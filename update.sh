@@ -1,5 +1,5 @@
 git restore package.json
 git pull
 npm install
-npm audit fixup --force
+npm audit fixup
 pm2 restart designer
