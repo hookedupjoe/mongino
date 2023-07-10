@@ -1,13 +1,15 @@
+![Mongino Header](https://mongino.com/wp-content/uploads/2023/07/mongino-logo-orange.png)
+
 # Mongino
 A Robust Application Environment
 
 * Author - W Joseph Francis
 * (c) hookedup, inc. 2023
 * License - LGPL
-* Website: [mongino.com](https://mongino.com/).
+* [mongino.com](https://mongino.com/)
 
 # Requirements
-* Windows, Mac and Linux (ubuntu recommended for headless server)
+* Windows, Mac or Linux (ubuntu recommended for headless server)
 * Node 14 or higher, (18 recommended)
 * MongoDB, v5+ recommended
 
@@ -21,13 +23,14 @@ A Robust Application Environment
 
 # To Run
 * npm start
+* open http://localhost:33480/ or ctrl-click the link when started.
 
 # To Update
-* Open directory where npm start is run from
+* Open git directory
 * git pull
 * npm install
 * npm audit fixup
 
-Note: If git complains about package.json changing (i.e. from auditi fixup)
+Note: If git complains about package.json changing (i.e. from audit fixup)
 * restore package.json
 * then "git pull" again
