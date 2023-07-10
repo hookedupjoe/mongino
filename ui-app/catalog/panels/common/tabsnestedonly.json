@@ -1,0 +1,87 @@
+{
+	"options": {
+		"padding": false
+	},
+	"content": [
+		{
+			"ctl": "tabs",
+			"name": "my-tabs",
+			"tabs": [
+				{
+					"label": "My Tab 1",
+					"name": "my-tab-1",
+					"ctl": "tab",
+					"content": [
+						{
+							"ctl": "tabs",
+							"name": "my-tab-1-tabs",
+							"tabs": [
+								{
+									"label": "my-tab-1-tab-1",
+									"name": "my-tab-1-tab-1",
+									"ctl": "tab",
+									"content": [
+										{
+											"ctl": "pagespot",
+											"name": "my-tab-1-tab-1-spot",
+											"text": "SPOT: my-tab-1-tab-1-spot"
+										}
+									]
+								},
+								{
+									"label": "my-tab-1-tab-2",
+									"name": "my-tab-1-tab-2",
+									"ctl": "tab",
+									"content": [
+										{
+											"ctl": "pagespot",
+											"name": "my-tab-1-tab-2-spot",
+											"text": "SPOT: my-tab-1-tab-2-spot"
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"label": "My Tab 2",
+					"name": "my-tab-2",
+					"ctl": "tab",
+					"content": [
+						{
+							"ctl": "tabs",
+							"name": "my-tab-2-tabs",
+							"tabs": [
+								{
+									"label": "my-tab-2-tab-1",
+									"name": "my-tab-2-tab-1",
+									"ctl": "tab",
+									"content": [
+										{
+											"ctl": "pagespot",
+											"name": "my-tab-2-tab-1-spot",
+											"text": "SPOT: my-tab-2-tab-1-spot"
+										}
+									]
+								},
+								{
+									"label": "my-tab-2-tab-2",
+									"name": "my-tab-2-tab-2",
+									"ctl": "tab",
+									"content": [
+										{
+											"ctl": "pagespot",
+											"name": "my-tab-2-tab-2-spot",
+											"text": "SPOT: my-tab-2-tab-2-spot"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	]
+}

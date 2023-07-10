@@ -1,0 +1,156 @@
+{
+	"options": {
+	  "readonly": true,
+		"padding": true
+	},
+	"content": [	{
+		"ctl": "title",
+		"name": "title",
+		"size": "large",
+		"color": "blue",
+		"icon": "globe",
+		"text": "My First Application"
+	},
+	{
+		"ctl": "tabs",
+		"name": "apptabs",
+		"tabs": [
+			{
+				"label": "App Info",
+				"name": "apptabs-info",
+				"ctl": "tab",
+				"content": [
+					{
+						"ctl": "pagespot",
+						"spotname": "apptabs-info"
+					},
+				
+					{
+						"ctl": "tabs",
+						"name": "my-tabs",
+						"tabs": [
+							{
+								"label": "Setup Info",
+								"name": "my-tab-1",
+								"ctl": "tab",
+								"content": [
+									{
+										"ctl": "fieldrow",
+										"name": "info-row",
+										"items": [
+											{
+												"ctl": "field",
+												"name": "appname",
+												"label": "Application Filename",
+												"default": "app014",
+												"req": true
+											},
+											{
+												"ctl": "field",
+												"name": "title",
+												"label": "Application Title",
+												"default": "Fourteen",
+												"req": true
+											}
+										]
+									}
+								]
+							},
+							{
+								"label": "Setup Options",
+								"name": "my-tab-2",
+								"ctl": "tab",
+								"content": [
+									{
+										"ctl": "tabs",
+										"name": "my-tab-2-tabs",
+										"tabs": [
+											{
+												"label": "Libraries",
+												"name": "my-tab-2-tab-1",
+												"ctl": "tab",
+												"content": [
+													{
+														"ctl": "dropdown",
+														"name": "cdn",
+														"label": "Library Location",
+														"default": "local",
+														"list": "Preview|local,Cloud|cloud,In App|app",
+														"req": true
+													},
+													{
+														"ctl": "dropdown",
+														"multi": true,
+														"name": "libraries",
+														"label": "Libraries",
+														"default": "local",
+														"list": "DataTables|datatables,Ace|ace",
+														"req": true
+													},
+													{
+														"ctl": "dropdown",
+														"multi": true,
+														"name": "plugins",
+														"label": "Plugins",
+														"default": "local",
+														"list": "DataTables|datatables,Svg Workspaces|svg",
+														"req": true
+													}
+												]
+											},
+											{
+												"label": "Resources",
+												"name": "my-tab-2-tab-2",
+												"ctl": "tab",
+												"content": [
+													{
+														"ctl": "pagespot",
+														"name": "my-tab-2-tab-2-spot",
+														"text": "Application Resources Go Here"
+													}
+												]
+											}
+										]
+									}
+								]
+							}
+						]
+					}
+				]
+			},
+			{
+				"label": "Develop",
+				"name": "apptabs-develop",
+				"ctl": "tab",
+				"content": [
+					{
+						"ctl": "pagespot",
+						"spotname": "apptabs-develop"
+					}
+				]
+			},
+			{
+				"label": "Preview",
+				"name": "apptabs-preview",
+				"ctl": "tab",
+				"content": [
+					{
+						"ctl": "pagespot",
+						"spotname": "apptabs-preview"
+					}
+				]
+			},
+			{
+				"label": "Deploy",
+				"name": "apptabs-deploy",
+				"ctl": "tab",
+				"content": [
+					{
+						"ctl": "pagespot",
+						"spotname": "apptabs-deploy"
+					}
+				]
+			}
+		]
+	}]
+}

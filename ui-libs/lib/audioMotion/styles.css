@@ -1,0 +1,51 @@
+
+@keyframes shine {
+	0% { -webkit-mask-position: 110%; }
+	100% { -webkit-mask-position: -10%; }
+}
+
+[appuse="audioMotionAudio"]{
+	display: block;
+	width: 100%;
+}
+
+/* minimal demo */
+[appuse="audioMotion"] {
+	height: 60vh;
+}
+
+/* fluid full-width analyzer (single instance demo) */
+[appuse="audioMotion"].fluid {
+	height: 45vh;
+	margin: 0 calc( 50% - 50vw + 9px );
+}
+
+/* background animation for overlay test on fluid demo */
+/* [appuse="audioMotion"].fluid > canvas {
+	background-image: url(media/sealoop.gif);
+	background-size: cover;
+} */
+
+/* overlay */
+[appuse="audioMotion"].overlay {
+	height: 563px;
+	margin: 0 auto;
+	position: relative;
+	width: 100%;
+}
+
+[appuse="audioMotion"].overlay > canvas {
+	bottom: 0;
+	pointer-events: none; /* let mouse clicks pass to the underlying video element */
+	position: absolute;
+	touch-action: none; /* ditto for touch events */
+}
+
+[appuse="audioMotion"].overlay:not(:fullscreen):hover > canvas {
+	opacity: .5;
+}
+
+@keyframes rotate {
+	0%   { left: 0; }
+	100% { left: -3024px; }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "mongino-change-this-name",
+  "version": "1.0.0",
+  "scripts": {
+    "init": "npm install",
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "child_process": "^1.0.2",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.16.3",
+    "fs-extra": "^7.0.1",
+    "gulp-replace": "^0.6.1",
+    "json-query": "^2.2.2",
+    "lodash": "^4.17.4",
+    "merge": "^1.2.0",
+    "os": "^0.1.1",
+    "q": "^1.4.1",
+    "request": "^2.83.0",
+    "router": "^1.1.4",
+    "mongodb": "^3.6.6"
+  }
+}

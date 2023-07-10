@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-tap-highlight" content="no">
+  <meta name="viewport"
+    content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+  <link rel="shortcut icon" href="favicon.ico">
+
+  <link rel="stylesheet" href="{{LIBRARY-LOCATION}}/built-lib/support-libs.css">
+  <link rel="stylesheet" href="{{LIBRARY-LOCATION}}/lib/semantic/dist/semantic.min.css">
+  <link rel="stylesheet" href="{{LIBRARY-LOCATION}}/lib/tabulator/css/tabulator.min.css">
+  <link rel="stylesheet" href="{{LIBRARY-LOCATION}}/lib/tabulator/css/semantic-ui/tabulator_semantic-ui.min.css">
+
+  {{OPTIONAL-TAGS}}
+
+  {{OPTIONAL-LIB-CSS}}
+
+  <link rel="stylesheet" href="{{LIBRARY-LOCATION}}/lib/css/appframe.css">
+  <link rel="stylesheet" href="{{LIBRARY-LOCATION}}/lib/css/resp-grid.css">
+  
+  {{OPTIONAL-CSS}}
+  
+  <link rel="stylesheet" href="app/css/app.css">
+
+  <title>{{PAGE-TITLE}}</title>
+</head>
+
+<body>
+
+  <div appuse="side-menu" class="ui sidebar right inverted labeled icon left inline vertical menu">
+  </div>
+  <div class="site-layout-north" style="background-color:#2b3443;">
+    <div style="padding:0px;" class="">
+
+      <a style="float:right;margin-left:4px;margin-top:5px;" semaction="showsidebar" class="toc item">
+        <i class="sidebar icon big inverted"></i>
+      </a>
+      <div style="float:left;margin-left:5px;padding:5px;margin-top:3px;line-height:25px;" class="site-header">
+        {{APP-TITLE}}
+      </div>
+      <div style="float:right;padding:0;margin:0;margin-right:10px;margin-left:10px;" appuse="nav-menu"
+        class="ui pointing inverted menu nomobile"></div>
+    </div>
+  </div>
+
+  <div appuse="app-loader"><i class="huge icons"><i class="big loading circle notch icon"></i></i></div>
+  <div appuse="main-page-container" class="site-layout-center pusher"></div>
+  <div appuse="site:global-context-menu"></div>
+
+  <!--   End of page *****************************************  -->
+
+  <!-- Support Libraries - Pre-Built Version -->
+  <script src="{{LIBRARY-LOCATION}}/built-lib/support-libs.js"></script>
+  <script src="{{LIBRARY-LOCATION}}/lib/semantic/dist/semantic.min.js"></script>
+
+  <!-- Mongino and Required Items -->
+  <script src="{{LIBRARY-LOCATION}}/lib/actionapp/actionapp.js?open&v=1204191338"></script>
+
+  <script src="{{LIBRARY-LOCATION}}/lib/actionapp/nosql-data-manager.js"></script>
+  <script src="{{LIBRARY-LOCATION}}/lib/actionapp/object-manager-plugin.js"></script>
+
+  <script src="{{LIBRARY-LOCATION}}/lib/jquery-touchswipe/jquery.touchSwipe.min.js"></script>
+
+  <script src="{{LIBRARY-LOCATION}}/lib/tabulator/js/tabulator.min.js"></script>
+  <script src="{{LIBRARY-LOCATION}}/lib/tabulator/addons/moment.2.24.js"></script>
+  <script src="{{LIBRARY-LOCATION}}/lib/tabulator/addons/xlsx.full.min.js"></script>
+
+
+  <!-- Optional Plugins -->
+  {{OPTIONAL-PLUGINS}}
+
+  <!-- OPTIONAL - JS Libraries -->
+  {{OPTIONAL-LIB-JS}}
+  
+  <!-- Application - Modules, etc -->
+  <script src="{{LIBRARY-LOCATION}}/lib/actionapp/app-module.js"></script>
+
+  <!-- Application Launch Script -->
+  <script src="./app/app.js"></script>
+
+</body>
+
+</html>

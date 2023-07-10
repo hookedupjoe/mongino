@@ -1,0 +1,115 @@
+{
+	"applicationTemplateLocation": "/.designer/build/tpl-apps/",
+	"applicationTemplates": [
+		{
+			"name": "default",
+			"title": "Default Template",
+			"details": "General starting point for application"
+		},
+		{
+			"name": "simple",
+			"title": "Simple single page app",
+			"details": "Starting point for single page application"
+		}
+	],
+	"pageTemplates": [
+		{
+			"name": "DefaultPage",
+			"title": "Default Page",
+			"details": "General starting point for a page"
+		},
+		{
+			"name": "HTMLStarter",
+			"title": "Starting Point with HTML content",
+			"details": "Starting point for a page that is uses HTML"
+		}
+	],
+	"libraryLocations": [
+		{
+			"name": "local",
+			"label": "Local",
+			"prefix": ""
+		},
+		{
+			"name": "cloud",
+			"label": "Cloud CDN",
+			"prefix": "//actionapp.hookedup.com"
+		}
+	],
+	"libraries": [		
+		{
+			"name": "Monaco",
+			"label": "Monaco Editor",
+			"css": [
+				"<link data-name=\"vs/editor/editor.main\" rel=\"stylesheet\" href=\"{{LIBRARY-LOCATION}}/lib/monaco/vs/editor/editor.main.css\">"
+			],
+			"js": [
+				"<script>var require = { paths: { 'vs': '{{LIBRARY-LOCATION}}/lib/monaco/vs' } };</script>",
+				"<script src=\"{{LIBRARY-LOCATION}}/lib/monaco/vs/loader.js\"></script>",
+				"<script src=\"{{LIBRARY-LOCATION}}/lib/monaco/vs/editor/editor.main.nls.js\"></script>",
+				"<script src=\"{{LIBRARY-LOCATION}}/lib/monaco/vs/editor/editor.main.js\"></script>"
+			]
+		},
+		{
+			"name": "jsTree",
+			"label": "jsTree Outline Control",
+			"css": [
+				"<link rel=\"stylesheet\" href=\"{{LIBRARY-LOCATION}}/lib/jsTree/themes/default/style.min.css\" />"
+			],
+			"js": [
+				"<script src=\"{{LIBRARY-LOCATION}}/lib/jsTree/jstree.min.js\"></script>"
+			]
+		},
+		{
+			"name": "audioMotionAnalyzer",
+			"label": "audioMotion Music Engire",
+			"css": [
+				"<link rel=\"stylesheet\" href=\"{{LIBRARY-LOCATION}}/lib/audioMotion/styles.css\" />"
+			],
+			"js": [
+				"<script src=\"{{LIBRARY-LOCATION}}/lib/audioMotion/audioMotion-engine.js\"></script>"
+			]
+		},
+		{
+			"name": "p5js",
+			"label": "p5js - Processing JavaScript",
+			"js": [
+				"<script src=\"{{LIBRARY-LOCATION}}/lib/p5js/p5.min.js\"></script>",
+				"<script src=\"{{LIBRARY-LOCATION}}/lib/p5js/addons/p5.sound.min.js\"></script>"
+			]
+		},
+		{
+			"name": "Ace",
+			"label": "Ace Editor",
+			"js": [
+				"<script src=\"{{LIBRARY-LOCATION}}/lib/ace/ace.js\"></script>",
+				"<script src=\"{{LIBRARY-LOCATION}}/lib/ace/addons/mongino-ace-plugin.js\"></script>"
+			]
+		},
+		{
+			"name": "UDP",
+			"label": "Mobile UDP",
+			"js": [
+				"<script src=\"{{LIBRARY-LOCATION}}/lib/udp/udp.js\"></script>"
+			]
+		}
+	],
+	"plugins": [
+		{
+			"name": "DataTables",
+			"label": "DataTables standard functionality / helpers",
+			"js": [
+				"<script src=\"{{LIBRARY-LOCATION}}/plugins/jquery-datatables-helper.js\"></script>",
+				"<script src=\"{{LIBRARY-LOCATION}}/plugins/datatables-plugin.js\"></script>"
+			]
+		},
+		{
+			"name": "SvgControls",
+			"label": "Beta - Graphical Workspaces and Controls",
+			"js": [
+				"<script src=\"{{LIBRARY-LOCATION}}/plugins/svg-controls-plugin.js\"></script>",
+				"<script src=\"{{LIBRARY-LOCATION}}/lib/d3/d3.min.js\"></script>"
+			]
+		}
+	]
+}

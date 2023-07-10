@@ -1,0 +1,198 @@
+{
+	"options": {
+		"padding": true
+	},
+	"content": [
+		{
+			"ctl": "ui",
+			"name": "title-area",
+			"classes": "",
+			"content": [
+				{
+					"ctl": "message",
+					"name": "title",
+					"text": "The title"
+				},
+				{
+					"ctl": "button",
+					"basic": true,
+					"right": true,
+					"icon": "recycle",
+					"name": "btn-reload-page",
+					"label": "Reload",
+					"attr": {
+						"pageaction": "closePage",
+						"appname": "",
+						"pagename": ""
+					}
+				},
+				{
+					"ctl": "button",
+					"color": "black",
+					"hidden": false,
+					"basic": true,
+					"right": true,
+					"icon": "cancel",
+					"name": "btn-close-page",
+					"label": "Close",
+					"attr": {
+						"pageaction": "closePage",
+						"appname": "",
+						"pagename": ""
+					}
+				},
+				{
+					"ctl": "button",
+					"toLeft": true,
+					"color": "blue",
+					"icon": "save",
+					"disabled": true,
+					"name": "btn-tb-save",
+					"label": "Save",
+					"onClick": {
+						"run": "action",
+						"action": "saveCode"
+					}
+				}
+			]
+		}
+	],
+	"index": {
+		"fieldsList": [],
+		"itemsList": [
+			"title-area",
+			"title",
+			"btn-reload-page",
+			"btn-close-page",
+			"btn-tb-save"
+		],
+		"fields": {},
+		"items": {
+			"title-area": {
+				"ctl": "ui",
+				"name": "title-area",
+				"classes": "",
+				"content": [
+					{
+						"ctl": "message",
+						"name": "title",
+						"text": "Hello WOrld"
+					},
+					{
+						"ctl": "button",
+						"basic": true,
+						"right": true,
+						"icon": "recycle",
+						"name": "btn-reload-page",
+						"label": "Reload",
+						"attr": {
+							"pageaction": "closePage",
+							"appname": "",
+							"pagename": ""
+						}
+					},
+					{
+						"ctl": "button",
+						"color": "black",
+						"hidden": false,
+						"basic": true,
+						"right": true,
+						"icon": "cancel",
+						"name": "btn-close-page",
+						"label": "Close",
+						"attr": {
+							"pageaction": "closePage",
+							"appname": "",
+							"pagename": ""
+						}
+					},
+					{
+						"ctl": "button",
+						"toLeft": true,
+						"color": "blue",
+						"icon": "save",
+						"disabled": true,
+						"name": "btn-tb-save",
+						"label": "Save",
+						"onClick": {
+							"run": "action",
+							"action": "saveCode"
+						}
+					}
+				]
+			},
+			"title": {
+				"ctl": "message",
+				"name": "title",
+				"text": "Hello WOrld"
+			},
+			"btn-reload-page": {
+				"ctl": "button",
+				"basic": true,
+				"right": true,
+				"icon": "recycle",
+				"name": "btn-reload-page",
+				"label": "Reload",
+				"attr": {
+					"pageaction": "closePage",
+					"appname": "",
+					"pagename": ""
+				}
+			},
+			"btn-close-page": {
+				"ctl": "button",
+				"color": "black",
+				"hidden": false,
+				"basic": true,
+				"right": true,
+				"icon": "cancel",
+				"name": "btn-close-page",
+				"label": "Close",
+				"attr": {
+					"pageaction": "closePage",
+					"appname": "",
+					"pagename": ""
+				}
+			},
+			"btn-tb-save": {
+				"ctl": "button",
+				"toLeft": true,
+				"color": "blue",
+				"icon": "save",
+				"disabled": true,
+				"name": "btn-tb-save",
+				"label": "Save",
+				"onClick": {
+					"run": "action",
+					"action": "saveCode"
+				}
+			}
+		},
+		"controls": {},
+		"required": {},
+		"outline": [
+			{
+				"ctl": "ui",
+				"name": "title-area",
+				"children": [
+					{
+						"ctl": "message",
+						"name": "title"
+					},
+					{
+						"ctl": "button",
+						"name": "btn-reload-page"
+					},
+					{
+						"ctl": "button",
+						"name": "btn-close-page"
+					},
+					{
+						"ctl": "button",
+						"name": "btn-tb-save"
+					}
+				]
+			}
+		]
+	}
+}

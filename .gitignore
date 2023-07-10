@@ -1,0 +1,12 @@
+data/
+node_modules/
+logs/
+npm-debug.log
+package-lock.json
+local_*/
+preview-app/
+restart.log
+
+# dotenv environment variables file
+.env
+.env.test

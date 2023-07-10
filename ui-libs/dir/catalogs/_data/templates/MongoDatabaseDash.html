@@ -1,0 +1,48 @@
+<div class="ui segment">
+  <div class="ui header blue medium">
+    Mongo Collections
+  </div>
+  
+  {{#if isLoading}}
+    <div class="ui message blue">
+      <b>Loading:</b> Please wait ...
+    </div>
+  {{/if}}
+
+  {{#if isNew}}
+    <div class="ui message blue">
+      <b>No Collections Setup:</b> Use the Add Collection button to add your <b>Mongo Account</b> account information.
+    </div>
+  {{/if}}
+
+  <div class="ui segment pad3">
+    <button myaction="newDoc" type="button" name="btn-page-tb-new" class="ui button compact blue icon  ">
+      <i class="plus icon"></i> Add Collection
+    </button>
+    <button myaction="refreshDash" type="button" name="btn-page-tb-new" class="ui button compact blue icon  ">
+      <i class="recycle icon"></i> Refresh
+    </button>
+  </div>
+
+  <div class="ui relaxed divided list">
+    {{#each collections}}
+    <a href="javascript:void(0)" class="item" collection="{{this.name}}" pageaction="openDatabase">
+      <i class="large boxes middle aligned icon"></i>
+
+      <div class="content">
+        <div class="right floated content">
+          <div class="ui button">
+            Collection Dashboard
+          </div>
+        </div>
+        <div class="header">
+          Collection: {{this.name}}
+        </div>
+        <div class="description">
+          {{this.type}}
+        </div>
+      </div>
+    </a>
+    {{/each}}
+  </div>
+</div>

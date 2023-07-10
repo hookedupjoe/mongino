@@ -1,0 +1,11 @@
+{
+  "pages": [
+    "Home"
+  ],
+  "title": "Default Application",
+  "prefix": "",
+  "name": "default",
+  "cdn": "local",
+  "libraries": [],
+  "plugins": []
+}

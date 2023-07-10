@@ -1,0 +1,28 @@
+{
+	"options": {
+		"readonly": false,
+		"padding": true
+	},
+	"content": [
+		{
+			"ctl": "title",
+			"name": "dyno-title",
+			"size": "large",
+			"color": {
+				"[computed]": "(context.page.controller.getDefaultColor ? context.page.controller.getDefaultColor() : 'green')"
+			},
+			"icon": "box",
+			"text": {
+				"[computed]": "context.page.data.demoTitle || 'No Default Title'"
+			}
+		},
+		{
+			"ctl": "dropdown",
+			"name": "dyno-dropdown",
+			"label": "Dynamic List",
+			"list": {
+				"[computed]": "context.page.data.demoDropDownList || ['Not Found']"
+			}
+				}
+	]
+}

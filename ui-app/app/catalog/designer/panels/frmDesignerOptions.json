@@ -1,0 +1,56 @@
+{
+	"options": {
+		"prompt": {
+			"submitLabel": "Save Designer Settings",
+			"title": "Designer Settings",
+			"submitLabelNew": "Save Settings",
+			"titleNew": "Designer Settings"
+		}
+	},
+	"content": [
+		
+		{
+			"ctl": "message",
+			"color": "blue",
+			"size": "large",
+			"name": "welcome-info",
+			"text": "Designer Settings, restart after saving settings."
+		},
+		{
+			"ctl": "fieldrow",
+			"req": true,
+			"items": [
+				{
+					"label": "Site Title",
+					"ctl": "field",
+					"name": "sitetitle",
+					"default": "Mongino",
+					"req": true
+				},
+				{
+					"row": false,
+					"ctl": "radiolist",
+					"name": "sitetype",
+					"label": "Designer Type",
+					"list": "Local,Server",
+					"req": true
+				}
+			],
+			"name": "designer-info-row"
+		},
+		{
+			"ctl": "fieldrow",
+			"req": true,
+			"items": [
+				{
+					"label": "Use Cordova",
+					"ctl": "radiolist",
+					"name": "usecordova",
+					"list": "Yes,No",
+					"req": true
+				}
+			],
+			"name": "cordova-options-row"
+		}
+	]
+}

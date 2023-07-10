@@ -1,0 +1,155 @@
+{
+	"options": {
+	  "readonly": true,
+		"padding": true
+	},
+	"content": [	{
+		"ctl": "title",
+		"name": "title",
+		"size": "large",
+		"color": "blue",
+		"icon": "globe",
+		"text": "My First Application"
+	},
+	{
+		"ctl": "tabs",
+		"name": "apptabs",
+		"tabs": [
+			{
+				"label": "Pages",
+				"name": "apptabs-pages",
+				"ctl": "tab",
+				"content": [
+					{
+						"ctl": "pagespot",
+						"spotname": "apptabs-pages",
+						"text": "PAGES GO HERE"
+					}
+				]
+			},
+			{
+				"label": "Catalog",
+				"name": "apptabs-catalog",
+				"ctl": "tab",
+				"content": [
+					{
+						"ctl": "pagespot",
+						"spotname": "apptabs-catalog",
+						"text": "CATALOG GOES HERE"
+					}
+				]
+			},
+			{
+				"label": "Setup",
+				"name": "apptabs-setup",
+				"ctl": "tab",
+				"content": [
+					{
+						"ctl": "pagespot",
+						"spotname": "apptabs-setup"
+					},
+				
+					{
+						"ctl": "tabs",
+						"name": "my-tabs",
+						"tabs": [
+							
+							{
+								"label": "Basic Info",
+								"name": "my-tab-1",
+								"ctl": "tab",
+								"content": [
+									{
+										"ctl": "fieldrow",
+										"name": "info-row",
+										"items": [
+											{
+												"ctl": "field",
+												"name": "appname",
+												"label": "Application Filename",
+												"default": "app014",
+												"req": true
+											},
+											{
+												"ctl": "field",
+												"name": "title",
+												"label": "Application Title",
+												"default": "Fourteen",
+												"req": true
+											}
+										]
+									},
+									{
+										"ctl": "dropdown",
+										"multi": true,
+										"name": "pages",
+										"label": "Pages to load",
+										"default": "local",
+										"list": "HomePage,LogsPage,TestPage",
+										"req": true
+									}
+								]
+							},
+							{
+								"label": "Libraries",
+								"name": "my-tab-2-tab-1",
+								"ctl": "tab",
+								"content": [
+									{
+										"ctl": "dropdown",
+										"name": "cdn",
+										"label": "Library Location",
+										"default": "local",
+										"list": "Preview|local,Cloud|cloud,In App|app",
+										"req": true
+									},
+									{
+										"ctl": "dropdown",
+										"multi": true,
+										"name": "libraries",
+										"label": "Libraries",
+										"default": "local",
+										"list": "DataTables,Ace",
+										"req": true
+									},
+									{
+										"ctl": "dropdown",
+										"multi": true,
+										"name": "plugins",
+										"label": "Plugins",
+										"default": "local",
+										"list": "DataTables,SvgWorkspaces",
+										"req": true
+									}
+								]
+							}
+						]
+					}
+				]
+			},
+			
+			{
+				"label": "Preview",
+				"name": "apptabs-preview",
+				"ctl": "tab",
+				"content": [
+					{
+						"ctl": "pagespot",
+						"spotname": "apptabs-preview"
+					}
+				]
+			},
+			{
+				"label": "Deploy",
+				"name": "apptabs-deploy",
+				"ctl": "tab",
+				"content": [
+					{
+						"ctl": "pagespot",
+						"spotname": "apptabs-deploy"
+					}
+				]
+			}
+		]
+	}]
+}
