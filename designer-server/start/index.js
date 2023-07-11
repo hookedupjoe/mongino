@@ -30,5 +30,10 @@ module.exports.setup = function (app, scope) {
     dataRouter.all('/*', dataRoute);
     app.use('/appdata/',dataRouter);
 
+    var uiAppRouter = express.Router(),
+    uiAppRoute = require('./appservers/index').setup(scope);
+    uiAppRouter.all('/:type/:name*', uiAppRoute);
+    uiAppRouter.all('/*', uiAppRoute);
+    app.use('/appserver/',uiAppRouter);
 
 };

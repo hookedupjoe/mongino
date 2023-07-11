@@ -2755,13 +2755,14 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
             tmpOptions = { url: tmpOptions };
         }
         
+        //--- ToDo: Move this out of base? Add as ActionAppCore hook?
         var tmpAppID = '';
         //--- If there is a dataContext, add related details to header
         if( tmpOptions.dataContext ){
-            console.log('tmpOptions.dataContext ',tmpOptions.dataContext );
+            //console.log('tmpOptions.dataContext ',tmpOptions.dataContext );
             if( tmpOptions.dataContext && tmpOptions.dataContext.getAppName){
                 tmpAppID = tmpOptions.dataContext.getAppName();
-                console.log('tmpAppID',tmpAppID);
+                //console.log('tmpAppID',tmpAppID);
                 if(tmpAppID){
                     var tmpHeaders = tmpOptions.headers || {};
                     $.extend(tmpHeaders, {'act-app-id':tmpAppID});

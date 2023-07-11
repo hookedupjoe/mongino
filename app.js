@@ -462,16 +462,20 @@ function setup(thePassportFlag) {
                 }
             }
 
+
             
             scope.locals.path.ws = {
                 root: tmpWSDirectory,
                 deploy: tmpWSDirectory + "deploy/",
                 uiApps: tmpWSDirectory + "ui-apps/",
+                uiAppServers: tmpWSDirectory + "ui-servers/",
                 catalogs: tmpWSDirectory + "catalogs/",
                 catalog: tmpWSDirectory + "catalog/",
                 pages: tmpWSDirectory + "catalog/pages/",
                 serverApps: tmpWSDirectory + "designer-servers/"
             }
+
+            await $.fs.ensureDir(scope.locals.path.ws.uiAppServers)
 
             if( homeAccountConfig ){
                 require(scope.locals.path.libraries + '/lib_Mongo.js');
