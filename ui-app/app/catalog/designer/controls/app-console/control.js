@@ -363,26 +363,16 @@ License: LGPL
 						]
 					},
 					{
-						"label": "Security",
+						"label": "ACL",
 						"name": "apptabs-data",
 						"ctl": "tab",
 						"content": [
+							
 							{
-								"ctl": "button",
-								"size": "small",
-								compact: true,
-								"onClick": {
-									"run": "action",
-									"action": "refreshACL"
-								},
-								"basic": true,
-								"icon": "recycle",
-								"name": "btn-refresh-app-acl",
-								"text": "Refresh"
-							},
-							{
-								"ctl": "spot",
+								"ctl": "control",
 								"text": "ACL INTERFACE HERE",
+								"controlname": "ACLEntries",
+								"catalog": "_data",
 								"name": "aclentries"
 							}
 						]
@@ -418,16 +408,25 @@ License: LGPL
 		addCatalogPanel: addCatalogPanel,
 		refreshResources: refreshResources,
 		closeMe: closeMe,
-		promptForSetupInfo: promptForSetupInfo
+		promptForSetupInfo: promptForSetupInfo,
+		refreshACL: refreshACL
 	};
 
 	function closeMe() {
 		this.context.page.controller.closeAppConsole(this.details);
 	}
 
+	// ,
+	// getAppName: getAppName
+	function refreshACL(){
+        this.parts.aclentries.parts.report.refresh()
+    }
 
 	
 	function _onInit() {
+		window.currentAppConsole = this;
+		this.isDesignerEditor = true;
+		
 		this.parts.pages.subscribe('selectMe', onPageSelect.bind(this))
 		this.parts.resources.subscribe('selectMe', onResourceSelect.bind(this))
 
@@ -482,6 +481,7 @@ License: LGPL
 			this.setItemDisplay('cordova-in-code-link',false);
 		}
 		
+		this.refreshACL();
 
 	}
 

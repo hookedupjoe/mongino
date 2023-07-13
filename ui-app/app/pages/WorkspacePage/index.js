@@ -92,8 +92,9 @@ License: LGPL
         ThisPage.loadedResources = loadedResources;
     }
     ThisPage._onInit = function () {
-
+        
     }
+
 
     //=== On Page Activation ===
     /*

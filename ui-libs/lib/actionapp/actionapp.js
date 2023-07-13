@@ -2760,6 +2760,7 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
         //--- If there is a dataContext, add related details to header
         if( tmpOptions.dataContext ){
             //console.log('tmpOptions.dataContext ',tmpOptions.dataContext );
+            //zzz
             if( tmpOptions.dataContext && tmpOptions.dataContext.getAppName){
                 tmpAppID = tmpOptions.dataContext.getAppName();
                 //console.log('tmpAppID',tmpAppID);
@@ -6487,11 +6488,13 @@ License: LGPL
     }
 
     meInstance.getDesignerEditor = function () {
+        console.log('getDesignerEditor');
         try {
-            var tmpCtl = this.getParentControl();
+            var tmpCtl = this;
             var tmpFoundControl = false;
             for (var i = 0; i < 20; i++) {
                 if (tmpCtl.isDesignerEditor) {
+                    console.log('getDesignerEditor tmpFoundControl',tmpFoundControl);
                     tmpFoundControl = tmpCtl;
                     break
                 }

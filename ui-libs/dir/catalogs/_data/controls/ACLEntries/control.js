@@ -121,7 +121,7 @@
     tmpViewer.setReportURL(tmpBaseURL + 'appdata/auth/get-acl-entries.json?open');
     tmpViewer.subscribe('selectionChange', refreshSelection.bind(this));
     tmpViewer.subscribe('tableBuilt', onTableBuilt.bind(this));
-
+    window.currentViewer = tmpViewer;
 
 
     this.parts.mainform.refreshUI();
