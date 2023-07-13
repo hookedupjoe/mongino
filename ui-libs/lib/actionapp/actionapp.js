@@ -2759,11 +2759,8 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
         var tmpAppID = '';
         //--- If there is a dataContext, add related details to header
         if( tmpOptions.dataContext ){
-            //console.log('tmpOptions.dataContext ',tmpOptions.dataContext );
-            //zzz
             if( tmpOptions.dataContext && tmpOptions.dataContext.getAppName){
                 tmpAppID = tmpOptions.dataContext.getAppName();
-                //console.log('tmpAppID',tmpAppID);
                 if(tmpAppID){
                     var tmpHeaders = tmpOptions.headers || {};
                     $.extend(tmpHeaders, {'act-app-id':tmpAppID});
@@ -6481,12 +6478,9 @@ License: LGPL
         //--- See if we are in the designer, if so - what app?
         var tmpDesigner = this.getDesignerEditor();
         if( tmpDesigner ){
-            window.tmpDesigner = tmpDesigner;
-            console.log('set d',tmpDesigner);
             if( tmpDesigner.details){
                 var tmpAppName = tmpDesigner.details.appname || tmpDesigner.details.catname;
                 if( tmpAppName ){
-                    console.log('tmpAppName',tmpAppName);
                     return tmpDesigner.details.appname;
                 }
             }
