@@ -3360,6 +3360,7 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
           tmpMask.removeClass('hidden');
           tmpFOFade.removeClass('hidden');
           tmpBody.removeClass('hidden');
+          ThisApp.refreshLayouts();
         });
         ThisApp.flyoverOpen = true;
     }
@@ -3840,13 +3841,13 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
     function initFlyoverMarkup() {
         var tmpHTML = [];
         tmpHTML.push('<div appuse="flyovermask" class="pagemask hidden">');
-        tmpHTML.push('	<div appuse="flyover" class="flyover hidden">');
-        tmpHTML.push('		<div class="ui content form">');
-        tmpHTML.push('			<div class="ui field" spot="flyover-menu">');
+        tmpHTML.push('	<div appuse="flyover" style="height:100%;padding:0;margin:0;" class="flyover hidden ui-layout-pane">');
+        //tmpHTML.push('		<div class="ui content form">');
+        tmpHTML.push('			<div class="ui field" style="height:100%" spot="flyover-menu">');
         tmpHTML.push('			</div>');
         tmpHTML.push('		</div>');
         tmpHTML.push('		<div style="clear:both"></div>');
-        tmpHTML.push('	</div>');
+        //tmpHTML.push('	</div>');
         tmpHTML.push('</div>');
         $('body').append(tmpHTML.join(''))
     }
@@ -6488,13 +6489,11 @@ License: LGPL
     }
 
     meInstance.getDesignerEditor = function () {
-        console.log('getDesignerEditor');
         try {
             var tmpCtl = this;
             var tmpFoundControl = false;
             for (var i = 0; i < 20; i++) {
                 if (tmpCtl.isDesignerEditor) {
-                    console.log('getDesignerEditor tmpFoundControl',tmpFoundControl);
                     tmpFoundControl = tmpCtl;
                     break
                 }
