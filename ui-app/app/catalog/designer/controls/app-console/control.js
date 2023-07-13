@@ -11,6 +11,16 @@ License: LGPL
 		},
 		"content": [
 			{
+				ctl: 'div',
+				classes: 'hidden',
+				content: [{
+				  "ctl": "control",
+				  "catalog": "_data",
+				  "controlname": "ACLDialog",
+				  "name": "acldialog"
+				}]
+			  },
+			  {
 				"ctl": "spot",
 				"name": "nav-tabs",
 				"text": "."
@@ -348,6 +358,16 @@ License: LGPL
 								},
 								text: "Refresh",
 								"name": "btn-refresh-setup"
+							},{
+								"ctl": "button",
+								"color": "blue",
+								"basic": true,
+								"onClick": {
+									"run": "action",
+									"action": "openACL"
+								},
+								text: "ACL",
+								"name": "btn-open-acl"
 							},
 							{
 								"ctl": "divider",
@@ -359,21 +379,6 @@ License: LGPL
 								"ctl": "panel",
 								"controlname": "design/ws/panel-app-setup?appname=",
 								"name": "setupinfo"
-							}
-						]
-					},
-					{
-						"label": "ACL",
-						"name": "apptabs-data",
-						"ctl": "tab",
-						"content": [
-							
-							{
-								"ctl": "control",
-								"text": "ACL INTERFACE HERE",
-								"controlname": "ACLEntries",
-								"catalog": "_data",
-								"name": "aclentries"
 							}
 						]
 					}
@@ -391,6 +396,7 @@ License: LGPL
 		setup: setup,
 		refreshPages: refreshPages,
 		refreshSetupInfo: refreshSetupInfo,
+		openACL: openACL,
 		getSetupInfo: getSetupInfo,
 		cancelAppSetup: cancelAppSetup,
 		saveAppSetup: saveAppSetup,
@@ -408,19 +414,18 @@ License: LGPL
 		addCatalogPanel: addCatalogPanel,
 		refreshResources: refreshResources,
 		closeMe: closeMe,
-		promptForSetupInfo: promptForSetupInfo,
-		refreshACL: refreshACL
+		promptForSetupInfo: promptForSetupInfo
 	};
 
 	function closeMe() {
 		this.context.page.controller.closeAppConsole(this.details);
 	}
 
-	// ,
+	// ,,refreshACL: refreshACL
 	// getAppName: getAppName
-	function refreshACL(){
-        this.parts.aclentries.parts.report.refresh()
-    }
+	// function refreshACL(){
+    //     this.parts.aclentries.parts.report.refresh()
+    // }
 
 	
 	function _onInit() {
@@ -481,7 +486,7 @@ License: LGPL
 			this.setItemDisplay('cordova-in-code-link',false);
 		}
 		
-		this.refreshACL();
+		//this.refreshACL();
 
 	}
 
@@ -734,7 +739,12 @@ License: LGPL
 	function refreshPages() {
 		this.parts.pages.refreshFromURI();
 	}
-
+	
+	function openACL() {
+		var tmpAppName = this.details.appname;
+		//this.parts.acldialog.loadOptions({details:{appname:tmpAppName}});
+		this.parts.acldialog.open({details:{appname:tmpAppName}});
+	}
 	function refreshSetupInfo() {
 		this.parts.setupinfo.refreshFromURI();
 	}

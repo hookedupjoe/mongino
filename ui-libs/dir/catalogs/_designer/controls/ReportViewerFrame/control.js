@@ -433,6 +433,11 @@
       tmpFullPull = false;
     }
 
+    tmpThis.viewerLoaded = true;
+    tmpThis.initTable( {
+      columns: tmpThis.reportCols
+    }, theOptions);
+
     ThisApp.apiCall( {
       loading: this.getEl(),
       cache: true,
@@ -448,16 +453,9 @@
 
       tmpData = tmpData.data || tmpData.docs || tmpData || [];
 
-      if (tmpThis.viewerLoaded !== true) {
-        tmpThis.viewerLoaded = true;
-        tmpThis.initTable( {
-          data: tmpData,
-          columns: tmpThis.reportCols
-        }, theOptions);
-      } else {
-        tmpOptions.fullPull = tmpFullPull;
-        tmpThis.refreshData(tmpData, tmpOptions);
-      }
+      tmpOptions.fullPull = tmpFullPull;
+      tmpThis.refreshData(tmpData, tmpOptions);
+      tmpThis.refreshColLayout();
       dfd.resolve(true)
 
     })
@@ -465,6 +463,14 @@
     return dfd.promise();
   }
 
+  ControlCode.refreshColLayout = function() {
+    try {
+      this.mainTable.hideColumn(currentViewer.mainTable.columnManager.columns[0])
+      this.mainTable.showColumn(currentViewer.mainTable.columnManager.columns[0])
+    } catch (error) {
+      
+    }
+  }
 
   ControlCode.refreshSelection = function() {
 

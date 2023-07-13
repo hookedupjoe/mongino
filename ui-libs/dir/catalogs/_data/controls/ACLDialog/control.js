@@ -16,7 +16,7 @@
           "ctl": "control",
           "catalog": "_data",
           "controlname": "ACLEntries",
-          "name": "mainform"
+          "name": "aclentries"
         }]
       }]
   
@@ -46,10 +46,15 @@
     ControlCode.open = open;
     function open(theOptions) {
       this.loadOptions(theOptions);
-      var tmpLoadEl = ThisApp.getSpot$('flyover-menu')
-      this.loadToElement(tmpLoadEl, theOptions)
-      ThisApp.fullScreenFlyover();
-  
+      var tmpLoadEl = ThisApp.getSpot$('flyover-menu');
+      var self = this;
+      this.loadToElement(tmpLoadEl, theOptions).then(function(){
+        ThisApp.fullScreenFlyover();
+        ThisApp.delay(10).then(function(){
+          self.parts.aclentries.getViewControl().refresh()
+        })
+      })
+      
     }
   
     function openSample() {
@@ -66,10 +71,6 @@
       if (tmpOptions.details && tmpOptions.details.appname) {
         this.setAppName(tmpOptions.details.appname);
       }
-  
-      console.log('pre init theOptions', theOptions)
-  
-  
     }
   
   
