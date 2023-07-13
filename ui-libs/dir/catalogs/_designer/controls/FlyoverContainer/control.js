@@ -17,8 +17,8 @@
 	"center": [
 		{
 			"ctl": "control",
-			"controlname":"ReportViewerFrame",
-			"catalog": "designer",
+			"controlname":"ACLEntries",
+			"catalog": "_data",
 			"name": "body"
 		}
 	]
@@ -36,7 +36,29 @@
 
     ControlCode._onInit = _onInit;
     function _onInit(){
+     
+    }
+    ControlCode._onPreInit = function(theOptions){
+       this.details = {};
+       var tmpOptions = theOptions || {};
+       if( tmpOptions.details && tmpOptions.details.appname){
+         this.setAppName(tmpOptions.details.appname);
+       }
+       
+       console.log('pre init theOptions',theOptions)
+      
+      
+    }
 
+    // ControlCode.getAppName = getAppName;
+    // function getAppName(){
+    //     return  this.details.appname;
+    // }    
+    
+    ControlCode.setAppName = setAppName;
+    function setAppName(theAppName){
+         this.details.appname = theAppName;
+        this.isDesignerEditor = true;
     }
 
 	var ThisControl = {specs: ControlSpecs, options: { proto: ControlCode, parent: ThisApp }};

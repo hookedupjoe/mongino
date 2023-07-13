@@ -107,7 +107,7 @@
   }
   ControlCode._onInit = function() {
     //--- TEMP DEBUG
-    window.activeControl = this;
+    window.activeACLEntries = this;
     window.activeReport = this.parts.report;
     
     //this.currentAccount = '_home';
@@ -163,11 +163,13 @@
     // Define columns based on Tabulator column documentation
     var tmpTableCols = [{
       "title": "Name",
-      "field": "entryname"
+      "field": "entryname",
+      "width":"300"
     },
       {
         "title": "Level",
-        "field": "level"
+        "field": "level",
+        "width":"300"
       }];
 
 
@@ -178,7 +180,7 @@
       tableConfig: {
          movableColumns: true,
         initialSort: [ {
-          column: "textfield",
+          column: "entryname",
           dir: "asc"
         }]
       },

@@ -3339,7 +3339,7 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
 
     me.fullScreenFlyover = fullScreenFlyover;
     function fullScreenFlyover(theHTML, theOptions){
-
+        
         var tmpOptions = theOptions || {};
         if( typeof(tmpOptions.onClose) == 'function'){
             me.fullScreenFlyoverCallback = tmpOptions.onClose;
@@ -3351,16 +3351,20 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
         if( tmpOptions.backgroundColor ){
             tmpBG = tmpOptions.backgroundColor;
         }
+       
         var tmpMask = ThisApp.getByAttr$({ appuse: 'flyovermask' });
         var tmpFOFade = ThisApp.getByAttr$({ appuse: 'flyoverfade' });
         var tmpBody = ThisApp.getByAttr$({ appuse: 'flyover' });
         tmpMask.css('background-color',tmpBG);
         tmpBody.css('background-color',tmpBG);
+        
         tmpMask.animate({ scrollTop: 0 }, 2, function () {
           tmpMask.removeClass('hidden');
           tmpFOFade.removeClass('hidden');
           tmpBody.removeClass('hidden');
-          ThisApp.refreshLayouts();
+          ThisApp.delay(100).then(function(){
+            ThisApp.refreshLayouts();
+          })
         });
         ThisApp.flyoverOpen = true;
     }
@@ -4265,7 +4269,7 @@ License: LGPL
         ThisApp.controls.addWebControl(this.ns(theControlName), theControl);
     }
 
-    me.regionNames = ['center', 'north', 'south', 'east', 'west'];
+    me.regionNames = ['north', 'center', 'south', 'east', 'west'];
 
     me.hideLoading = function (theOptions) {
         this.showLoading(false, theOptions);
@@ -6478,9 +6482,11 @@ License: LGPL
         var tmpDesigner = this.getDesignerEditor();
         if( tmpDesigner ){
             window.tmpDesigner = tmpDesigner;
+            console.log('set d',tmpDesigner);
             if( tmpDesigner.details){
                 var tmpAppName = tmpDesigner.details.appname || tmpDesigner.details.catname;
                 if( tmpAppName ){
+                    console.log('tmpAppName',tmpAppName);
                     return tmpDesigner.details.appname;
                 }
             }
@@ -8316,7 +8322,7 @@ License: LGPL
         tmpThis.parentEl = ThisApp.asSpot(theEl);
 
         if (isFunc(tmpThis._onPreInit)) {
-            tmpThis._onPreInit();
+            tmpThis._onPreInit(tmpOptions);
         }
         var tmpHTML = tmpThis.getHTML();
         tmpThis.parentEl.html(tmpHTML);
@@ -8602,7 +8608,7 @@ License: LGPL
                 }
             }
             
-            var tmpContentItems = ['items', 'tabs', 'content', 'center', 'north', 'south', 'east', 'west'];
+            var tmpContentItems = ['items', 'tabs', 'content', 'north', 'center', 'south', 'east', 'west'];
             for (var aIndex in tmpContentItems) {
                 var tmpContentItem = tmpContentItems[aIndex];
                 if (tmpItem[tmpContentItem]) {
@@ -8880,7 +8886,7 @@ License: LGPL
         var tmpClasses = ''
         tmpHTML.push('<div ctlcomp="layout" ' + getItemAttrString(tmpObject) + ' class="' + tmpClasses + ' " ' + tmpStyle + '>')
     
-        var tmpRegions = ['center', 'north', 'south', 'east', 'west'];
+        var tmpRegions = ['north', 'center', 'south', 'east', 'west'];
         for (var i = 0; i < tmpRegions.length; i++) {
             var tmpRegion = tmpRegions[i];
             var tmpRegionConfig = tmpObject[tmpRegion] || '';
@@ -8930,7 +8936,7 @@ License: LGPL
             var tmpClasses = ''
             tmpHTML.push('<div ctlcomp="layout" ' + getItemAttrString(theObject) + ' class="' + tmpClasses + ' " ' + tmpStyle + '>')
 
-            var tmpRegions = ['center', 'north', 'south', 'east', 'west'];
+            var tmpRegions = [ 'north', 'center', 'south', 'east', 'west'];
             for (var i = 0; i < tmpRegions.length; i++) {
                 var tmpRegion = tmpRegions[i];
                 var tmpRegionConfig = theObject[tmpRegion] || '';
