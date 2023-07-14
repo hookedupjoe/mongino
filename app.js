@@ -66,25 +66,25 @@ var startupDataString = '';
 var mongoSystemAccount = false;
 var homeAccountConfig = {};
 
-const ACTAPP_DB_HOME_ACCOUNT_ADDRESS = process.env.ACTAPP_DB_HOME_ACCOUNT_ADDRESS;
-if( ACTAPP_DB_HOME_ACCOUNT_ADDRESS ){
-    const ACTAPP_DB_HOME_ACCOUNT_PORT=process.env.ACTAPP_DB_HOME_ACCOUNT_PORT;
-    const ACTAPP_DB_HOME_ACCOUNT_USERNAME=process.env.ACTAPP_DB_HOME_ACCOUNT_USERNAME;
-    const ACTAPP_DB_HOME_ACCOUNT_PASSWORD=process.env.ACTAPP_DB_HOME_ACCOUNT_PASSWORD;
+const MONGINO_DB_HOME_ACCOUNT_ADDRESS = process.env.MONGINO_DB_HOME_ACCOUNT_ADDRESS;
+if( MONGINO_DB_HOME_ACCOUNT_ADDRESS ){
+    const MONGINO_DB_HOME_ACCOUNT_PORT=process.env.MONGINO_DB_HOME_ACCOUNT_PORT;
+    const MONGINO_DB_HOME_ACCOUNT_USERNAME=process.env.MONGINO_DB_HOME_ACCOUNT_USERNAME;
+    const MONGINO_DB_HOME_ACCOUNT_PASSWORD=process.env.MONGINO_DB_HOME_ACCOUNT_PASSWORD;
     var tmpAcct = '';
     homeAccountConfig.id = "_home";
-    homeAccountConfig.address = ACTAPP_DB_HOME_ACCOUNT_ADDRESS;
-    homeAccountConfig.port = ACTAPP_DB_HOME_ACCOUNT_PORT
+    homeAccountConfig.address = MONGINO_DB_HOME_ACCOUNT_ADDRESS;
+    homeAccountConfig.port = MONGINO_DB_HOME_ACCOUNT_PORT
     
-    if( ACTAPP_DB_HOME_ACCOUNT_USERNAME ){
-        tmpAcct = ACTAPP_DB_HOME_ACCOUNT_USERNAME;
-        homeAccountConfig.username = ACTAPP_DB_HOME_ACCOUNT_USERNAME;
-        if( ACTAPP_DB_HOME_ACCOUNT_PASSWORD ){
-            tmpAcct += ':' + ACTAPP_DB_HOME_ACCOUNT_PASSWORD;
-            homeAccountConfig.password = ACTAPP_DB_HOME_ACCOUNT_PASSWORD
+    if( MONGINO_DB_HOME_ACCOUNT_USERNAME ){
+        tmpAcct = MONGINO_DB_HOME_ACCOUNT_USERNAME;
+        homeAccountConfig.username = MONGINO_DB_HOME_ACCOUNT_USERNAME;
+        if( MONGINO_DB_HOME_ACCOUNT_PASSWORD ){
+            tmpAcct += ':' + MONGINO_DB_HOME_ACCOUNT_PASSWORD;
+            homeAccountConfig.password = MONGINO_DB_HOME_ACCOUNT_PASSWORD
         }
     }
-    startupDataString = 'mongodb://' + tmpAcct + '@' + ACTAPP_DB_HOME_ACCOUNT_ADDRESS + ':' + ACTAPP_DB_HOME_ACCOUNT_PORT + '/?retryWrites=true&w=majority';
+    startupDataString = 'mongodb://' + tmpAcct + '@' + MONGINO_DB_HOME_ACCOUNT_ADDRESS + ':' + MONGINO_DB_HOME_ACCOUNT_PORT + '/?retryWrites=true&w=majority';
     isUsingData = true;
 }
 
@@ -127,7 +127,7 @@ if( isUsingPassport ){
     cb(null, obj);
   });
 
-//---ToDo: Use ACTAPP_DB_HOME_ACCOUNT to spin up default connection db for application data
+//---ToDo: Use MONGINO_DB_HOME_ACCOUNT to spin up default connection db for application data
 //         Keep accounts for access to more than one.
 //---ToDo: move to mongo for accounts?
 app.use(session({
@@ -137,7 +137,7 @@ app.use(session({
     store: MongoStore.create({
         mongoUrl: startupDataString,
         mongoOptions: {useNewUrlParser: true, useUnifiedTopology: true},
-        dbName: 'actappauth-sessions',
+        dbName: 'monginoauth-sessions',
         ttl: 14 * 24 * 60 * 60 // = 14 days. Default
       }),
     secret: process.env.SESSION_SECRET || 'sdflksjflksdjflksdjfieieieiei'
@@ -145,8 +145,13 @@ app.use(session({
 
     
     async function authUser(theUsername, thePassword, done){
+        if(theUsername == process.env.MONGINO_AUTH_ADMIN_USERNAME && thePassword == process.env.MONGINO_AUTH_ADMIN_PASSWORD){
+            var tmpRetDoc = {id: 'system_admin_user', displayName: 'System Admin'};
+            return done (null, tmpRetDoc ) 
+        }
+    
         var tmpAccount = await $.MongoManager.getAccount('_home');
-        var tmpDB = await tmpAccount.getDatabase('actappauth');
+        var tmpDB = await tmpAccount.getDatabase('monginoauth');
         var tmpDocType = 'user';
         var tmpMongoDB = tmpDB.getMongoDB();        
         var tmpDocs = await tmpMongoDB.collection($.MongoManager.options.prefix.datatype + tmpDocType)
@@ -179,7 +184,7 @@ app.use(session({
     
     app.post ("/login", passport.authenticate('local', {
     successRedirect: "/authcomplete",
-    failureRedirect: "/login.html",
+    failureRedirect: "/pagelogin?type=page&page=/",
     }))
 
 /* JWT login. */

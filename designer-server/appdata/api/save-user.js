@@ -33,7 +33,7 @@ module.exports.setup = function setup(scope) {
                 
                 
                 var tmpAccount = await $.MongoManager.getAccount('_home');
-                var tmpDB = await tmpAccount.getDatabase('actappauth');
+                var tmpDB = await tmpAccount.getDatabase('monginoauth');
                 var tmpDocType = 'user';
                 var tmpCollName = $.MongoManager.options.prefix.datatype  + tmpDocType;
 

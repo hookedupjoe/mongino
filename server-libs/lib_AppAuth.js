@@ -34,7 +34,7 @@ meAuthManager.saveUser = async function(theUser, theOptions){
             var tmpUser = theUser;
             
             var tmpAccount = await $.MongoManager.getAccount('_home');
-            var tmpDB = await tmpAccount.getDatabase('actappauth');
+            var tmpDB = await tmpAccount.getDatabase('monginoauth');
             var tmpDocType = 'user';
             var tmpCollName = $.MongoManager.options.prefix.datatype  + tmpDocType;
 
@@ -76,7 +76,7 @@ meAuthManager.getUsers = async function(){
     return new Promise( async function (resolve, reject) {
         try {
             var tmpAccount = await $.MongoManager.getAccount('_home');
-            var tmpDB = await tmpAccount.getDatabase('actappauth');
+            var tmpDB = await tmpAccount.getDatabase('monginoauth');
             var tmpDocType = 'user';
             var tmpMongoDB = tmpDB.getMongoDB();
             var tmpDocs = await tmpMongoDB.collection($.MongoManager.options.prefix.datatype + tmpDocType).find().filter({__doctype:tmpDocType}).toArray();
@@ -97,7 +97,7 @@ meAuthManager.getAclEntries = async function(theOptions){
             var tmpAccount = await $.MongoManager.getAccount(theOptions.accountid);
             var tmpDB = await tmpAccount.getDatabase(theOptions.dbname);
             var tmpDocType = 'aclentry';
-            var tmpCollName = 'actappauth';
+            var tmpCollName = 'monginoauth';
             
             var tmpMongoDB = tmpDB.getMongoDB();
             var tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter({__doctype:tmpDocType}).toArray();
@@ -119,7 +119,7 @@ meAuthManager.saveAclEntry = async function(theEntry){
             var tmpAccount = await $.MongoManager.getAccount(theEntry.accountid);
             var tmpDB = await tmpAccount.getDatabase(theEntry.dbname);
             //var tmpDocType = 'aclentry';
-            var tmpCollName = 'actappauth';
+            var tmpCollName = 'monginoauth';
 
             var tmpAddRet = false;
             console.log('theEntry.data._id',theEntry.data._id);
@@ -159,7 +159,7 @@ meAuthManager.recycleAcleEntries = async function(theOptions){
             var tmpAccount = await $.MongoManager.getAccount(theOptions.accountid);
             var tmpDB = await tmpAccount.getDatabase(theOptions.dbname);
             var tmpDocType = 'aclentry';
-            var tmpCollName = 'actappauth';
+            var tmpCollName = 'monginoauth';
 
             var tmpProcIds = [];
 
@@ -205,7 +205,7 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
             var tmpAccount = await $.MongoManager.getAccount('_home');
             var tmpDB = await tmpAccount.getDatabase(tmpDBName);
             var tmpMongoDB = tmpDB.getMongoDB();
-            var tmpDocs = await tmpMongoDB.collection('actappauth').find({}).filter({"_doctype": "aclentry","entryname": theUserId, "type": "person"}).toArray();
+            var tmpDocs = await tmpMongoDB.collection('monginoauth').find({}).filter({"_doctype": "aclentry","entryname": theUserId, "type": "person"}).toArray();
             if( !(tmpDocs) || tmpDocs.length == 0){
                 resolve(false);
             } else {
