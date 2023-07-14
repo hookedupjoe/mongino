@@ -15,11 +15,17 @@ const { ObjectId } = require('mongodb');
  $.fs.ensureDir($.scope.locals.path.ws.mongoConfigAccounts);
 
  $.MongoManager = new MongoManager();
-
+ 
 //==== MongoManager === === === === === === === === === === 
 function MongoManager(theAccountConfig) {
     this.accounts = {};
     this.accountConfigs = {};
+    this.options = {
+        prefix: {
+            db: '-mo-',
+            datatype: '-mo-dt-'
+        }
+    };
 }
 MongoManager.prototype.ObjectId = function( theObjID ){
     return new ObjectId(theObjID);
