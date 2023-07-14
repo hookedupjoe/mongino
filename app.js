@@ -428,26 +428,6 @@ try {
     console.log('Not hot reading, chokidar not installed on dev side')  
 }
 
-try {
-    //--- ToDo: Make this optional.
-    const chokidar = require('chokidar');
-    var tmpWatchDir = scope.locals.path.root + "/server-libs"
-    //--> Watch All (CLOSE BEFORE COMMIT!)-->      var tmpWatchDir = scope.locals.path.root;
-console.log('atching')
-    chokidar.watch(tmpWatchDir, {ignored: /index\.js$/})
-        .on('change', (path) => {
-            try {
-                if (require.cache[path]) delete require.cache[path];
-                console.log('New file loaded for ' + path);
-            } catch (theChangeError) {
-                console.log("Could not hot update: " + path);
-                console.log("The reason: " + theChangeError);
-            }
-        });
-} catch (ex){
-    console.log('Not hot reading, chokidar not installed on dev side')  
-}
-
 
 
 function setup(thePassportFlag) {
