@@ -73,7 +73,7 @@ module.exports.setup = function setup(scope) {
 
         
         if( !(tmpIsAllowed) ){
-            //return res.sendStatus(401);
+            return res.sendStatus(401);
         }
         
         var tmpType = req.params.type || ''

@@ -201,11 +201,13 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
                 console.log('no resource id passed, be save and deny');
                 resolve(false);
             }
-            
+
             var tmpAccount = await $.MongoManager.getAccount('_home');
             var tmpDB = await tmpAccount.getDatabase(tmpDBName);
             var tmpMongoDB = tmpDB.getMongoDB();
-            var tmpDocs = await tmpMongoDB.collection('monginoauth').find({}).filter({"_doctype": "aclentry","entryname": theUserId, "type": "person"}).toArray();
+            var tmpFilter = {"__doctype": "aclentry","entryname": theUserId, "type": "person"};
+            console.log(tmpFilter);
+            var tmpDocs = await tmpMongoDB.collection('monginoauth').find({}).filter(tmpFilter).toArray();
             if( !(tmpDocs) || tmpDocs.length == 0){
                 resolve(false);
             } else {

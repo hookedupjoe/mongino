@@ -5,7 +5,7 @@
     //~thisPageSpecs//~
 var thisPageSpecs = {
 	"pageName": "AdminPage",
-	"pageTitle": "Admin",
+	"pageTitle": "Users",
 	"navOptions": {
 		"topLink": true,
 		"sideLink": true
