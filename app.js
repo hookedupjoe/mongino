@@ -149,7 +149,7 @@ app.use(session({
         var tmpDB = await tmpAccount.getDatabase('actappauth');
         var tmpDocType = 'user';
         var tmpMongoDB = tmpDB.getMongoDB();        
-        var tmpDocs = await tmpMongoDB.collection('mongino-' + tmpDocType)
+        var tmpDocs = await tmpMongoDB.collection($.MongoManager.options.prefix.datatype + tmpDocType)
             .find({username:theUsername})
             .filter({username:theUsername, __doctype:tmpDocType})
             .toArray();

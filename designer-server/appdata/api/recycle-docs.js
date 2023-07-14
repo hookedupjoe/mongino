@@ -33,7 +33,7 @@ module.exports.setup = function setup(scope) {
                 var tmpAccount = await $.MongoManager.getAccount(tmpBody.accountid);
                 var tmpDB = await tmpAccount.getDatabase(tmpBody.dbname);
                 var tmpDocType = tmpBody.doctype || '';
-                var tmpCollName = 'mongino-'  + tmpDocType;
+                var tmpCollName = $.MongoManager.options.prefix.datatype  + tmpDocType;
                 var tmpProcIds = [];
 
                 var tmpColl = await tmpDB.getCollection(tmpCollName)

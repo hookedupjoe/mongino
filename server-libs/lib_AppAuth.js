@@ -36,7 +36,7 @@ meAuthManager.saveUser = async function(theUser, theOptions){
             var tmpAccount = await $.MongoManager.getAccount('_home');
             var tmpDB = await tmpAccount.getDatabase('actappauth');
             var tmpDocType = 'user';
-            var tmpCollName = 'mongino-'  + tmpDocType;
+            var tmpCollName = $.MongoManager.options.prefix.datatype  + tmpDocType;
 
             var tmpAddRet = false;
             var tmpID = tmpUser.data._id || false;
@@ -79,7 +79,7 @@ meAuthManager.getUsers = async function(){
             var tmpDB = await tmpAccount.getDatabase('actappauth');
             var tmpDocType = 'user';
             var tmpMongoDB = tmpDB.getMongoDB();
-            var tmpDocs = await tmpMongoDB.collection('mongino-' + tmpDocType).find().filter({__doctype:tmpDocType}).toArray();
+            var tmpDocs = await tmpMongoDB.collection($.MongoManager.options.prefix.datatype + tmpDocType).find().filter({__doctype:tmpDocType}).toArray();
             var tmpRet = {success:true};
             tmpRet = $.merge(false, tmpRet, {data:tmpDocs});
             resolve(tmpRet);

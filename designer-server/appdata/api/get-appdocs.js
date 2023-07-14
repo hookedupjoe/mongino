@@ -33,7 +33,7 @@ module.exports.setup = function setup(scope) {
                 var tmpDB = await tmpAccount.getDatabase(tmpBody.dbname);
                 var tmpDocType = tmpBody.doctype;
                 var tmpMongoDB = tmpDB.getMongoDB();
-                var tmpDocs = await tmpMongoDB.collection('mongino-' + tmpDocType).find().filter({__doctype:tmpDocType}).toArray();
+                var tmpDocs = await tmpMongoDB.collection($.MongoManager.options.prefix.datatype + tmpDocType).find().filter({__doctype:tmpDocType}).toArray();
                 var tmpRet = {success:true};
                 tmpRet = $.merge(false, tmpRet, {data:tmpDocs});
 

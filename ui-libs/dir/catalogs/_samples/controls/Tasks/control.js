@@ -205,7 +205,7 @@
     var tmpDocType = 'task';
 
     //ToDo: Move this up
-    // var tmpCollName = 'mongino-' + (theData.__doctype || 'default');
+    // var tmpCollName = $.MongoManager.options.prefix.datatype + (theData.__doctype || 'default');
     // tmpData.collection = tmpCollName;
     tmpData.doctype = theData.__doctype;
 
