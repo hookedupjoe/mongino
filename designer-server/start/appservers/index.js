@@ -42,7 +42,7 @@ module.exports.setup = function setup(scope) {
             if( tmpAppInfo ){
                 tmpAccountID = tmpAppInfo['data-account-id'] || '_home';
                 tmpDBName = tmpAppInfo['data-db-name'] || tmpAppInfo.name;
-                tmpDBName = 'aadb-' + tmpDBName;
+                tmpDBName = $.MongoManager.options.prefix.db + tmpDBName;
             }
             //--- Load account and dbname from app details
 
