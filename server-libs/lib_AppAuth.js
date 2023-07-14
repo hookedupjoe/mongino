@@ -40,6 +40,9 @@ meAuthManager.saveUser = async function(theUser, theOptions){
 
             var tmpAddRet = false;
             var tmpID = tmpUser.data._id || false;
+            if( tmpID == 'system_admin_user'){
+                reject('Invalid requeset');
+            }
             //--- Remove ID (even if blank) for add / edit operations
             if( tmpUser.data.hasOwnProperty('_id')){
                 delete tmpUser.data._id;
@@ -189,6 +192,9 @@ meAuthManager.recycleAcleEntries = async function(theOptions){
 meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
     return new Promise( async function (resolve, reject) {
         try {
+            if( theUserId == 'system_admin_user'){
+                resolve(true);
+            }
             var tmpResID = '';
             var tmpDBName = theResource.database || theResource.db || '';
             var tmpResType = '';
