@@ -48,6 +48,13 @@
 					"name": "usecordova",
 					"list": "Yes,No",
 					"req": true
+				},
+				{
+					"label": "Deploy Base URL (optional)",
+					"ctl": "field",
+					"name": "deploybaseurl",
+					"default": "",
+					"req": false
 				}
 			],
 			"name": "cordova-options-row"

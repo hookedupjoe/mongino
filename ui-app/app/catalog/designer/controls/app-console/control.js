@@ -253,6 +253,16 @@ License: LGPL
 							},
 							{
 								"ctl": "a",
+								"classes": "ui button green",
+								"attr": {
+									href: "tbd",
+									target: "app-tbd"
+								},
+								text: "Open Deployed",
+								"name": "open-deploy-link"
+							},
+							{
+								"ctl": "a",
 								"classes": "ui button basic blue",
 								"attr": {
 									href: "",
@@ -456,6 +466,7 @@ License: LGPL
 		var tmpDeployLink = this.getItemEl('deploy-in-code-link');
 		tmpDeployLink.attr('href', "vscode://file/" + this.details.deploy);
 		tmpDeployLink.attr('target', "app-deploy-code-" + this.details.appname);
+
 
 		var tmpMobileLink = this.getItemEl('cordova-in-code-link');
 		tmpMobileLink.attr('href', "vscode://file/" + this.details.cordova);
@@ -708,6 +719,23 @@ License: LGPL
 			href: "/" + tmpAppName,
 			target: "app" + tmpAppName
 		}
+
+		
+		var tmpHostName = $(location).attr('hostname');
+		var tmpDeployURL = ActionAppCore.designerDetails.deploybaseurl || '';
+		if( !(tmpDeployURL)  ){
+			tmpDeployURL = "//" + tmpHostName + ":33481" + "/";
+		}
+		tmpDeployURL = tmpDeployURL.trim();
+		if( !(tmpDeployURL.endsWith('/'))){
+			tmpDeployURL += '/';
+		}
+		tmpDeployURL += tmpAppName;
+		this.controlConfig.index.items["open-deploy-link"].attr = {
+			href: tmpDeployURL,
+			target: "app-deployed-" + tmpAppName 
+		}
+
 
 	}
 	//---- Initial Setup of the control
