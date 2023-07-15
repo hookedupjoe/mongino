@@ -9,7 +9,7 @@ module.exports.setup = function setup(scope) {
     scope.locals.path.appdata = scope.locals.path.start + "/appdata"
     
     return  async function processReq(req, res, next) {
-        console.log('appdata session',req.session)
+        
         if( req.authUser ){
             //--- validate access?
         } else {
@@ -24,7 +24,6 @@ module.exports.setup = function setup(scope) {
 
 
         var tmpAppID = req.headers['act-app-id'] || '';
-        console.log('tmpAppID',tmpAppID);
 
         if( tmpAppID ){
             //--- Always use header value, even if appid passed
