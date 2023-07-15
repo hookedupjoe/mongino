@@ -10,7 +10,7 @@
 var path = require('path'),
     http = require('http'),
     fs = require('fs-extra'),
-    previewScope = {},
+    deployedScope = {},
     scope = {};
 
 var https = require('https');
@@ -50,15 +50,15 @@ $.setup(scope);
 $.scope = scope;
 var bld = $.bld;
 
-previewScope.locals = {
-    name: 'mongino-preview-server',
-    title: 'Mongino Preview Server',
+deployedScope.locals = {
+    name: 'mongino-deployed-server',
+    title: 'Mongino Deployed Server',
     path: {
         root: path.resolve(__dirname)
     }
 }
-previewScope.locals.path.start = scope.locals.path.root + "/preview-server";
-previewScope.locals.path.libraries = scope.locals.path.root + "/server-libs";
+deployedScope.locals.path.start = scope.locals.path.root + "/preview-server";
+deployedScope.locals.path.libraries = scope.locals.path.root + "/server-libs";
 
 
 var isUsingData = false;
@@ -91,7 +91,7 @@ if( MONGINO_DB_HOME_ACCOUNT_ADDRESS ){
 const bcrypt = require("bcrypt")
 var express = require('express'),
 app = express(),
-preview = express(),
+deployed = express(),
 cookieParser = require('cookie-parser'),
 bodyParser = require('body-parser');
 
@@ -650,38 +650,38 @@ function setup(thePassportFlag) {
             }
 
 
-            //==========   PREVIEW DEPLOYMENT ====
+            //==========   DEPLOYED DEPLOYMENT ====
             //--- Allow the designer server to access deployed app files directly from designer
-            preview.use(function(req, res, next) {
-                //--- ToDo: Do we need remote access TO preview server?
+            deployed.use(function(req, res, next) {
+                //--- ToDo: Do we need remote access TO deployed server?
                 res.header("Access-Control-Allow-Origin", "*");
                 res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                 next();
             });
 
             //--- Use standard body and cookie parsers
-            preview.use(bodyParser.json());
-            preview.use(bodyParser.urlencoded({ extended: false }));
-            preview.use(cookieParser());
+            deployed.use(bodyParser.json());
+            deployed.use(bodyParser.urlencoded({ extended: false }));
+            deployed.use(cookieParser());
 
-            preview.use(express.static(scope.locals.path.root + '/ui-libs'));
-            preview.use(express.static(scope.locals.path.root + '/common'));
-            //preview.use(express.static(tmpWSDirectory + '/ui-apps'));
+            deployed.use(express.static(scope.locals.path.root + '/ui-libs'));
+            deployed.use(express.static(scope.locals.path.root + '/common'));
+            //deployed.use(express.static(tmpWSDirectory + '/ui-apps'));
             //console.log('scope.locals.path.ws.deploy',scope.locals.path.ws.deploy);
-            preview.use(express.static(scope.locals.path.ws.deploy + '/ui-apps'));
-            //preview.use(express.static(tmpWSDirectory));
+            deployed.use(express.static(scope.locals.path.ws.deploy + '/ui-apps'));
+            //deployed.use(express.static(tmpWSDirectory));
 
             //--- Plug in application routes
-            require('./preview-server/start').setup(preview, previewScope);
+            require('./preview-server/start').setup(deployed, deployedScope);
 
              
             // error handlers
-            preview.use(function (req, res, next) {
+            deployed.use(function (req, res, next) {
                 var err = new Error('Not Found');
                 err.status = 404;
                 next(err);
             });
-            preview.use(function (err, req, res, next) {
+            deployed.use(function (err, req, res, next) {
                 res.status(err.status || 500);
                 next();
             });
@@ -690,22 +690,20 @@ function setup(thePassportFlag) {
 
             //--- Standard Server Startup
             if( tmpUseSSL ){
-                var serverPreview = https.createServer(server_config, preview);
+                var serverDeployed = https.createServer(server_config, deployed);
             } else {
-                var serverPreview = http.createServer(preview);
+                var serverDeployed = http.createServer(deployed);
             }
 
-            var portPreview = process.env.PREVIEWPORT || 33481;
-            serverPreview.listen(portPreview, '0.0.0.0');
+            var portDeployed = process.env.DEPLOYEDPORT || 33481;
+            serverDeployed.listen(portDeployed, '0.0.0.0');
 
             //--- Show port in console
-            serverPreview.on('listening', onListeningPreview(serverPreview));
-            function onListeningPreview(serverPreview) {
+            serverDeployed.on('listening', onListeningDeployed(serverDeployed));
+            function onListeningDeployed(serverDeployed) {
                 return function () {
-                    var address = serverPreview.address();
-                    //ToDo: Review need for this port?
-                    //      Now used to preview deployment using /ui-app/ in the URL
-                    //console.log(('Preview sites on port:' + address.port + "."));
+                    var address = serverDeployed.address();
+                    console.log(('Deployed sites on port:' + address.port + "."));
                 };
             }
 
