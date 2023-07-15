@@ -238,34 +238,63 @@ meAuthManager.recycleAclEntries = async function(theOptions){
 
 }
 
-meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
+meAuthManager.isSystemAllowed = async function(theUserId){
     return new Promise( async function (resolve, reject) {
         try {
             if( theUserId == 'system_admin_user'){
                 resolve(true);
             }
-            var tmpIsDesign = ( theResource.system == 'design' );
-            var tmpResID = '';
-            var tmpDBName = '';
+
+            var tmpCollName = tmpCollName = '-mo-dt-systemaclentry'
+            var tmpDocType = 'systemaclentry';
+            var tmpDBName = 'monginoauth'; 
+
+            var tmpAccount = await $.MongoManager.getAccount('_home');
+            var tmpDB = await tmpAccount.getDatabase(tmpDBName);
+            var tmpMongoDB = tmpDB.getMongoDB();
+            var tmpFilter = {"__doctype": tmpDocType,"entryname": theUserId, "type": "person"};
+            console.log(tmpFilter);
+            var tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
+            if( !(tmpDocs) || tmpDocs.length == 0){
+                resolve(false);
+            } else {
+                //--- ToDo: Check access level
+                resolve(true);
+            }
+            resolve(true);
+        }
+        catch (error) {
+            console.log('Error in isAllow: ' + error);
+            resolve(false);
+        }
+    });
+}
+
+
+meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
+    var self = this;
+    return new Promise( async function (resolve, reject) {
+        try {
+            if( theUserId == 'system_admin_user'){
+                resolve(true);
+            }
+            
+            if( await self.isSystemAllowed(theUserId) ){
+                resolve(true);
+            }
+
             var tmpCollName = 'monginoauth';
             var tmpDocType = 'aclentry';
+            var tmpDBName = theResource.database || theResource.db || '';
+            var tmpResType = '';
+            if( tmpDBName ){
+                tmpResType = 'db';
+                tmpResID = tmpDBName;
+            }
 
-            if( tmpIsDesign ){
-                tmpDBName = 'monginoauth'; 
-                tmpCollName = '-mo-dt-systemaclentry'
-                tmpDocType = 'systemaclentry';
-            } else {
-                tmpDBName = theResource.database || theResource.db || '';
-                var tmpResType = '';
-                if( tmpDBName ){
-                    tmpResType = 'db';
-                    tmpResID = tmpDBName;
-                }
-    
-                if( !(tmpResID) ){
-                    console.log('no resource id passed, be save and deny');
-                    resolve(false);
-                }
+            if( !(tmpResID) ){
+                console.log('no resource id passed, be save and deny');
+                resolve(false);
             }
 
             var tmpAccount = await $.MongoManager.getAccount('_home');
@@ -284,7 +313,6 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
         }
         catch (error) {
             console.log('Error in isAllow: ' + error);
-            console.log('theUserId, theResourceID, thePermission',theUserId, theResourceID, thePermission);
             resolve(false);
         }
     });
