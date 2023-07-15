@@ -309,18 +309,50 @@ function processAuth(req, res, next) {
 
 
  //-- When any directory is loaded (home page or app)
- app.all(/\/$/, function(req, res, next) {
+ app.all(/\/$/, async function(req, res, next) {
     try {
+        
+        
         var tmpUser = {};
         if( isUsingPassport ){
             if( req.session && req.session.passport && req.session.passport.user ){
                 var tmpUserInfo = req.session.passport.user;
                 var tmpSource = tmpUserInfo.provider;
+                var tmpUserID = tmpUserInfo.id;
                 tmpUser.userid = tmpUserInfo.id;
                 if( tmpSource ){
                     tmpUser.userid = tmpSource + '-' + tmpUser.userid;
                 }
                 tmpUser.displayName = tmpUserInfo.displayName || '';
+                console.log('tmpUser',tmpUser);
+
+                console.log('req.originalUrl',req.originalUrl);
+                if( req.originalUrl == '/' ){
+                    var tmpIsSysAllowed = await $.AuthMgr.isAllowed(tmpUserID,{system:'design'}, 0);
+                    if( !tmpIsSysAllowed) {
+                        //ToDo: Redirect to a "no access to this resource page"
+                        console.log('no access to ' + req.originalUrl) 
+                        var tmpLoginURL = '/pagelogin?type=page';
+                        tmpLoginURL += '&page=' + req.url;
+                        res.redirect(tmpLoginURL);
+                    }
+                } else if(req.originalUrl != ''){
+                    var tmpDBName = req.originalUrl.replace(/\//g, '');
+                    tmpDBName = $.MongoManager.options.prefix.db + tmpDBName;
+                    console.log('tmpDBName',tmpDBName);
+                    
+                    var tmpIsSysAllowed = await $.AuthMgr.isAllowed(tmpUserID,{db:tmpDBName}, 0);
+                    if( !tmpIsSysAllowed) {
+                        //ToDo: Redirect to a "no access to this resource page"
+                        console.log('no access to ' + req.originalUrl) 
+                        var tmpLoginURL = '/pagelogin?type=page';
+                        tmpLoginURL += '&page=' + req.url;
+                        res.redirect(tmpLoginURL);
+                    }
+                }
+                
+
+
             } else {
                 var tmpLoginURL = '/pagelogin?type=page';
                 tmpLoginURL += '&page=' + req.url;
@@ -390,7 +422,7 @@ function processAuth(req, res, next) {
 });
 
 app.get('/authcomplete', function (req, res, next) {
-    
+    console.log('auth complete')
     // Render page using renderFile method
     ejs.renderFile('views/authcomplete.ejs', {},
     {}, function (err, template) {
