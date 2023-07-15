@@ -1,7 +1,6 @@
 'use strict';
-const THIS_MODULE_NAME = 'deploy-app';
-const THIS_MODULE_TITLE = 'Deploy system application running on this server in applications port (i.e. 33481)';
-//--- ToDo: Deploy and test server side APIs
+const THIS_MODULE_NAME = 'deploy-external-app';
+const THIS_MODULE_TITLE = 'Deploy external application with own server';
 
 module.exports.setup = function setup(scope) {
     var config = scope;
@@ -51,12 +50,12 @@ module.exports.setup = function setup(scope) {
                 }
 
                 tmpPrefix = tmpPrefix || tmpAppDetails.prefix || ('mongino-' + tmpAppName)
-                var tmpDeployDirUI = tmpDeployDir + '/ui-apps/'
-                var tmpDeployBase = tmpDeployDirUI + tmpAppName + '/';
-                var tmpDeployTemp = tmpDeployDirUI + "temp_files" + '/';
+
+                var tmpDeployBase = tmpDeployDir + tmpAppName + '/';
+                var tmpDeployTemp = tmpDeployDir + "temp_files" + '/';
 
                 await($.fs.ensureDir(tmpDeployBase));
-                //await($.fs.ensureDir(tmpDeployBase + '/ui-app'));
+                await($.fs.ensureDir(tmpDeployBase + '/ui-app'));
 
                 await($.fs.ensureDir(tmpDeployTemp));
                 await($.fs.emptyDir(tmpDeployTemp));
@@ -71,11 +70,10 @@ module.exports.setup = function setup(scope) {
                 await($.fs.ensureDir(tmpDeployGIT));
                 await($.fs.remove(tmpDeployGIT));
 
-                await($.fs.copy(tmpDeployTemp,tmpDeployBase));
+                await($.fs.copy(tmpDeployTemp,tmpDeployBase + '/ui-app'));
                 
                 await($.fs.remove(tmpDeployTemp));
 
-                /*
                 var tmpServerFilesLoc = scope.locals.path.designer + '/build/tpl-servers/ui-app/';
 
 
@@ -83,19 +81,17 @@ module.exports.setup = function setup(scope) {
                 var tmpManifestText = await($.bld.getTextFile(tmpDeployBase + 'manifest.yml'));
                 tmpManifestText = tmpManifestText.replace('{{URL-PREFIX}}', tmpPrefix);
                 await($.fs.writeFile(tmpDeployBase + 'manifest.yml',tmpManifestText))
-                */
 
                 //--- Rebuild using defaults
                 await($.bld.buildApp(tmpAppName,scope,{deploy:true}));
 
-                //---- Always using references to server library files for server deploys
-                // if( tmpAppDetails.cdn != 'cloud'){
-                //     await($.fs.copy(scope.locals.path.uilibs + '/',tmpDeployBase + '/ui-app/'));
-                // }
-                // var tmpEPFrom = scope.locals.path.appdataendpoints + '/api/';
-                // var tmpEPTo = tmpDeployBase + 'server-app/appdata/api/';
+                if( tmpAppDetails.cdn != 'cloud'){
+                    await($.fs.copy(scope.locals.path.uilibs + '/',tmpDeployBase + '/ui-app/'));
+                }
+                var tmpEPFrom = scope.locals.path.appdataendpoints + '/api/';
+                var tmpEPTo = tmpDeployBase + 'server-app/appdata/api/';
 
-                // await($.fs.copy(tmpEPFrom,tmpEPTo));
+                await($.fs.copy(tmpEPFrom,tmpEPTo));
 
                 var tmpRet = {
                     status: true,

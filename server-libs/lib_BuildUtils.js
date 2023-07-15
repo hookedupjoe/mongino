@@ -245,7 +245,7 @@ function buildApp(theAppName, scope, theOptions) {
                 tmpDeployDir += tmpAppName + '/CordovaApp/www/';
                 await($.fs.ensureDir(tmpDeployDir));
             } else {
-                tmpDeployDir += tmpAppName + '/ui-app/';
+                tmpDeployDir += 'ui-apps/' + tmpAppName + '/';
                 await($.fs.ensureDir(tmpDeployDir));
             }
 

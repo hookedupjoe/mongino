@@ -531,7 +531,7 @@ function setup(thePassportFlag) {
             //--- Server Apps from same port ?
             app.use(express.static(tmpWSDirectory + '/ui-apps'));
             //--- Deployed Apps from same port using /ui-app ?
-            app.use(express.static(scope.locals.path.ws.deploy));
+            //app.use(express.static(scope.locals.path.ws.deploy));
 
             //--- Plug in application routes
             require('./designer-server/start').setup(app, scope);
@@ -668,7 +668,7 @@ function setup(thePassportFlag) {
             preview.use(express.static(scope.locals.path.root + '/common'));
             //preview.use(express.static(tmpWSDirectory + '/ui-apps'));
             //console.log('scope.locals.path.ws.deploy',scope.locals.path.ws.deploy);
-            preview.use(express.static(scope.locals.path.ws.deploy));
+            preview.use(express.static(scope.locals.path.ws.deploy + '/ui-apps'));
             //preview.use(express.static(tmpWSDirectory));
 
             //--- Plug in application routes
