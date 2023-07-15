@@ -113,7 +113,7 @@ $.passport = passport;
 
 
 function processAuth(req, res, next) {
-    console.log('processAuth',req.session)
+    //console.log('processAuth',req.session)
     if (req.session && req.session.passport && req.session.passport.user) {
         var tmpUser = req.session.passport.user;
         var tmpUserKey = tmpUser.id;
@@ -163,7 +163,7 @@ if (isUsingPassport) {
 
 
 async function authUser(theUsername, thePassword, done) {
-    console.log('authUser', theUsername, thePassword)
+    //console.log('authUser', theUsername, thePassword)
     if (theUsername == process.env.MONGINO_AUTH_ADMIN_USERNAME && thePassword == process.env.MONGINO_AUTH_ADMIN_PASSWORD) {
         var tmpRetDoc = { id: 'system_admin_user', displayName: 'System Admin' };
         return done(null, tmpRetDoc)
@@ -201,7 +201,7 @@ function initAuth(theExpress){
 
 
     if( !(_session)){
-        console.log('new sess')
+        //console.log('new sess')
         _session = session({
             resave: false,
             saveUninitialized: true,
@@ -214,8 +214,6 @@ function initAuth(theExpress){
             }),
             secret: process.env.SESSION_SECRET || 'sdflksjflksdjflksdjfieieieiei'
         })
-    } else {
-        console.log('ex')
     }
 
     
@@ -253,14 +251,14 @@ function initAuth2(theExpress){
                     tmpUser.userid = tmpSource + '-' + tmpUser.userid;
                 }
                 tmpUser.displayName = tmpUserInfo.displayName || '';
-                console.log('tmpUser', tmpUser);
+                // console.log('tmpUser', tmpUser);
 
-                console.log('req.originalUrl', req.originalUrl);
+                // console.log('req.originalUrl', req.originalUrl);
                 if (req.originalUrl == '/') {
                     var tmpIsSysAllowed = await $.AuthMgr.isAllowed(tmpUserID, { system: 'design' }, 0);
                     if (!tmpIsSysAllowed) {
                         //ToDo: Redirect to a "no access to this resource page"
-                        console.log('no access to ' + req.originalUrl)
+                        // console.log('no access to ' + req.originalUrl)
                         var tmpLoginURL = '/pagelogin?type=page';
                         tmpLoginURL += '&page=' + req.url;
                         res.redirect(tmpLoginURL);
@@ -268,12 +266,12 @@ function initAuth2(theExpress){
                 } else if (req.originalUrl != '') {
                     var tmpDBName = req.originalUrl.replace(/\//g, '');
                     tmpDBName = $.MongoManager.options.prefix.db + tmpDBName;
-                    console.log('tmpDBName', tmpDBName);
+                    // console.log('tmpDBName', tmpDBName);
 
                     var tmpIsSysAllowed = await $.AuthMgr.isAllowed(tmpUserID, { db: tmpDBName }, 0);
                     if (!tmpIsSysAllowed) {
                         //ToDo: Redirect to a "no access to this resource page"
-                        console.log('no access to ' + req.originalUrl)
+                        // console.log('no access to ' + req.originalUrl)
                         var tmpLoginURL = '/pagelogin?type=page';
                         tmpLoginURL += '&page=' + req.url;
                         res.redirect(tmpLoginURL);
@@ -319,7 +317,7 @@ function initAuth2(theExpress){
     });
 
     tmpApp.get('/authcomplete', function (req, res, next) {
-        console.log('auth complete')
+        //console.log('auth complete')
         // Render page using renderFile method
         ejs.renderFile('views/authcomplete.ejs', {},
             {}, function (err, template) {

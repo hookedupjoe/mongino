@@ -9,7 +9,7 @@ module.exports.setup = function setup(scope) {
     scope.locals.path.appdata = scope.locals.path.start + "/appdata"
     
     return  async function processReq(req, res, next) {
-        console.log('appdata des',req.session)
+        console.log('appdata session',req.session)
         if( req.authUser ){
             //--- validate access?
         } else {
@@ -24,6 +24,8 @@ module.exports.setup = function setup(scope) {
 
 
         var tmpAppID = req.headers['act-app-id'] || '';
+        console.log('tmpAppID',tmpAppID);
+
         if( tmpAppID ){
             //--- Always use header value, even if appid passed
             req.body.appid = tmpAppID;
@@ -66,10 +68,15 @@ module.exports.setup = function setup(scope) {
         //--- May have passed anonymous?
         if( req.authUser ){
             var tmpDBName = req.body.dbname;
-            tmpIsAllowed = await $.AuthMgr.isAllowed(req.authUser.id,{db:req.body.dbname}, tmpAccessType)
+            if( !(tmpDBName) ){
+                tmpIsAllowed = await $.AuthMgr.isAllowed(req.authUser.id,{system:'design'}, 0)
+            } else {
+                tmpIsAllowed = await $.AuthMgr.isAllowed(req.authUser.id,{db:req.body.dbname}, tmpAccessType)
+            }
         }
         
         if( !(tmpIsAllowed) ){
+            
             return res.sendStatus(401);
         }
         
@@ -85,7 +92,7 @@ module.exports.setup = function setup(scope) {
             .replace('.js', '');
 
         try {
-        console.log('scope.locals.path.appdata',scope.locals.path.appdata);
+        
         var tmpBasePath = scope.locals.path.appdata.replace('preview-server','designer-server');
         var tmpFilePath = tmpBasePath + '/' + tmpType + '/' + tmpName + '.js';
         var tmpProcessReq = require(tmpFilePath);
