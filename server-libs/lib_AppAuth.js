@@ -244,25 +244,36 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
             if( theUserId == 'system_admin_user'){
                 resolve(true);
             }
+            var tmpIsDesign = ( theResource.system == 'design' );
             var tmpResID = '';
-            var tmpDBName = theResource.database || theResource.db || '';
-            var tmpResType = '';
-            if( tmpDBName ){
-                tmpResType = 'db';
-                tmpResID = tmpDBName;
-            }
+            var tmpDBName = '';
+            var tmpCollName = 'monginoauth';
+            var tmpDocType = 'aclentry';
 
-            if( !(tmpResID) ){
-                console.log('no resource id passed, be save and deny');
-                resolve(false);
+            if( tmpIsDesign ){
+                tmpDBName = 'monginoauth'; 
+                tmpCollName = '-mo-dt-systemaclentry'
+                tmpDocType = 'systemaclentry';
+            } else {
+                tmpDBName = theResource.database || theResource.db || '';
+                var tmpResType = '';
+                if( tmpDBName ){
+                    tmpResType = 'db';
+                    tmpResID = tmpDBName;
+                }
+    
+                if( !(tmpResID) ){
+                    console.log('no resource id passed, be save and deny');
+                    resolve(false);
+                }
             }
 
             var tmpAccount = await $.MongoManager.getAccount('_home');
             var tmpDB = await tmpAccount.getDatabase(tmpDBName);
             var tmpMongoDB = tmpDB.getMongoDB();
-            var tmpFilter = {"__doctype": "aclentry","entryname": theUserId, "type": "person"};
+            var tmpFilter = {"__doctype": tmpDocType,"entryname": theUserId, "type": "person"};
             console.log(tmpFilter);
-            var tmpDocs = await tmpMongoDB.collection('monginoauth').find({}).filter(tmpFilter).toArray();
+            var tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
             if( !(tmpDocs) || tmpDocs.length == 0){
                 resolve(false);
             } else {

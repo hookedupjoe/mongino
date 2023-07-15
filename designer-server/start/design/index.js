@@ -24,6 +24,21 @@ module.exports.setup = function setup(scope) {
         try {
 
             
+        var tmpIsAllowed = true;
+        var tmpAccessType = 0; //--- ToDo: Determine access type based on action
+        //--- May have passed anonymous?
+        if( req.authUser ){
+            console.log('req.authUser',req.authUser);
+            tmpIsAllowed = await $.AuthMgr.isAllowed(req.authUser.id,{system:'design'}, tmpAccessType)
+            console.log('tmpIsAllowed from check',tmpIsAllowed);
+        }
+
+        
+        if( !(tmpIsAllowed) ){
+            return res.sendStatus(401);
+        }
+        
+            
         var tmpFilePath = scope.locals.path.design + '/' + tmpType + '/' + tmpName + '.js';
         var tmpProcessReq = require(tmpFilePath);
         if (typeof(tmpProcessReq.setup) == 'function') {
