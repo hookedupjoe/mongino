@@ -329,7 +329,6 @@ function initAuth2(theExpress){
             });
     });
 
-    
 
     tmpApp.post("/login", passport.authenticate('local', {
         successRedirect: "/authcomplete",
@@ -596,6 +595,10 @@ function setup() {
             //--- Plug in application routes
             require('./preview-server/start').setup(deployed, deployedScope);
       
+            
+            initAuth2(deployed);
+
+            
             // error handlers
             deployed.use(function (req, res, next) {
                 var err = new Error('Not Found');
@@ -606,8 +609,6 @@ function setup() {
                 res.status(err.status || 500);
                 next();
             });
-
-            initAuth2(deployed);
 
 
             //--- Standard Server Startup
