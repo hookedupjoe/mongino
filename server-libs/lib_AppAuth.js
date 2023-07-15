@@ -139,7 +139,6 @@ meAuthManager.getAclEntries = async function(theOptions){
 }
 
 meAuthManager.saveAclEntry = async function(theEntry){
-    console.log('saveAclEntry',theEntry)
     return new Promise( async function (resolve, reject) {
         try {
             var tmpAccount = await $.MongoManager.getAccount(theEntry.accountid);
@@ -161,7 +160,6 @@ meAuthManager.saveAclEntry = async function(theEntry){
             }
 
             var tmpAddRet = false;
-            console.log('theEntry.data._id',theEntry.data._id);
             var tmpID = theEntry.data._id || false;
             //--- Remove ID (even if blank) for add / edit operations
             if( theEntry.data.hasOwnProperty('_id')){
@@ -253,7 +251,6 @@ meAuthManager.isSystemAllowed = async function(theUserId){
             var tmpDB = await tmpAccount.getDatabase(tmpDBName);
             var tmpMongoDB = tmpDB.getMongoDB();
             var tmpFilter = {"__doctype": tmpDocType,"entryname": theUserId, "type": "person"};
-            console.log(tmpFilter);
             var tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
             if( !(tmpDocs) || tmpDocs.length == 0){
                 resolve(false);
@@ -280,7 +277,6 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
             }
             
             var tmpIsDesign = ( theResource.system == 'design' );
-            console.log('tmpIsDesign',tmpIsDesign)
             if( tmpIsDesign ){
                 if( await self.isSystemAllowed(theUserId) ){
                     resolve(true);
@@ -301,7 +297,7 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
             }
 
             if( !(tmpResID) ){
-                console.log('no resource id passed, be save and deny');
+                //console.log('no resource id passed, be safe and deny');
                 resolve(false);
             }
 
@@ -309,7 +305,7 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
             var tmpDB = await tmpAccount.getDatabase(tmpDBName);
             var tmpMongoDB = tmpDB.getMongoDB();
             var tmpFilter = {"__doctype": tmpDocType,"entryname": theUserId, "type": "person"};
-            console.log(tmpFilter);
+            //console.log(tmpFilter);
             var tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
             if( !(tmpDocs) || tmpDocs.length == 0){
                 if( await self.isSystemAllowed(theUserId) ){
