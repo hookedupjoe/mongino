@@ -36,7 +36,7 @@ meAuthManager.saveUser = async function(theUser, theOptions){
             var tmpAccount = await $.MongoManager.getAccount('_home');
             var tmpDB = await tmpAccount.getDatabase('monginoauth');
             var tmpDocType = 'user';
-            var tmpCollName = $.MongoManager.options.prefix.datatype  + tmpDocType;
+            var tmpCollName = $.MongoManager.options.prefix.datatype + tmpDocType;
 
             var tmpAddRet = false;
             var tmpID = tmpUser.data._id || false;
@@ -94,6 +94,29 @@ meAuthManager.getUsers = async function(){
     });
 }
 
+
+
+meAuthManager.getSystemAclEntries = async function(theOptions){
+    return new Promise( async function (resolve, reject) {
+        try {
+            var tmpAccount = await $.MongoManager.getAccount(theOptions.accountid);
+            var tmpDB = await tmpAccount.getDatabase('monginoauth');
+            var tmpDocType = 'systemaclentry';
+            var tmpCollName = $.MongoManager.options.prefix.datatype + tmpDocType;
+            
+            var tmpMongoDB = tmpDB.getMongoDB();
+            var tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter({__doctype:tmpDocType}).toArray();
+            var tmpRet = {success:true};
+            tmpRet = $.merge(false, tmpRet, {data:tmpDocs});
+            resolve(tmpRet);
+        }
+        catch (error) {
+            console.log('Err : ' + error);
+            reject(error);
+        }
+    });
+}
+
 meAuthManager.getAclEntries = async function(theOptions){
     return new Promise( async function (resolve, reject) {
         try {
@@ -120,9 +143,22 @@ meAuthManager.saveAclEntry = async function(theEntry){
     return new Promise( async function (resolve, reject) {
         try {
             var tmpAccount = await $.MongoManager.getAccount(theEntry.accountid);
-            var tmpDB = await tmpAccount.getDatabase(theEntry.dbname);
+            var tmpIsSystem = false;
+            if( theEntry.options && theEntry.options.acltype == 'system'){
+                tmpIsSystem = true;
+            }
+            var tmpDB = '';
+            if( tmpIsSystem ){
+                tmpDB = await tmpAccount.getDatabase('monginoauth');
+            } else {
+                tmpDB = await tmpAccount.getDatabase(theEntry.dbname);
+            }
             //var tmpDocType = 'aclentry';
             var tmpCollName = 'monginoauth';
+
+            if( tmpIsSystem ){
+                tmpCollName = $.MongoManager.options.prefix.datatype + 'systemaclentry';
+            }
 
             var tmpAddRet = false;
             console.log('theEntry.data._id',theEntry.data._id);
@@ -155,15 +191,28 @@ meAuthManager.saveAclEntry = async function(theEntry){
 
 }
 
-meAuthManager.recycleAcleEntries = async function(theOptions){
+meAuthManager.recycleAclEntries = async function(theOptions){
     return new Promise( async function (resolve, reject) {
         try {
-          
+            var tmpIsSystem = false;
+            if( theOptions.options && theOptions.options.acltype == 'system'){
+                tmpIsSystem = true;
+            }
+   
             var tmpAccount = await $.MongoManager.getAccount(theOptions.accountid);
-            var tmpDB = await tmpAccount.getDatabase(theOptions.dbname);
+           ///var tmpDB = await tmpAccount.getDatabase(theOptions.dbname);
+            var tmpDB = '';
+            if( tmpIsSystem ){
+                tmpDB = await tmpAccount.getDatabase('monginoauth');
+            } else {
+                tmpDB = await tmpAccount.getDatabase(theOptions.dbname);
+            }
+
             var tmpDocType = 'aclentry';
             var tmpCollName = 'monginoauth';
-
+            if( tmpIsSystem ){
+                tmpCollName = $.MongoManager.options.prefix.datatype + 'systemaclentry';
+            }
             var tmpProcIds = [];
 
             var tmpColl = await tmpDB.getCollection(tmpCollName)

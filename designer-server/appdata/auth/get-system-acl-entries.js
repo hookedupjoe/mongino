@@ -1,19 +1,17 @@
 'use strict';
-const THIS_MODULE_NAME = 'save-acl-entry';
-const THIS_MODULE_TITLE = 'Auth: Save New ACL for App';
-//ToDo: Also create mongo user details?
-//      roles?
+const THIS_MODULE_NAME = 'get-system-acl-entries';
+const THIS_MODULE_TITLE = 'Auth: Get System Level ACL Entries';
+
 module.exports.setup = function setup(scope) {
     var config = scope;
     var $ = config.locals.$;
-
+    
     function Route() {
         this.name = THIS_MODULE_NAME;
         this.title = THIS_MODULE_TITLE;
     }
     var base = Route.prototype;
-    
-    
+
     var $ = config.locals.$;
 
     //--- Load the prototype
@@ -26,13 +24,8 @@ module.exports.setup = function setup(scope) {
                     throw("Bad JSON Passed")
                 }
             }
-            console.log('req.params',req.params);
-            return $.AuthMgr.saveAclEntry(tmpBody);
-
+        return $.AuthMgr.getSystemAclEntries(tmpBody);
     }
-
-
-
 
 
     //====== IMPORTANT --- --- --- --- --- --- --- --- --- --- 

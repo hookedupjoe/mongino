@@ -26,7 +26,7 @@ module.exports.setup = function setup(scope) {
                 throw("Bad JSON Passed")
             }
         }
-        return $.AuthMgr.recycleAcleEntries(tmpBody);
+        return $.AuthMgr.recycleAclEntries(tmpBody);
     }
 
 
