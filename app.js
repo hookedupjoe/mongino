@@ -21,6 +21,8 @@ require('dotenv').config();
 
 const LocalStrategy = require('passport-local').Strategy
 
+
+
 const session = require('express-session');
 
 scope.locals = {
@@ -49,7 +51,6 @@ deployedScope.locals = {
 deployedScope.locals.path.start = scope.locals.path.root + "/preview-server";
 deployedScope.locals.path.libraries = scope.locals.path.root + "/server-libs";
 
-
 var isUsingData = false;
 var startupDataString = '';
 var homeAccountConfig = {};
@@ -76,6 +77,9 @@ if (MONGINO_DB_HOME_ACCOUNT_ADDRESS) {
     isUsingData = true;
 }
 
+
+var sessionStore;
+
 const bcrypt = require("bcrypt")
 var express = require('express'),
     app = express(),
@@ -87,8 +91,7 @@ var express = require('express'),
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-
-app.all('*', function (req, res, next) {
+function mAllowHeaders(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, Accept");
     //--- If OPTIONS check, just send back headers
@@ -97,7 +100,8 @@ app.all('*', function (req, res, next) {
     } else {
         next();
     }
-});
+}
+app.all('*', mAllowHeaders);
 
 //--- Passport Auth ------------------
 var isUsingPassport = (process.env.AUTH_TYPE == 'passport');
@@ -107,6 +111,46 @@ const MongoStore = require('connect-mongo');
 var passport = require('passport');
 $.passport = passport;
 
+
+function processAuth(req, res, next) {
+    console.log('processAuth',req.session)
+    if (req.session && req.session.passport && req.session.passport.user) {
+        var tmpUser = req.session.passport.user;
+        var tmpUserKey = tmpUser.id;
+        if (tmpUser.provider) {
+            tmpUserKey = tmpUser.provider + "-" + tmpUserKey;
+        }
+        req.authUser = {
+            id: tmpUserKey,
+            displayName: tmpUser.displayName
+        }
+        next()
+    } else {
+        const authHeader = req.headers['authorization']
+        const token = authHeader && authHeader.split(' ')[1]
+
+        if (token == null) {
+            req.authUser = false;
+            next()
+        } else {
+            jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+                if (err) {
+                    req.authUser = false;
+                } else {
+                    var tmpCurr = {
+                        id: user.id,
+                        displayName: user.displayName
+                    }
+                    req.authUser = tmpCurr;
+                }
+                next()
+            })
+        }
+    }
+}
+
+
+
 if (isUsingPassport) {
     passport.serializeUser(function (user, cb) {
         cb(null, user);
@@ -115,160 +159,91 @@ if (isUsingPassport) {
         cb(null, obj);
     });
 
-    //---ToDo: Use MONGINO_DB_HOME_ACCOUNT to spin up default connection db for application data
-    //         Keep accounts for access to more than one.
-    //---ToDo: move to mongo for accounts?
-    app.use(session({
-        resave: false,
-        saveUninitialized: true,
-        maxAge: new Date(Date.now() + 3600000),
-        store: MongoStore.create({
-            mongoUrl: startupDataString,
-            mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
-            dbName: 'monginoauth-sessions',
-            ttl: 14 * 24 * 60 * 60 // = 14 days. Default
-        }),
-        secret: process.env.SESSION_SECRET || 'sdflksjflksdjflksdjfieieieiei'
-    }));
-
-    async function authUser(theUsername, thePassword, done) {
-        if (theUsername == process.env.MONGINO_AUTH_ADMIN_USERNAME && thePassword == process.env.MONGINO_AUTH_ADMIN_PASSWORD) {
-            var tmpRetDoc = { id: 'system_admin_user', displayName: 'System Admin' };
-            return done(null, tmpRetDoc)
-        }
-
-        var tmpAccount = await $.MongoManager.getAccount('_home');
-        var tmpDB = await tmpAccount.getDatabase('monginoauth');
-        var tmpDocType = 'user';
-        var tmpMongoDB = tmpDB.getMongoDB();
-        var tmpDocs = await tmpMongoDB.collection($.MongoManager.options.prefix.datatype + tmpDocType)
-            .find({ username: theUsername })
-            .filter({ username: theUsername, __doctype: tmpDocType })
-            .toArray();
-
-        if (tmpDocs && tmpDocs.length == 1) {
-            var tmpUserDoc = tmpDocs[0];
-            if (tmpUserDoc.username != theUsername) {
-                return done(null, false);
-            }
-            var tmpIsGood = await bcrypt.compare(thePassword, tmpUserDoc.password);
-            if (!(tmpIsGood)) {
-                return done(null, false);
-            }
-            var tmpRetDoc = { id: tmpUserDoc.username, displayName: tmpUserDoc.firstname + ' ' + tmpUserDoc.lastname };
-            return done(null, tmpRetDoc)
-        } else {
-            return done(null, false)
-        }
-    }
-
-
-    app.get('/auth/google',
-        passport.authenticate('google', { scope: ['profile', 'email'] }));
-
-    app.get('/auth/github',
-        passport.authenticate('github', { scope: ['profile', 'email'] }));
-
-    app.post("/login", passport.authenticate('local', {
-        successRedirect: "/authcomplete",
-        failureRedirect: "/pagelogin?type=page&page=/",
-    }))
-
-    /* JWT login. */
-    app.post('/login/jwt', function (req, res, next) {
-
-        passport.authenticate('local', { scope: ['profile', 'email'], session: false }, (err, user, info) => {
-            if (err || !user) {
-                return res.status(400).json({
-                    message: info ? info.message : 'Login failed',
-                    user: user
-                });
-            }
-
-            req.login(user, { session: false }, (err) => {
-                if (err) {
-                    res.send(err);
-                }
-
-                const token = jwt.sign(user, process.env.JWT_SECRET);
-
-                return res.json({ user, token });
-            });
-        })
-            (req, res);
-
-    });
-
-    app.use(passport.initialize());
-    app.use(passport.session());
-
-    passport.use(new LocalStrategy(authUser))
-
-
-    function processAuth(req, res, next) {
-        if (req.session && req.session.passport && req.session.passport.user) {
-            var tmpUser = req.session.passport.user;
-            var tmpUserKey = tmpUser.id;
-            if (tmpUser.provider) {
-                tmpUserKey = tmpUser.provider + "-" + tmpUserKey;
-            }
-            req.authUser = {
-                id: tmpUserKey,
-                displayName: tmpUser.displayName
-            }
-            next()
-        } else {
-            const authHeader = req.headers['authorization']
-            const token = authHeader && authHeader.split(' ')[1]
-
-            if (token == null) {
-                req.authUser = false;
-                next()
-            } else {
-                jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-                    if (err) {
-                        req.authUser = false;
-                    } else {
-                        var tmpCurr = {
-                            id: user.id,
-                            displayName: user.displayName
-                        }
-                        req.authUser = tmpCurr;
-                    }
-                    next()
-                })
-            }
-        }
-    }
-    app.use(processAuth)
 }
 
 
-//-- stop pages from loading with index.html -vs- main entry point
-app.all(/index.html/, function (req, res, next) {
-
-    try {
-        var tmpCheckPos = req.url.toLowerCase().indexOf('index.html');
-        if (tmpCheckPos > -1) {
-            var tmpURL = req.url.substring(0, tmpCheckPos);
-            res.redirect(tmpURL);
-        }
-    } catch (error) {
-        //--- OK?
-        console.log('Error attempting to check for index', error);
+async function authUser(theUsername, thePassword, done) {
+    console.log('authUser', theUsername, thePassword)
+    if (theUsername == process.env.MONGINO_AUTH_ADMIN_USERNAME && thePassword == process.env.MONGINO_AUTH_ADMIN_PASSWORD) {
+        var tmpRetDoc = { id: 'system_admin_user', displayName: 'System Admin' };
+        return done(null, tmpRetDoc)
     }
 
-    next();
-});
+    var tmpAccount = await $.MongoManager.getAccount('_home');
+    var tmpDB = await tmpAccount.getDatabase('monginoauth');
+    var tmpDocType = 'user';
+    var tmpMongoDB = tmpDB.getMongoDB();
+    var tmpDocs = await tmpMongoDB.collection($.MongoManager.options.prefix.datatype + tmpDocType)
+        .find({ username: theUsername })
+        .filter({ username: theUsername, __doctype: tmpDocType })
+        .toArray();
+
+    if (tmpDocs && tmpDocs.length == 1) {
+        var tmpUserDoc = tmpDocs[0];
+        if (tmpUserDoc.username != theUsername) {
+            return done(null, false);
+        }
+        var tmpIsGood = await bcrypt.compare(thePassword, tmpUserDoc.password);
+        if (!(tmpIsGood)) {
+            return done(null, false);
+        }
+        var tmpRetDoc = { id: tmpUserDoc.username, displayName: tmpUserDoc.firstname + ' ' + tmpUserDoc.lastname };
+        return done(null, tmpRetDoc)
+    } else {
+        return done(null, false)
+    }
+}
+
+var _session;
+function initAuth(theExpress){
+    var tmpApp = theExpress;
 
 
-//-- When any directory is loaded (home page or app)
-app.all(/\/$/, async function (req, res, next) {
-    try {
+
+    if( !(_session)){
+        console.log('new sess')
+        _session = session({
+            resave: false,
+            saveUninitialized: true,
+            maxAge: new Date(Date.now() + 3600000),
+            store: MongoStore.create({
+                mongoUrl: startupDataString,
+                mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
+                dbName: 'monginoauth-sessions',
+                ttl: 14 * 24 * 60 * 60 // = 14 days. Default
+            }),
+            secret: process.env.SESSION_SECRET || 'sdflksjflksdjflksdjfieieieiei'
+        })
+    } else {
+        console.log('ex')
+    }
+
+    
+    //---ToDo: Use MONGINO_DB_  HOME_ACCOUNT to spin up default connection db for application data
+    //         Keep accounts for access to more than one.
+    //---ToDo: move to mongo for accounts?
+   
+    tmpApp.use(_session);
+
+    tmpApp.use(passport.initialize());
+    tmpApp.use(passport.session());
+    
+    tmpApp.use(processAuth)
 
 
-        var tmpUser = {};
-        if (isUsingPassport) {
+}
+
+function initAuth2(theExpress){
+    var tmpApp = theExpress;
+   
+
+    
+    //-- When any directory is loaded (home page or tmpApp)
+    tmpApp.all(/\/$/, async function (req, res, next) {
+        try {
+
+
+            var tmpUser = {};
             if (req.session && req.session.passport && req.session.passport.user) {
                 var tmpUserInfo = req.session.passport.user;
                 var tmpSource = tmpUserInfo.provider;
@@ -312,20 +287,107 @@ app.all(/\/$/, async function (req, res, next) {
                 tmpLoginURL += '&page=' + req.url;
                 res.redirect(tmpLoginURL);
             }
+        } catch (error) {
+            console.log("Error in oath check", error);
         }
-    } catch (error) {
-        console.log("Error in oath check", error);
-    }
 
-    next();
-});
-
-app.post('/logout', function (req, res, next) {
-    req.logout(function (err) {
-        if (err) { return next(err); }
-        res.redirect('/');
+        next();
     });
-});
+
+    
+    
+    tmpApp.post('/logout', function (req, res, next) {
+        req.logout(function (err) {
+            if (err) { return next(err); }
+            res.redirect('/');
+        });
+    });
+
+
+        
+    tmpApp.get('/pagelogin', function (req, res, next) {
+
+        // Render page using renderFile method
+        ejs.renderFile('views/pagelogin.ejs', {},
+            {}, function (err, template) {
+                if (err) {
+                    throw err;
+                } else {
+                    res.end(template);
+                }
+            });
+    });
+
+    tmpApp.get('/authcomplete', function (req, res, next) {
+        console.log('auth complete')
+        // Render page using renderFile method
+        ejs.renderFile('views/authcomplete.ejs', {},
+            {}, function (err, template) {
+                if (err) {
+                    throw err;
+                } else {
+                    res.end(template);
+                }
+            });
+    });
+
+    
+
+    tmpApp.post("/login", passport.authenticate('local', {
+        successRedirect: "/authcomplete",
+        failureRedirect: "/pagelogin?type=page&page=/",
+    }))
+
+    /* JWT login. */
+    tmpApp.post('/login/jwt', function (req, res, next) {
+
+        passport.authenticate('local', { scope: ['profile', 'email'], session: false }, (err, user, info) => {
+            if (err || !user) {
+                return res.status(400).json({
+                    message: info ? info.message : 'Login failed',
+                    user: user
+                });
+            }
+
+            req.login(user, { session: false }, (err) => {
+                if (err) {
+                    res.send(err);
+                }
+
+                const token = jwt.sign(user, process.env.JWT_SECRET);
+
+                return res.json({ user, token });
+            });
+        })
+            (req, res);
+
+    });
+    
+    
+    //-- stop pages from loading with index.html -vs- main entry point
+    tmpApp.all(/index.html/, function (req, res, next) {
+
+        try {
+            var tmpCheckPos = req.url.toLowerCase().indexOf('index.html');
+            if (tmpCheckPos > -1) {
+                var tmpURL = req.url.substring(0, tmpCheckPos);
+                res.redirect(tmpURL);
+            }
+        } catch (error) {
+            //--- OK?
+            console.log('Error attempting to check for index', error);
+        }
+
+        next();
+    });
+
+
+}
+passport.use(new LocalStrategy(authUser))
+
+initAuth(app);
+initAuth2(app);
+initAuth(deployed);
 
 $.designerConfig = {};
 
@@ -354,32 +416,6 @@ app.get('/designer/details.js', async function (req, res, next) {
 
     var tmpRet = 'ActionAppCore.designerDetails = ' + JSON.stringify(tmpRet);
     return res.send(tmpRet);
-});
-
-app.get('/pagelogin', function (req, res, next) {
-
-    // Render page using renderFile method
-    ejs.renderFile('views/pagelogin.ejs', {},
-        {}, function (err, template) {
-            if (err) {
-                throw err;
-            } else {
-                res.end(template);
-            }
-        });
-});
-
-app.get('/authcomplete', function (req, res, next) {
-    console.log('auth complete')
-    // Render page using renderFile method
-    ejs.renderFile('views/authcomplete.ejs', {},
-        {}, function (err, template) {
-            if (err) {
-                throw err;
-            } else {
-                res.end(template);
-            }
-        });
 });
 
 try {
@@ -545,6 +581,8 @@ function setup() {
                 next();
             });
 
+
+
             //--- Use standard body and cookie parsers
             deployed.use(bodyParser.json());
             deployed.use(bodyParser.urlencoded({ extended: false }));
@@ -554,10 +592,12 @@ function setup() {
             deployed.use(express.static(scope.locals.path.root + '/common'));
             deployed.use(express.static(scope.locals.path.ws.deploy + '/ui-apps'));
 
+            
+
+
             //--- Plug in application routes
             require('./preview-server/start').setup(deployed, deployedScope);
-
-
+      
             // error handlers
             deployed.use(function (req, res, next) {
                 var err = new Error('Not Found');
@@ -569,6 +609,7 @@ function setup() {
                 next();
             });
 
+            initAuth2(deployed);
 
 
             //--- Standard Server Startup
@@ -599,7 +640,6 @@ function setup() {
 
     });
 }
-
 
 
 //--- Run setup with async wrapper to allow async stuff

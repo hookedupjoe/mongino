@@ -9,6 +9,7 @@ module.exports.setup = function setup(scope) {
     scope.locals.path.appdata = scope.locals.path.start + "/appdata"
     
     return  async function processReq(req, res, next) {
+        console.log('appdata des',req.session)
         if( req.authUser ){
             //--- validate access?
         } else {
@@ -84,9 +85,9 @@ module.exports.setup = function setup(scope) {
             .replace('.js', '');
 
         try {
-
-             
-        var tmpFilePath = scope.locals.path.appdata + '/' + tmpType + '/' + tmpName + '.js';
+        console.log('scope.locals.path.appdata',scope.locals.path.appdata);
+        var tmpBasePath = scope.locals.path.appdata.replace('preview-server','designer-server');
+        var tmpFilePath = tmpBasePath + '/' + tmpType + '/' + tmpName + '.js';
         var tmpProcessReq = require(tmpFilePath);
         if (typeof(tmpProcessReq.setup) == 'function') {
             var tmpToRun = tmpProcessReq.setup(scope);
@@ -99,6 +100,7 @@ module.exports.setup = function setup(scope) {
 
         
         } catch (ex) {
+            console.log('error here')
             res.json({status:false, error: ex.toString()})
         }
     };

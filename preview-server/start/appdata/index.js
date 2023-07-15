@@ -7,9 +7,72 @@ module.exports.setup = function setup(scope) {
 
     let $ = scope.locals.$;
     scope.locals.path.appdata = scope.locals.path.start + "/appdata"
-    scope.locals.path.appdata = scope.locals.path.appdata.replace('preview-server','designer-server');
     
     return  async function processReq(req, res, next) {
+        console.log('appdata preview',req.authUser);
+        if( req.authUser ){
+            //--- validate access?
+        } else {
+            
+            if( $.isUsingPassport ){
+                console.log('appdata preview denied');
+                return res.sendStatus(401)
+            }
+            console.log('Anonymous Access')
+        }
+
+        
+
+
+        var tmpAppID = req.headers['act-app-id'] || '';
+        if( tmpAppID ){
+            //--- Always use header value, even if appid passed
+            req.body.appid = tmpAppID;
+        //--- Optional ... do not allow if not in header?
+        //     Maybe only designer level access can specify app?
+        // } else {
+        //     return res.sendStatus(401);
+        }
+
+        var tmpAppInfo = false;
+        var tmpAccountID = '';
+        var tmpDBName = '';
+        if( req.body && req.body.appid ){
+            tmpAppID = req.body.appid
+            tmpAppInfo = $.appIndex[req.body.appid];
+            
+            if( tmpAppInfo ){
+                tmpAccountID = tmpAppInfo['data-account-id'] || '_home';
+                tmpDBName = tmpAppInfo['data-db-name'] || tmpAppInfo.name;
+                tmpDBName = $.MongoManager.options.prefix.db + tmpDBName;
+            }
+            //--- Load account and dbname from app details
+
+            //--- ToDo: Remove this from here - add to header????
+            if( tmpAccountID && tmpDBName ){
+                req.body.accountid = tmpAccountID;
+                req.body.dbname = tmpDBName;
+            }
+            
+        }
+        if( !(tmpAppID)){
+            //--- If no app ID is passed, they don't know what they are doing - show denied?
+            //console.log('no app id');
+            //----ToDo: Assure system admin/dev for this update
+            //return res.sendStatus(401);
+        }
+
+        var tmpIsAllowed = true;
+        var tmpAccessType = 0; //--- ToDo: Determine access type based on action
+        //--- May have passed anonymous?
+        if( req.authUser ){
+            var tmpDBName = req.body.dbname;
+            tmpIsAllowed = await $.AuthMgr.isAllowed(req.authUser.id,{db:req.body.dbname}, tmpAccessType)
+        }
+        
+        if( !(tmpIsAllowed) ){
+            return res.sendStatus(401);
+        }
         
         var tmpType = req.params.type || ''
         var tmpName = req.params.name || ''
@@ -24,7 +87,7 @@ module.exports.setup = function setup(scope) {
 
         try {
 
-            
+             
         var tmpFilePath = scope.locals.path.appdata + '/' + tmpType + '/' + tmpName + '.js';
         var tmpProcessReq = require(tmpFilePath);
         if (typeof(tmpProcessReq.setup) == 'function') {
