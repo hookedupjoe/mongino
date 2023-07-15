@@ -279,14 +279,22 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
                 resolve(true);
             }
             
-            if( await self.isSystemAllowed(theUserId) ){
-                resolve(true);
+            var tmpIsDesign = ( theResource.system == 'design' );
+            console.log('tmpIsDesign',tmpIsDesign)
+            if( tmpIsDesign ){
+                if( await self.isSystemAllowed(theUserId) ){
+                    resolve(true);
+                } else {
+                    resolve(false);
+                }
             }
 
             var tmpCollName = 'monginoauth';
             var tmpDocType = 'aclentry';
             var tmpDBName = theResource.database || theResource.db || '';
             var tmpResType = '';
+            var tmpResID = '';
+
             if( tmpDBName ){
                 tmpResType = 'db';
                 tmpResID = tmpDBName;
@@ -304,7 +312,11 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
             console.log(tmpFilter);
             var tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
             if( !(tmpDocs) || tmpDocs.length == 0){
-                resolve(false);
+                if( await self.isSystemAllowed(theUserId) ){
+                    resolve(true);
+                } else {
+                    resolve(false);
+                }
             } else {
                 //--- ToDo: Check access level
                 resolve(true);
@@ -312,7 +324,7 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
             resolve(true);
         }
         catch (error) {
-            console.log('Error in isAllow: ' + error);
+            console.log('Error in isAllowed: ' + error);
             resolve(false);
         }
     });
