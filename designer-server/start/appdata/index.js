@@ -65,12 +65,8 @@ module.exports.setup = function setup(scope) {
         //--- May have passed anonymous?
         if( req.authUser ){
             var tmpDBName = req.body.dbname;
-            console.log('tmpDBN', tmpDBName);
-            console.log('req.authUser',req.authUser);
             tmpIsAllowed = await $.AuthMgr.isAllowed(req.authUser.id,{db:req.body.dbname}, tmpAccessType)
-            console.log('tmpIsAllowed from check',tmpIsAllowed);
         }
-
         
         if( !(tmpIsAllowed) ){
             return res.sendStatus(401);
