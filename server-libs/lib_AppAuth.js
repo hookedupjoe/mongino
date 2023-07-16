@@ -28,13 +28,12 @@ var meAuthManager = AuthManager.prototype;
 module.exports.AuthManager = AuthManager;
 
 meAuthManager.saveUser = async function(theUser, theOptions){
-    console.log('saveUser',theUser);
     return new Promise( async function (resolve, reject) {
         try {
             var tmpUser = theUser;
             
             var tmpAccount = await $.MongoManager.getAccount('_home');
-            var tmpDB = await tmpAccount.getDatabase('monginoauth');
+            var tmpDB = await tmpAccount.getDatabase($.MongoManager.options.names.directory);
             var tmpDocType = 'user';
             var tmpCollName = $.MongoManager.options.prefix.datatype + tmpDocType;
 
@@ -79,7 +78,7 @@ meAuthManager.getUsers = async function(){
     return new Promise( async function (resolve, reject) {
         try {
             var tmpAccount = await $.MongoManager.getAccount('_home');
-            var tmpDB = await tmpAccount.getDatabase('monginoauth');
+            var tmpDB = await tmpAccount.getDatabase($.MongoManager.options.names.directory);
             var tmpDocType = 'user';
             var tmpMongoDB = tmpDB.getMongoDB();
             var tmpDocs = await tmpMongoDB.collection($.MongoManager.options.prefix.datatype + tmpDocType).find().filter({__doctype:tmpDocType}).toArray();
@@ -100,7 +99,7 @@ meAuthManager.getSystemAclEntries = async function(theOptions){
     return new Promise( async function (resolve, reject) {
         try {
             var tmpAccount = await $.MongoManager.getAccount(theOptions.accountid);
-            var tmpDB = await tmpAccount.getDatabase('monginoauth');
+            var tmpDB = await tmpAccount.getDatabase($.MongoManager.options.names.directory);
             var tmpDocType = 'systemaclentry';
             var tmpCollName = $.MongoManager.options.prefix.datatype + tmpDocType;
             
@@ -123,7 +122,7 @@ meAuthManager.getAclEntries = async function(theOptions){
             var tmpAccount = await $.MongoManager.getAccount(theOptions.accountid);
             var tmpDB = await tmpAccount.getDatabase(theOptions.dbname);
             var tmpDocType = 'aclentry';
-            var tmpCollName = 'monginoauth';
+            var tmpCollName = $.MongoManager.options.names.aclcollection;
             
             var tmpMongoDB = tmpDB.getMongoDB();
             var tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter({__doctype:tmpDocType}).toArray();
@@ -148,12 +147,12 @@ meAuthManager.saveAclEntry = async function(theEntry){
             }
             var tmpDB = '';
             if( tmpIsSystem ){
-                tmpDB = await tmpAccount.getDatabase('monginoauth');
+                tmpDB = await tmpAccount.getDatabase($.MongoManager.options.names.directory);
             } else {
                 tmpDB = await tmpAccount.getDatabase(theEntry.dbname);
             }
             //var tmpDocType = 'aclentry';
-            var tmpCollName = 'monginoauth';
+            var tmpCollName = $.MongoManager.options.names.aclcollection;
 
             if( tmpIsSystem ){
                 tmpCollName = $.MongoManager.options.prefix.datatype + 'systemaclentry';
@@ -201,13 +200,13 @@ meAuthManager.recycleAclEntries = async function(theOptions){
            ///var tmpDB = await tmpAccount.getDatabase(theOptions.dbname);
             var tmpDB = '';
             if( tmpIsSystem ){
-                tmpDB = await tmpAccount.getDatabase('monginoauth');
+                tmpDB = await tmpAccount.getDatabase($.MongoManager.options.names.directory);
             } else {
                 tmpDB = await tmpAccount.getDatabase(theOptions.dbname);
             }
 
             var tmpDocType = 'aclentry';
-            var tmpCollName = 'monginoauth';
+            var tmpCollName = $.MongoManager.options.names.aclcollection;
             if( tmpIsSystem ){
                 tmpCollName = $.MongoManager.options.prefix.datatype + 'systemaclentry';
             }
@@ -245,7 +244,7 @@ meAuthManager.isSystemAllowed = async function(theUserId){
 
             var tmpCollName = tmpCollName = '-mo-dt-systemaclentry'
             var tmpDocType = 'systemaclentry';
-            var tmpDBName = 'monginoauth'; 
+            var tmpDBName = $.MongoManager.options.names.directory; 
 
             var tmpAccount = await $.MongoManager.getAccount('_home');
             var tmpDB = await tmpAccount.getDatabase(tmpDBName);
@@ -279,7 +278,7 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
             var tmpIsDesign = ( theResource.system == 'design' );
            
 
-            var tmpCollName = 'monginoauth';
+            var tmpCollName = $.MongoManager.options.names.aclcollection;
             var tmpDocType = 'aclentry';
             var tmpDBName = theResource.database || theResource.db || '';
             

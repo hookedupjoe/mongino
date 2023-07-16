@@ -137,7 +137,7 @@ app.use(session({
     store: MongoStore.create({
         mongoUrl: startupDataString,
         mongoOptions: {useNewUrlParser: true, useUnifiedTopology: true},
-        dbName: 'monginoauth-sessions',
+        dbName: '-mosys-Directory',
         ttl: 14 * 24 * 60 * 60 // = 14 days. Default
       }),
     secret: process.env.SESSION_SECRET || 'sdflksjflksdjflksdjfieieieiei'
@@ -151,7 +151,7 @@ app.use(session({
         }
     
         var tmpAccount = await $.MongoManager.getAccount('_home');
-        var tmpDB = await tmpAccount.getDatabase('monginoauth');
+        var tmpDB = await tmpAccount.getDatabase($.MongoManager.options.names.directory);
         var tmpDocType = 'user';
         var tmpMongoDB = tmpDB.getMongoDB();        
         var tmpDocs = await tmpMongoDB.collection($.MongoManager.options.prefix.datatype + tmpDocType)

@@ -24,6 +24,10 @@ function MongoManager(theAccountConfig) {
         prefix: {
             db: '-mo-',
             datatype: '-mo-dt-'
+        },
+        names: {
+            aclcollection: '-mosys-ACL',
+            directory: '-mosys-Directory'
         }
     };
 }
