@@ -5447,6 +5447,13 @@ License: LGPL
 
             me.promptSize(tmpSize);
 
+            var tmpTitleEl = ThisApp.getByAttr$({appuse:"_prompter:prompt-dialog-title"});
+            if( tmpTitle ){
+                tmpTitleEl.removeClass('hidden');
+            } else {
+                tmpTitleEl.addClass('hidden');
+            }
+            
             me.callback = false;
             if (typeof (tmpOptions.callback) == 'function') {
                 me.callback = tmpOptions.callback

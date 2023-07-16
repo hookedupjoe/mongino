@@ -11,12 +11,12 @@
 
   {{#if isNew}}
     <div class="ui message blue">
-      <b>No Collections Setup:</b> Use the Add Collection button to add your <b>Mongo Account</b> account information.
+      <b>No Collections Setup:</b> Creating documents will automatically create collections.
     </div>
   {{/if}}
 
   <div class="ui segment pad3">
-    <button myaction="newDoc" type="button" name="btn-page-tb-new" class="ui button compact blue icon  ">
+    <button myaction="newDoc" type="button" name="btn-page-tb-new" class="ui button compact blue icon hidden">
       <i class="plus icon"></i> Add Collection
     </button>
     <button myaction="refreshDash" type="button" name="btn-page-tb-new" class="ui button compact blue icon  ">

@@ -289,7 +289,7 @@
     var tmpBaseURL = ActionAppCore.ActAppData.rootPath;
     var tmpViewer = this.getViewControl();
     self.parts.mainform.prompt({
-      title: 'Add Test Doc', submitLabel: 'Save New Doc'
+      title: '', submitLabel: 'Save New Doc'
     }).then(function(theSubmit, theData) {
       if (!theSubmit) {
         return;
