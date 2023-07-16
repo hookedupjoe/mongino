@@ -312,7 +312,7 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
             var tmpFilter, tmpDocs;
             //--- See if no username , check anonymous access, kick out
             if( !(theUserId) ){
-                tmpFilter = {"__doctype": tmpDocType,"entryname": '-mo-no-login', "type": "person"}; 
+                tmpFilter = {"__doctype": tmpDocType,"entryname": '-mo-anonymous', "type": "person"}; 
                 tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
                 if( (tmpDocs) && tmpDocs.length == 1){
                     resolve(true);
@@ -320,14 +320,14 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
                     resolve(false);
                 }   
             }
-            //--- ToDo: Combine filter into one for -mo-has-login ?
+            //--- ToDo: Combine filter into one for -mo-user ?
             tmpFilter = {"__doctype": tmpDocType,"entryname": theUserId, "type": "person"};
             tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
             if( !(tmpDocs) || tmpDocs.length == 0){
                 if( await self.isSystemAllowed(theUserId) ){
                     resolve(true);
                 } else {
-                    tmpFilter = {"__doctype": tmpDocType,"entryname": '-mo-has-login', "type": "person"};
+                    tmpFilter = {"__doctype": tmpDocType,"entryname": '-mo-user', "type": "person"};
                     tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
                     if( (tmpDocs) && tmpDocs.length == 1){
                         resolve(true);
