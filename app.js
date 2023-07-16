@@ -240,7 +240,6 @@ function initAuth2(theExpress){
     tmpApp.all(/\/$/, async function (req, res, next) {
         try {
 
-//console.log('dir auth for',req.originalUrl);
             var tmpUser = {};
             var tmpUserID = '';
             if (req.session && req.session.passport && req.session.passport.user) {
@@ -257,7 +256,6 @@ function initAuth2(theExpress){
             tmpLoginURL += '&page=' + req.originalUrl;
             var tmpIsAllowed = false;
 
-            // console.log('req.originalUrl', req.originalUrl);
             if (req.originalUrl == '/' || !(req.originalUrl) ) {
                 if( !(tmpUserID) ){
                     tmpIsAllowed = false;
@@ -268,9 +266,6 @@ function initAuth2(theExpress){
                 var tmpDBName = req.originalUrl.replace(/\//g, '');
                 tmpDBName = $.MongoManager.options.prefix.db + tmpDBName;
                 tmpIsAllowed = await $.AuthMgr.isAllowed(tmpUserID, { db: tmpDBName }, 0);
-                if (!tmpIsAllowed) {
-                    tmpIsAllowed = await $.AuthMgr.isAllowed(tmpUserID, { system: 'design' }, 0);
-                }
             }
 
             if (!tmpIsAllowed) {
