@@ -286,18 +286,20 @@ function initAuth2(theExpress){
                 tmpUser.displayName = tmpUserInfo.displayName || '';
             }
             var tmpLoginURL = '/pagelogin?type=page';
-            tmpLoginURL += '&page=' + req.originalUrl;
+            //tmpLoginURL += '&page=' + req.originalUrl;
             var tmpIsAllowed = false;
 
             if (req.originalUrl == '/' || !(req.originalUrl) ) {
                 if( !(tmpUserID) ){
                     tmpIsAllowed = false;
+                    tmpLoginURL += '&page=/';
                 } else {
                     tmpIsAllowed = await $.AuthMgr.isAllowed(tmpUserID, { system: 'design' }, 0);
                 }
             } else {
                 var tmpDBName = req.originalUrl.replace(/\//g, '');
                 tmpDBName = $.MongoManager.options.prefix.db + tmpDBName;
+                tmpLoginURL += '&page=/' + tmpDBName + '/';;
                 tmpIsAllowed = await $.AuthMgr.isAllowed(tmpUserID, { db: tmpDBName }, 0);
             }
 
