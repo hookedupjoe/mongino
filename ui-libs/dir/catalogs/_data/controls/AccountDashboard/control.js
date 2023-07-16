@@ -128,7 +128,7 @@
   ControlCode.refreshDash = function(theContent, theOptTpl){
     var self = this;
     var tmpBaseURL = ActionAppCore.ActAppData.appDataEndpoint;
-      var tmpURL = tmpBaseURL + 'get-db-list/?account=' + self.accountid;      
+      var tmpURL = tmpBaseURL + 'get-db-list?account=' + self.accountid;      
 
       ThisApp.apiCall(tmpURL).then(function(theReply){
         self.accountData = theReply;

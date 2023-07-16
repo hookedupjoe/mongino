@@ -277,23 +277,31 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
             }
             
             var tmpIsDesign = ( theResource.system == 'design' );
-            if( tmpIsDesign ){
-                if( await self.isSystemAllowed(theUserId) ){
-                    resolve(true);
-                } else {
-                    resolve(false);
-                }
-            }
+           
 
             var tmpCollName = 'monginoauth';
             var tmpDocType = 'aclentry';
             var tmpDBName = theResource.database || theResource.db || '';
+            
             var tmpResType = '';
             var tmpResID = '';
 
             if( tmpDBName ){
                 tmpResType = 'db';
                 tmpResID = tmpDBName;
+            }
+
+            //--- Just in case an api call is made with / in the end
+            if( tmpDBName.indexOf('?') > -1 ){
+                tmpDBName = '';
+            }
+
+            if( tmpIsDesign || !(tmpDBName)){
+                if( await self.isSystemAllowed(theUserId) ){
+                    resolve(true);
+                } else {
+                    resolve(false);
+                }
             }
 
             if( !(tmpResID) ){

@@ -266,8 +266,6 @@ function initAuth2(theExpress){
                 } else if (req.originalUrl != '') {
                     var tmpDBName = req.originalUrl.replace(/\//g, '');
                     tmpDBName = $.MongoManager.options.prefix.db + tmpDBName;
-                    // console.log('tmpDBName', tmpDBName);
-
                     var tmpIsSysAllowed = await $.AuthMgr.isAllowed(tmpUserID, { db: tmpDBName }, 0);
                     if (!tmpIsSysAllowed) {
                         //ToDo: Redirect to a "no access to this resource page"

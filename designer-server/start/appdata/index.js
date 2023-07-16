@@ -9,7 +9,8 @@ module.exports.setup = function setup(scope) {
     scope.locals.path.appdata = scope.locals.path.start + "/appdata"
     
     return  async function processReq(req, res, next) {
-        
+
+       
         if( req.authUser ){
             //--- validate access?
         } else {
@@ -42,6 +43,7 @@ module.exports.setup = function setup(scope) {
             tmpAppInfo = $.appIndex[req.body.appid];
             
             if( tmpAppInfo ){
+                console.log('tmpAppInfo',tmpAppInfo);
                 tmpAccountID = tmpAppInfo['data-account-id'] || '_home';
                 tmpDBName = tmpAppInfo['data-db-name'] || tmpAppInfo.name;
                 tmpDBName = $.MongoManager.options.prefix.db + tmpDBName;
@@ -91,7 +93,6 @@ module.exports.setup = function setup(scope) {
             .replace('.js', '');
 
         try {
-        
         var tmpBasePath = scope.locals.path.appdata.replace('preview-server','designer-server');
         var tmpFilePath = tmpBasePath + '/' + tmpType + '/' + tmpName + '.js';
         var tmpProcessReq = require(tmpFilePath);
