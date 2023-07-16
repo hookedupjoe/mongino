@@ -267,7 +267,6 @@ function initAuth2(theExpress){
             } else {
                 var tmpDBName = req.originalUrl.replace(/\//g, '');
                 tmpDBName = $.MongoManager.options.prefix.db + tmpDBName;
-                console.log('tmpDBName',tmpDBName);
                 tmpIsAllowed = await $.AuthMgr.isAllowed(tmpUserID, { db: tmpDBName }, 0);
                 if (!tmpIsAllowed) {
                     tmpIsAllowed = await $.AuthMgr.isAllowed(tmpUserID, { system: 'design' }, 0);
@@ -279,7 +278,7 @@ function initAuth2(theExpress){
             }
 
         } catch (error) {
-            console.log("Error in oath check", error);
+            console.error("Error in oath check", error);
             //--- ToDo: Catch and show error message details to user and/or console?
             res.redirect(tmpLoginURL);
         }
@@ -312,8 +311,6 @@ function initAuth2(theExpress){
     });
 
     tmpApp.get('/authcomplete', function (req, res, next) {
-        //console.log('auth complete')
-        // Render page using renderFile method
         ejs.renderFile('views/authcomplete.ejs', {},
             {}, function (err, template) {
                 if (err) {

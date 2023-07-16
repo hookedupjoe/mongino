@@ -268,7 +268,6 @@ meAuthManager.isSystemAllowed = async function(theUserId){
 
 
 meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
-    console.log('isAllowed',theUserId, theResource);
     var self = this;
     return new Promise( async function (resolve, reject) {
         try {
@@ -303,9 +302,7 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
                     resolve(false);
                 }
             }
-            console.log('isAllowed tmpDBName',tmpDBName);
             if( !(tmpResID) ){
-                //console.log('no resource id passed, be safe and deny');
                 resolve(false);
             }
 
@@ -325,7 +322,6 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
             }
             //--- ToDo: Combine filter into one for -mo-has-login ?
             tmpFilter = {"__doctype": tmpDocType,"entryname": theUserId, "type": "person"};
-            //console.log(tmpFilter);
             tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
             if( !(tmpDocs) || tmpDocs.length == 0){
                 if( await self.isSystemAllowed(theUserId) ){
@@ -346,7 +342,7 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
             resolve(true);
         }
         catch (error) {
-            console.log('Error in isAllowed: ' + error);
+            console.error('Error in isAllowed: ' + error);
             resolve(false);
         }
     });
