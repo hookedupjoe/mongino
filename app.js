@@ -397,14 +397,13 @@ if (isUsingPassport) {
 
 app.get('/designer/details.js', async function (req, res, next) {
     var tmpRet = {
-        sitetitle: "Mongino",
         sitetype: "Local"
     };
     var tmpConfigPath = $.scope.locals.path.ws.root + '/config/';
     await $.fs.ensureDir(tmpConfigPath);
     var tmpSettings = await $.bld.getJsonFile(tmpConfigPath + '/designer-settings.json');
 
-    if (tmpSettings && tmpSettings.sitetitle) {
+    if (tmpSettings) {
         tmpRet = tmpSettings;
     }
 

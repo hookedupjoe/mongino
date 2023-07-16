@@ -50,9 +50,10 @@ License: LGPL
 													{
 														ctl: "title",
 														icon: "hdd",
-														classes:"mar0 pad0",
+														classes:"mar0 pad0 designer-ws-header",
 														color: "black",
 														size: "large",
+														name: "designer-ws-header",
 														text: "Designer Workspace"
 													},
 													{

@@ -31,7 +31,7 @@ module.exports.setup = function setup(scope) {
                 var tmpConfigPath = $.scope.locals.path.ws.root + '/config/';
                 await $.fs.ensureDir(tmpConfigPath);
                 var tmpStatus = true;
-                if( tmpBody && tmpBody.sitetitle ){
+                if( tmpBody  ){
                     await $.bld.saveJsonFile(tmpConfigPath + '/designer-settings.json', tmpBody);     
 
                 } else {

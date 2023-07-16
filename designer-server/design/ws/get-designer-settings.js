@@ -22,13 +22,12 @@ module.exports.setup = function setup(scope) {
             try {
 
                var tmpRet = {
-                    sitetitle: "Mongino",
                     sitetype: "Local"
                 };
                 var tmpConfigPath = $.scope.locals.path.ws.root + '/config/';
                 await $.fs.ensureDir(tmpConfigPath);
                 var tmpSettings = await $.bld.getJsonFile(tmpConfigPath + '/designer-settings.json');
-                if( tmpSettings && tmpSettings.sitetitle ){
+                if( tmpSettings ){
                     tmpRet = tmpSettings;
                 }
                 resolve(tmpRet);

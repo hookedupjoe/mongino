@@ -136,10 +136,10 @@ License: LGPL
             function () {
                 //--- For debugging
                 window.wsPage = ThisPage;
+                
                 if (ActionAppCore.designerDetails.sitetitle) {
-                    $('.site-header').html(ActionAppCore.designerDetails.sitetitle)
+                    ThisApp.getByAttr$({appuse:"designer-header-text"}).html(ActionAppCore.designerDetails.sitetitle)
                 }
-
 
                 ThisPage.subscribe('selectMe', ThisPage.pageTabSelected)
 
@@ -855,9 +855,9 @@ License: LGPL
                 }
                 
                 //ThisApp.common.designerConfig = theData;
-                
+                console.log('theData1',ThisApp.clone(theData));
                 $.extend(ActionAppCore.designerDetails, theData);
-
+                console.log('theData',theData);
                 ThisApp.common.apiCall({
                     url: '/design/ws/save-designer-settings',
                     data: theData

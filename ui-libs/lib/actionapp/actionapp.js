@@ -3699,7 +3699,8 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
             }
         }
 
-        var tmpNavHTML = '{{#each navlinks}} {{#if isTopLink}}<a appuse="tablinks" group="app:pages" item="{{name}}" action="showPage" class="item blue">{{title}}</a>{{/if}} {{/each}}';
+        var tmpNavColor = 'blue';
+        var tmpNavHTML = '{{#each navlinks}} {{#if isTopLink}}<a appuse="tablinks" group="app:pages" item="{{name}}" action="showPage" class="item ' + tmpNavColor + '">{{title}}</a>{{/if}} {{/each}}';
         var tmpSideLinksHTML = '{{#each navlinks}} {{#if isSideLink}}<a appuse="tablinks" group="app:pages" item="{{name}}" action="showPage" class="item">{{{iconHTML}}}{{title}}</a>{{/if}} {{/each}}';
         ThisApp.addTemplate('tpl-side-menu-item', tmpSideLinksHTML)
         ThisApp.addTemplate('tpl-nav-menu-item', tmpNavHTML)

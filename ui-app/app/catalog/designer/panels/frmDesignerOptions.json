@@ -24,8 +24,8 @@
 					"label": "Site Title",
 					"ctl": "field",
 					"name": "sitetitle",
-					"default": "Mongino",
-					"req": true
+					"placeholder": "leave blank to use graphic",
+					"req": false
 				},
 				{
 					"row": false,
