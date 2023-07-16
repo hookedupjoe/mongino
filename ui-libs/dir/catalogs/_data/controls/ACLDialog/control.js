@@ -57,14 +57,7 @@
       
     }
   
-    function openSample() {
-      activeFlyover.open({
-        details: {
-          appname: 'DemoApp3'
-        }})
-  
-    }
-  
+    
     ControlCode.loadOptions = function(theOptions) {
       this.details = this.details || {};
       var tmpOptions = theOptions || {};

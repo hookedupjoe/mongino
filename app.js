@@ -20,8 +20,21 @@ const ejs = require('ejs');
 require('dotenv').config();
 
 const LocalStrategy = require('passport-local').Strategy
+const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const GitHubStrategy = require('passport-github2').Strategy;
 
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_SECRET;
 
+const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+const GITHUB_CLIENT_SECRET = process.env.GITHUB_SECRET;
+
+var tmpBaseCallback = 'http://localhost:33480/';
+if( process.env.PASSPORT_BASE_CALLBACK ){
+  tmpBaseCallback = process.env.PASSPORT_BASE_CALLBACK;
+}
+
+tmpBaseCallback = '/';
 
 const session = require('express-session');
 
@@ -194,12 +207,32 @@ async function authUser(theUsername, thePassword, done) {
     }
 }
 
+function initOAuth(theExpress){
+    var tmpApp = theExpress;
+                 
+    tmpApp.get('/auth/google/callback',
+        passport.authenticate('google', { failureRedirect: '/error' }),
+        function (req, res) {
+            // Successful authentication, redirect success.
+            res.redirect('/authcomplete');
+        }
+    );
+
+    tmpApp.get('/auth/github/callback',
+        passport.authenticate('github', { failureRedirect: '/error' }),
+        function (req, res) {
+        // Successful authentication, redirect success.
+        res.redirect('/authcomplete');
+        }
+    );
+
+
+}
 var _session;
 function initAuth(theExpress){
     var tmpApp = theExpress;
 
-
-
+     
     if( !(_session)){
         //console.log('new sess')
         _session = session({
@@ -228,6 +261,8 @@ function initAuth(theExpress){
     
     tmpApp.use(processAuth)
 
+    
+    
 
 }
 
@@ -317,11 +352,18 @@ function initAuth2(theExpress){
     });
 
 
+    tmpApp.get('/auth/google',
+    passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+    tmpApp.get('/auth/github',
+    passport.authenticate('github', { scope: ['profile', 'email'] }));
+
     tmpApp.post("/login", passport.authenticate('local', {
         successRedirect: "/authcomplete",
         failureRedirect: "/pagelogin?type=page&page=/",
     }))
 
+    
     /* JWT login. */
     tmpApp.post('/login/jwt', function (req, res, next) {
 
@@ -365,6 +407,9 @@ function initAuth2(theExpress){
         next();
     });
 
+    
+    
+
 
 }
 passport.use(new LocalStrategy(authUser))
@@ -380,6 +425,14 @@ $.designerConfig.isUsingData = isUsingData;
 
 if (isUsingPassport) {
     $.designerConfig.passport = {};
+
+    if( GOOGLE_CLIENT_ID ){
+        $.designerConfig.passport.google = true;
+    }
+    if( GITHUB_CLIENT_ID ){
+        $.designerConfig.passport.github = true;
+    }
+    
 }
 
 app.get('/designer/details.js', async function (req, res, next) {
@@ -508,6 +561,28 @@ function setup() {
                 next();
             });
 
+            passport.use(new GoogleStrategy({
+                clientID: GOOGLE_CLIENT_ID,
+                clientSecret: GOOGLE_CLIENT_SECRET,
+                callbackURL: tmpBaseCallback + "auth/google/callback"
+                },
+                function (accessToken, refreshToken, profile, done) {
+                return done(null, profile);
+                }
+            ));
+                
+            passport.use(new GitHubStrategy({
+                clientID: GITHUB_CLIENT_ID,
+                clientSecret: GITHUB_CLIENT_SECRET,
+                callbackURL: tmpBaseCallback + "auth/github/callback"
+                },
+                function (accessToken, refreshToken, profile, done) {
+                return done(null, profile);
+                }
+            ));
+
+            initOAuth(app);
+            initOAuth(deployed);
             //--- Standard Server Startup
             var port = 33480;
 
