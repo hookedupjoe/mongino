@@ -34,8 +34,6 @@ if( process.env.PASSPORT_BASE_CALLBACK ){
   tmpBaseCallback = process.env.PASSPORT_BASE_CALLBACK;
 }
 
-tmpBaseCallback = '/';
-
 const session = require('express-session');
 
 scope.locals = {
