@@ -268,6 +268,7 @@ meAuthManager.isSystemAllowed = async function(theUserId){
 
 
 meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
+    console.log('isAllowed',theUserId, theResource);
     var self = this;
     return new Promise( async function (resolve, reject) {
         try {
@@ -302,7 +303,7 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
                     resolve(false);
                 }
             }
-
+            console.log('isAllowed tmpDBName',tmpDBName);
             if( !(tmpResID) ){
                 //console.log('no resource id passed, be safe and deny');
                 resolve(false);
@@ -311,18 +312,32 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
             var tmpAccount = await $.MongoManager.getAccount('_home');
             var tmpDB = await tmpAccount.getDatabase(tmpDBName);
             var tmpMongoDB = tmpDB.getMongoDB();
-
+            var tmpFilter, tmpDocs;
             //--- See if no username , check anonymous access, kick out
-
-            //--- ToDo: Combine filter into one for -mo-has-login
-            var tmpFilter = {"__doctype": tmpDocType,"entryname": theUserId, "type": "person"};
+            if( !(theUserId) ){
+                tmpFilter = {"__doctype": tmpDocType,"entryname": '-mo-no-login', "type": "person"}; 
+                tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
+                if( (tmpDocs) && tmpDocs.length == 1){
+                    resolve(true);
+                } else {
+                    resolve(false);
+                }   
+            }
+            //--- ToDo: Combine filter into one for -mo-has-login ?
+            tmpFilter = {"__doctype": tmpDocType,"entryname": theUserId, "type": "person"};
             //console.log(tmpFilter);
-            var tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
+            tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
             if( !(tmpDocs) || tmpDocs.length == 0){
                 if( await self.isSystemAllowed(theUserId) ){
                     resolve(true);
                 } else {
-                    resolve(false);
+                    tmpFilter = {"__doctype": tmpDocType,"entryname": '-mo-has-login', "type": "person"};
+                    tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
+                    if( (tmpDocs) && tmpDocs.length == 1){
+                        resolve(true);
+                    } else {
+                        resolve(false);
+                    }  
                 }
             } else {
                 //--- ToDo: Check access level

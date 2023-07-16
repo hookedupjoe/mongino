@@ -240,51 +240,48 @@ function initAuth2(theExpress){
     tmpApp.all(/\/$/, async function (req, res, next) {
         try {
 
-
+//console.log('dir auth for',req.originalUrl);
             var tmpUser = {};
+            var tmpUserID = '';
             if (req.session && req.session.passport && req.session.passport.user) {
                 var tmpUserInfo = req.session.passport.user;
                 var tmpSource = tmpUserInfo.provider;
-                var tmpUserID = tmpUserInfo.id;
+                tmpUserID = tmpUserInfo.id;
                 tmpUser.userid = tmpUserInfo.id;
                 if (tmpSource) {
                     tmpUser.userid = tmpSource + '-' + tmpUser.userid;
                 }
                 tmpUser.displayName = tmpUserInfo.displayName || '';
-                // console.log('tmpUser', tmpUser);
+            }
+            var tmpLoginURL = '/pagelogin?type=page';
+            tmpLoginURL += '&page=' + req.originalUrl;
+            var tmpIsAllowed = false;
 
-                // console.log('req.originalUrl', req.originalUrl);
-                if (req.originalUrl == '/') {
-                    var tmpIsSysAllowed = await $.AuthMgr.isAllowed(tmpUserID, { system: 'design' }, 0);
-                    if (!tmpIsSysAllowed) {
-                        //ToDo: Redirect to a "no access to this resource page"
-                        // console.log('no access to ' + req.originalUrl)
-                        var tmpLoginURL = '/pagelogin?type=page';
-                        tmpLoginURL += '&page=' + req.url;
-                        res.redirect(tmpLoginURL);
-                    }
-                } else if (req.originalUrl != '') {
-                    var tmpDBName = req.originalUrl.replace(/\//g, '');
-                    tmpDBName = $.MongoManager.options.prefix.db + tmpDBName;
-                    var tmpIsSysAllowed = await $.AuthMgr.isAllowed(tmpUserID, { db: tmpDBName }, 0);
-                    if (!tmpIsSysAllowed) {
-                        //ToDo: Redirect to a "no access to this resource page"
-                        // console.log('no access to ' + req.originalUrl)
-                        var tmpLoginURL = '/pagelogin?type=page';
-                        tmpLoginURL += '&page=' + req.url;
-                        res.redirect(tmpLoginURL);
-                    }
+            // console.log('req.originalUrl', req.originalUrl);
+            if (req.originalUrl == '/' || !(req.originalUrl) ) {
+                if( !(tmpUserID) ){
+                    tmpIsAllowed = false;
+                } else {
+                    tmpIsAllowed = await $.AuthMgr.isAllowed(tmpUserID, { system: 'design' }, 0);
                 }
-
-
-
             } else {
-                var tmpLoginURL = '/pagelogin?type=page';
-                tmpLoginURL += '&page=' + req.url;
+                var tmpDBName = req.originalUrl.replace(/\//g, '');
+                tmpDBName = $.MongoManager.options.prefix.db + tmpDBName;
+                console.log('tmpDBName',tmpDBName);
+                tmpIsAllowed = await $.AuthMgr.isAllowed(tmpUserID, { db: tmpDBName }, 0);
+                if (!tmpIsAllowed) {
+                    tmpIsAllowed = await $.AuthMgr.isAllowed(tmpUserID, { system: 'design' }, 0);
+                }
+            }
+
+            if (!tmpIsAllowed) {
                 res.redirect(tmpLoginURL);
             }
+
         } catch (error) {
             console.log("Error in oath check", error);
+            //--- ToDo: Catch and show error message details to user and/or console?
+            res.redirect(tmpLoginURL);
         }
 
         next();
