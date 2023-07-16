@@ -29,9 +29,20 @@ const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_SECRET;
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_SECRET;
 
+const GOOGLE_CLIENT_ID_DEPLOYED = process.env.GOOGLE_CLIENT_ID_DEPLOYED;
+const GOOGLE_CLIENT_SECRET_DEPLOYED = process.env.GOOGLE_SECRET_DEPLOYED;
+
+const GITHUB_CLIENT_ID_DEPLOYED = process.env.GITHUB_CLIENT_ID_DEPLOYED;
+const GITHUB_CLIENT_SECRET_DEPLOYED = process.env.GITHUB_SECRET_DEPLOYED;
+
 var tmpBaseCallback = 'http://localhost:33480/';
 if( process.env.PASSPORT_BASE_CALLBACK ){
   tmpBaseCallback = process.env.PASSPORT_BASE_CALLBACK;
+}
+
+var tmpDeployedBaseCallback = 'http://localhost:33481/';
+if( process.env.PASSPORT_BASE_CALLBACK_DEPLOYED ){
+  tmpDeployedBaseCallback = process.env.PASSPORT_BASE_CALLBACK_DEPLOYED;
 }
 
 const session = require('express-session');
@@ -205,11 +216,15 @@ async function authUser(theUsername, thePassword, done) {
     }
 }
 
-function initOAuth(theExpress){
+function initOAuth(theExpress, theIsDeployed){
     var tmpApp = theExpress;
+    var tmpPostFix = '';
+    if( theIsDeployed ){
+        tmpPostFix = 'app';
+    }
                  
     tmpApp.get('/auth/google/callback',
-        passport.authenticate('google', { failureRedirect: '/error' }),
+        passport.authenticate('google'+tmpPostFix, { failureRedirect: '/error' }),
         function (req, res) {
             // Successful authentication, redirect success.
             res.redirect('/authcomplete');
@@ -217,7 +232,7 @@ function initOAuth(theExpress){
     );
 
     tmpApp.get('/auth/github/callback',
-        passport.authenticate('github', { failureRedirect: '/error' }),
+        passport.authenticate('github'+tmpPostFix, { failureRedirect: '/error' }),
         function (req, res) {
         // Successful authentication, redirect success.
         res.redirect('/authcomplete');
@@ -264,9 +279,12 @@ function initAuth(theExpress){
 
 }
 
-function initAuth2(theExpress){
+function initAuth2(theExpress, theIsDeployed){
     var tmpApp = theExpress;
-   
+    var tmpPostFix = '';
+    if( theIsDeployed ){
+        tmpPostFix = 'app';
+    }
 
     
     //-- When any directory is loaded (home page or tmpApp)
@@ -353,10 +371,10 @@ function initAuth2(theExpress){
 
 
     tmpApp.get('/auth/google',
-    passport.authenticate('google', { scope: ['profile', 'email'] }));
+    passport.authenticate('google'+tmpPostFix, { scope: ['profile', 'email'] }));
 
     tmpApp.get('/auth/github',
-    passport.authenticate('github', { scope: ['profile', 'email'] }));
+    passport.authenticate('github'+tmpPostFix, { scope: ['profile', 'email'] }));
 
     tmpApp.post("/login", passport.authenticate('local', {
         successRedirect: "/authcomplete",
@@ -561,7 +579,7 @@ function setup() {
                 next();
             });
 
-            passport.use(new GoogleStrategy({
+            passport.use('google', new GoogleStrategy({
                 clientID: GOOGLE_CLIENT_ID,
                 clientSecret: GOOGLE_CLIENT_SECRET,
                 callbackURL: tmpBaseCallback + "auth/google/callback"
@@ -571,7 +589,7 @@ function setup() {
                 }
             ));
                 
-            passport.use(new GitHubStrategy({
+            passport.use('github', new GitHubStrategy({
                 clientID: GITHUB_CLIENT_ID,
                 clientSecret: GITHUB_CLIENT_SECRET,
                 callbackURL: tmpBaseCallback + "auth/github/callback"
@@ -581,8 +599,29 @@ function setup() {
                 }
             ));
 
+            passport.use('googleapp', new GoogleStrategy({
+                clientID: GOOGLE_CLIENT_ID_DEPLOYED,
+                clientSecret: GOOGLE_CLIENT_SECRET_DEPLOYED,
+                callbackURL: tmpDeployedBaseCallback + "auth/google/callback"
+                },
+                function (accessToken, refreshToken, profile, done) {
+                return done(null, profile);
+                }
+            ));
+                
+            passport.use('githubapp', new GitHubStrategy({
+                clientID: GITHUB_CLIENT_ID_DEPLOYED,
+                clientSecret: GITHUB_CLIENT_SECRET_DEPLOYED,
+                callbackURL: tmpDeployedBaseCallback + "auth/github/callback"
+                },
+                function (accessToken, refreshToken, profile, done) {
+                return done(null, profile);
+                }
+            ));
+
+
             initOAuth(app);
-            initOAuth(deployed);
+            initOAuth(deployed,true);
             //--- Standard Server Startup
             var port = 33480;
 
@@ -657,7 +696,7 @@ function setup() {
             require('./preview-server/start').setup(deployed, deployedScope);
       
             
-            initAuth2(deployed);
+            initAuth2(deployed, true);
 
             
             // error handlers
