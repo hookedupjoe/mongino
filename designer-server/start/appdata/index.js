@@ -11,16 +11,7 @@ module.exports.setup = function setup(scope) {
     return  async function processReq(req, res, next) {
 
        
-        if( req.authUser ){
-            //--- validate access?
-        } else {
-            
-            if( $.isUsingPassport ){
-                return res.sendStatus(401)
-            }
-            console.log('Anonymous Access')
-        }
-
+        
         
 
 
@@ -43,7 +34,6 @@ module.exports.setup = function setup(scope) {
             tmpAppInfo = $.appIndex[req.body.appid];
             
             if( tmpAppInfo ){
-                console.log('tmpAppInfo',tmpAppInfo);
                 tmpAccountID = tmpAppInfo['data-account-id'] || '_home';
                 tmpDBName = tmpAppInfo['data-db-name'] || tmpAppInfo.name;
                 tmpDBName = $.MongoManager.options.prefix.db + tmpDBName;
@@ -64,20 +54,26 @@ module.exports.setup = function setup(scope) {
             //return res.sendStatus(401);
         }
 
-        var tmpIsAllowed = true;
-        var tmpAccessType = 0; //--- ToDo: Determine access type based on action
+        var tmpIsAllowed = false;
+        var tmpAccessType = 0; //--- ToDo: Determine access type based on action or method
         //--- May have passed anonymous?
+        var tmpDBName = req.body.dbname;
+
+        
+        
         if( req.authUser ){
-            var tmpDBName = req.body.dbname;
             if( !(tmpDBName) ){
                 tmpIsAllowed = await $.AuthMgr.isAllowed(req.authUser.id,{system:'design'}, 0)
             } else {
-                tmpIsAllowed = await $.AuthMgr.isAllowed(req.authUser.id,{db:req.body.dbname}, tmpAccessType)
+                tmpIsAllowed = await $.AuthMgr.isAllowed(req.authUser.id,{db:tmpDBName}, tmpAccessType)
+            }
+        } else {
+            if( tmpDBName ){
+                tmpIsAllowed = await $.AuthMgr.isAllowed('',{db:tmpDBName}, tmpAccessType)
             }
         }
-        
+       
         if( !(tmpIsAllowed) ){
-            
             return res.sendStatus(401);
         }
         

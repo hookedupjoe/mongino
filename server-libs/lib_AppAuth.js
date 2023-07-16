@@ -311,6 +311,10 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
             var tmpAccount = await $.MongoManager.getAccount('_home');
             var tmpDB = await tmpAccount.getDatabase(tmpDBName);
             var tmpMongoDB = tmpDB.getMongoDB();
+
+            //--- See if no username , check anonymous access, kick out
+
+            //--- ToDo: Combine filter into one for -mo-has-login
             var tmpFilter = {"__doctype": tmpDocType,"entryname": theUserId, "type": "person"};
             //console.log(tmpFilter);
             var tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
