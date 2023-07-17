@@ -45,33 +45,6 @@ if( process.env.PASSPORT_BASE_CALLBACK_DEPLOYED ){
   tmpDeployedBaseCallback = process.env.PASSPORT_BASE_CALLBACK_DEPLOYED;
 }
 
-const session = require('express-session');
-
-scope.locals = {
-    name: 'mongino-designer',
-    title: 'Mongino',
-    path: {
-        root: path.resolve(__dirname)
-    }
-};
-scope.locals.path.start = scope.locals.path.root + "/designer-server";
-scope.locals.path.libraries = scope.locals.path.root + "/server-libs";
-
-var $ = require(scope.locals.path.libraries + '/globalUtilities.js').$;
-$.setup(scope);
-
-$.scope = scope;
-var bld = $.bld;
-
-deployedScope.locals = {
-    name: 'mongino-deployed-server',
-    title: 'Mongino Deployed Server',
-    path: {
-        root: path.resolve(__dirname)
-    }
-}
-deployedScope.locals.path.start = scope.locals.path.root + "/preview-server";
-deployedScope.locals.path.libraries = scope.locals.path.root + "/server-libs";
 
 var isUsingData = false;
 var startupDataString = '';
@@ -100,7 +73,54 @@ if (MONGINO_DB_HOME_ACCOUNT_ADDRESS) {
 }
 
 
-var sessionStore;
+
+const session = require('express-session');
+
+scope.locals = {
+    name: 'mongino-designer',
+    title: 'Mongino',
+    path: {
+        root: path.resolve(__dirname)
+    }
+};
+scope.locals.path.start = scope.locals.path.root + "/designer-server";
+scope.locals.path.libraries = scope.locals.path.root + "/server-libs";
+
+var $ = require(scope.locals.path.libraries + '/globalUtilities.js').$;
+//--- Passport Auth ------------------
+var isUsingPassport = (process.env.AUTH_TYPE == 'passport');
+$.isUsingPassport = isUsingPassport;
+
+
+$.designerConfig = {};
+
+$.designerConfig.isUsingPassport = isUsingPassport;
+$.designerConfig.isUsingData = isUsingData;
+
+
+$.designerConfig.passport = {};
+
+    if( GOOGLE_CLIENT_ID ){
+        $.designerConfig.passport.google = true;
+    }
+    if( GITHUB_CLIENT_ID ){
+        $.designerConfig.passport.github = true;
+    }
+
+$.setup(scope);
+
+$.scope = scope;
+var bld = $.bld;
+
+deployedScope.locals = {
+    name: 'mongino-deployed-server',
+    title: 'Mongino Deployed Server',
+    path: {
+        root: path.resolve(__dirname)
+    }
+}
+deployedScope.locals.path.start = scope.locals.path.root + "/preview-server";
+deployedScope.locals.path.libraries = scope.locals.path.root + "/server-libs";
 
 const bcrypt = require("bcrypt")
 var express = require('express'),
@@ -125,9 +145,6 @@ function mAllowHeaders(req, res, next) {
 }
 app.all('*', mAllowHeaders);
 
-//--- Passport Auth ------------------
-var isUsingPassport = (process.env.AUTH_TYPE == 'passport');
-$.isUsingPassport = isUsingPassport;
 
 const MongoStore = require('connect-mongo');
 var passport = require('passport');
@@ -348,7 +365,7 @@ function initAuth2(theExpress, theIsDeployed){
     tmpApp.get('/pagelogin', function (req, res, next) {
 
         // Render page using renderFile method
-        ejs.renderFile('views/pagelogin.ejs', {},
+        ejs.renderFile('views/pagelogin.ejs', {designerConfig:$.designerConfig},
             {}, function (err, template) {
                 if (err) {
                     throw err;
@@ -369,12 +386,15 @@ function initAuth2(theExpress, theIsDeployed){
             });
     });
 
+    if( $.designerConfig.passport.google ){
+        tmpApp.get('/auth/google',
+        passport.authenticate('google'+tmpPostFix, { scope: ['profile', 'email'] }));
+    }
 
-    tmpApp.get('/auth/google',
-    passport.authenticate('google'+tmpPostFix, { scope: ['profile', 'email'] }));
-
-    tmpApp.get('/auth/github',
-    passport.authenticate('github'+tmpPostFix, { scope: ['profile', 'email'] }));
+    if( $.designerConfig.passport.github ){
+        tmpApp.get('/auth/github',
+        passport.authenticate('github'+tmpPostFix, { scope: ['profile', 'email'] }));
+    }
 
     tmpApp.post("/login", passport.authenticate('local', {
         successRedirect: "/authcomplete",
@@ -436,22 +456,6 @@ initAuth(app);
 initAuth2(app);
 initAuth(deployed);
 
-$.designerConfig = {};
-
-$.designerConfig.isUsingPassport = isUsingPassport;
-$.designerConfig.isUsingData = isUsingData;
-
-if (isUsingPassport) {
-    $.designerConfig.passport = {};
-
-    if( GOOGLE_CLIENT_ID ){
-        $.designerConfig.passport.google = true;
-    }
-    if( GITHUB_CLIENT_ID ){
-        $.designerConfig.passport.github = true;
-    }
-    
-}
 
 app.get('/designer/details.js', async function (req, res, next) {
     var tmpRet = {
@@ -579,47 +583,51 @@ function setup() {
                 next();
             });
 
-            passport.use('google', new GoogleStrategy({
-                clientID: GOOGLE_CLIENT_ID,
-                clientSecret: GOOGLE_CLIENT_SECRET,
-                callbackURL: tmpBaseCallback + "auth/google/callback"
-                },
-                function (accessToken, refreshToken, profile, done) {
-                return done(null, profile);
-                }
-            ));
-                
-            passport.use('github', new GitHubStrategy({
-                clientID: GITHUB_CLIENT_ID,
-                clientSecret: GITHUB_CLIENT_SECRET,
-                callbackURL: tmpBaseCallback + "auth/github/callback"
-                },
-                function (accessToken, refreshToken, profile, done) {
-                return done(null, profile);
-                }
-            ));
+            if( $.designerConfig.passport.google ){
+                passport.use('google', new GoogleStrategy({
+                    clientID: GOOGLE_CLIENT_ID,
+                    clientSecret: GOOGLE_CLIENT_SECRET,
+                    callbackURL: tmpBaseCallback + "auth/google/callback"
+                    },
+                    function (accessToken, refreshToken, profile, done) {
+                    return done(null, profile);
+                    }
+                ));
+    
+                passport.use('googleapp', new GoogleStrategy({
+                    clientID: GOOGLE_CLIENT_ID_DEPLOYED,
+                    clientSecret: GOOGLE_CLIENT_SECRET_DEPLOYED || GOOGLE_CLIENT_SECRET,
+                    callbackURL: tmpDeployedBaseCallback + "auth/google/callback"
+                    },
+                    function (accessToken, refreshToken, profile, done) {
+                    return done(null, profile);
+                    }
+                ));
+            }
+            
+            if( $.designerConfig.passport.github ){
+                passport.use('github', new GitHubStrategy({
+                    clientID: GITHUB_CLIENT_ID,
+                    clientSecret: GITHUB_CLIENT_SECRET,
+                    callbackURL: tmpBaseCallback + "auth/github/callback"
+                    },
+                    function (accessToken, refreshToken, profile, done) {
+                    return done(null, profile);
+                    }
+                ));
 
-            passport.use('googleapp', new GoogleStrategy({
-                clientID: GOOGLE_CLIENT_ID_DEPLOYED,
-                clientSecret: GOOGLE_CLIENT_SECRET_DEPLOYED,
-                callbackURL: tmpDeployedBaseCallback + "auth/google/callback"
-                },
-                function (accessToken, refreshToken, profile, done) {
-                return done(null, profile);
-                }
-            ));
-                
-            passport.use('githubapp', new GitHubStrategy({
-                clientID: GITHUB_CLIENT_ID_DEPLOYED,
-                clientSecret: GITHUB_CLIENT_SECRET_DEPLOYED,
-                callbackURL: tmpDeployedBaseCallback + "auth/github/callback"
-                },
-                function (accessToken, refreshToken, profile, done) {
-                return done(null, profile);
-                }
-            ));
+                passport.use('githubapp', new GitHubStrategy({
+                    clientID: GITHUB_CLIENT_ID_DEPLOYED,
+                    clientSecret: GITHUB_CLIENT_SECRET_DEPLOYED || GITHUB_CLIENT_SECRET,
+                    callbackURL: tmpDeployedBaseCallback + "auth/github/callback"
+                    },
+                    function (accessToken, refreshToken, profile, done) {
+                    return done(null, profile);
+                    }
+                ));
 
-
+            }
+           
             initOAuth(app);
             initOAuth(deployed,true);
             //--- Standard Server Startup
