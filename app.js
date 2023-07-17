@@ -22,18 +22,25 @@ require('dotenv').config();
 const LocalStrategy = require('passport-local').Strategy
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const GitHubStrategy = require('passport-github2').Strategy;
+const TwitchStrategy = require("passport-twitch").Strategy;
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_SECRET;
 
-const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
-const GITHUB_CLIENT_SECRET = process.env.GITHUB_SECRET;
-
 const GOOGLE_CLIENT_ID_DEPLOYED = process.env.GOOGLE_CLIENT_ID_DEPLOYED;
 const GOOGLE_CLIENT_SECRET_DEPLOYED = process.env.GOOGLE_SECRET_DEPLOYED;
 
+const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+const GITHUB_CLIENT_SECRET = process.env.GITHUB_SECRET;
+
 const GITHUB_CLIENT_ID_DEPLOYED = process.env.GITHUB_CLIENT_ID_DEPLOYED;
 const GITHUB_CLIENT_SECRET_DEPLOYED = process.env.GITHUB_SECRET_DEPLOYED;
+
+const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
+const TWITCH_CLIENT_SECRET = process.env.TWITCH_SECRET;
+
+const TWITCH_CLIENT_ID_DEPLOYED = process.env.TWITCH_CLIENT_ID_DEPLOYED;
+const TWITCH_CLIENT_SECRET_DEPLOYED = process.env.TWITCH_SECRET_DEPLOYED;
 
 var tmpBaseCallback = 'http://localhost:33480/';
 if( process.env.PASSPORT_BASE_CALLBACK ){
@@ -105,6 +112,9 @@ $.designerConfig.passport = {};
     }
     if( GITHUB_CLIENT_ID ){
         $.designerConfig.passport.github = true;
+    }
+    if( TWITCH_CLIENT_ID ){
+        $.designerConfig.passport.twitch = true;
     }
 
 $.setup(scope);
@@ -250,6 +260,14 @@ function initOAuth(theExpress, theIsDeployed){
 
     tmpApp.get('/auth/github/callback',
         passport.authenticate('github'+tmpPostFix, { failureRedirect: '/error' }),
+        function (req, res) {
+        // Successful authentication, redirect success.
+        res.redirect('/authcomplete');
+        }
+    );
+
+    tmpApp.get('/auth/twitch/callback',
+        passport.authenticate('twitch'+tmpPostFix, { failureRedirect: '/error' }),
         function (req, res) {
         // Successful authentication, redirect success.
         res.redirect('/authcomplete');
@@ -408,6 +426,11 @@ function initAuth2(theExpress, theIsDeployed){
     if( $.designerConfig.passport.google ){
         tmpApp.get('/auth/google',
         passport.authenticate('google'+tmpPostFix, { scope: ['profile', 'email'] }));
+    }
+
+    if( $.designerConfig.passport.twitch ){
+        tmpApp.get('/auth/twitch',
+        passport.authenticate('twitch'+tmpPostFix, { scope: ['user_read'] }));
     }
 
     if( $.designerConfig.passport.github ){
@@ -645,6 +668,31 @@ function setup() {
                     }
                 ));
 
+            }
+
+            if( $.designerConfig.passport.twitch ){
+
+                passport.use('twitch', new TwitchStrategy({
+                    clientID: TWITCH_CLIENT_ID,
+                    clientSecret: TWITCH_CLIENT_SECRET,
+                    callbackURL: tmpBaseCallback + "auth/twitch/callback",
+                    scope: "user_read"
+                },
+                function(accessToken, refreshToken, profile, done) {
+                    return done(null, profile);
+                }
+                ));
+
+                passport.use('twitchapp', new TwitchStrategy({
+                    clientID: TWITCH_CLIENT_ID_DEPLOYED,
+                    clientSecret: TWITCH_CLIENT_SECRET_DEPLOYED,
+                    callbackURL: tmpDeployedBaseCallback + "auth/twitch/callback",
+                    scope: "user_read"
+                },
+                function(accessToken, refreshToken, profile, done) {
+                    return done(null, profile);
+                }
+                ));
             }
            
             initOAuth(app);

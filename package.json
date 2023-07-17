@@ -31,6 +31,7 @@
     "passport-google-oauth": "^2.0.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
+    "passport-twitch": "^1.0.3",
     "q": "^1.4.1",
     "request": "^2.83.0",
     "router": "^1.1.4"

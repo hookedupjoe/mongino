@@ -53,12 +53,17 @@
 &nbsp;
 <% } %>
 
+<% if(designerConfig.passport && designerConfig.passport.twitch){ %>
+  <a href="/auth/twitch" class="ui button blue"><i class="icon twitch"></i> Log-In via Twitch</a>
+&nbsp;
+<% } %>
+
 <% if(designerConfig.passport && designerConfig.passport.github){ %>
   <a href="/auth/github" class="ui button blue"><i class="icon github"></i> Log-In via GitHub</a>
 
 <% } %>
 
-<% if(designerConfig.passport && (designerConfig.passport.github || designerConfig.passport.google)){ %>
+<% if(designerConfig.passport && (designerConfig.passport.github || designerConfig.passport.google || designerConfig.passport.twitch)){ %>
   <br /><br /> 
 
 <% } %>
