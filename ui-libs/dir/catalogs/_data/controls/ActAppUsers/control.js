@@ -187,7 +187,7 @@
         tableConfig: {
            movableColumns: true,
           initialSort: [ {
-            column: "textfield",
+            column: "username",
             dir: "asc"
           }]
         },
