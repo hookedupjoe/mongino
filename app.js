@@ -22,7 +22,9 @@ require('dotenv').config();
 const LocalStrategy = require('passport-local').Strategy
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const GitHubStrategy = require('passport-github2').Strategy;
-const TwitchStrategy = require("passport-twitch").Strategy;
+const OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
+var request        = require('request');
+
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_SECRET;
@@ -52,6 +54,28 @@ if( process.env.PASSPORT_BASE_CALLBACK_DEPLOYED ){
   tmpDeployedBaseCallback = process.env.PASSPORT_BASE_CALLBACK_DEPLOYED;
 }
 
+
+// Override passport profile function to get user profile from Twitch API
+OAuth2Strategy.prototype.userProfile = function(accessToken, done) {
+    var options = {
+      url: 'https://api.twitch.tv/helix/users',
+      method: 'GET',
+      headers: {
+        'Client-ID': TWITCH_CLIENT_ID,
+        'Accept': 'application/vnd.twitchtv.v5+json',
+        'Authorization': 'Bearer ' + accessToken
+      }
+    };
+  
+    request(options, function (error, response, body) {
+      if (response && response.statusCode == 200) {
+        done(null, JSON.parse(body));
+      } else {
+        done(JSON.parse(body));
+      }
+    });
+  }
+  
 
 var isUsingData = false;
 var startupDataString = '';
@@ -161,18 +185,36 @@ var passport = require('passport');
 $.passport = passport;
 
 
+
 function processAuth(req, res, next) {
     //console.log('processAuth',req.session)
+
+    //--- ToDo: Cache user info?
+    // if( req.session && req.session.authUser ){
+    //     req.authUser = req.session.authUser;
+    //     console.log('found existing',req.authUser);
+    //     next();
+    // }
     if (req.session && req.session.passport && req.session.passport.user) {
         var tmpUser = req.session.passport.user;
-        var tmpUserKey = tmpUser.id;
-        if (tmpUser.provider) {
-            tmpUserKey = tmpUser.provider + "-" + tmpUserKey;
+        var tmpUserData = tmpUser.data || {};
+        if( tmpUserData.length == 1 ){
+            tmpUserData = tmpUserData[0];
         }
+        var tmpUserKey = tmpUser.id || tmpUserData.id;
+        if (tmpUser.provider || tmpUserData.provider) {
+            var tmpProvider = tmpUser.provider || tmpUserData.provider;
+            tmpUserKey = tmpProvider + "-" + tmpUserKey;
+        }
+        var tmpDispName = tmpUser.displayName || tmpUserData.displayName || tmpUser.display_name || tmpUserData.display_name
         req.authUser = {
             id: tmpUserKey,
-            displayName: tmpUser.displayName
+            provider: tmpUser.provider || 'unknown',
+            displayName: tmpDispName
         }
+        //--- ToDo: Cache user info?
+        //req.session.authUser = req.authUser;
+        //console.log('set initial req.authUser',req.authUser);
         next()
     } else {
         const authHeader = req.headers['authorization']
@@ -380,7 +422,7 @@ function initAuth2(theExpress, theIsDeployed){
 
      
     tmpApp.get('/appinit.js', function (req, res, next) {
-        console.log(req.session);
+        //console.log(req.session);
 
         var tmpHTML = [];
         var tmpProvider = 'local';
@@ -671,23 +713,30 @@ function setup() {
             }
 
             if( $.designerConfig.passport.twitch ){
-
-                passport.use('twitch', new TwitchStrategy({
+                console.log('tmpBaseCallback + "auth/twitch/callback"',tmpBaseCallback + "auth/twitch/callback")
+                passport.use('twitch', new OAuth2Strategy({
+                    authorizationURL: 'https://id.twitch.tv/oauth2/authorize',
+                    tokenURL: 'https://id.twitch.tv/oauth2/token',
                     clientID: TWITCH_CLIENT_ID,
                     clientSecret: TWITCH_CLIENT_SECRET,
                     callbackURL: tmpBaseCallback + "auth/twitch/callback",
-                    scope: "user_read"
+                    state: true
                 },
                 function(accessToken, refreshToken, profile, done) {
+                    //console.log('profile',profile);
+                    profile.provider = "twitch";
+                    profile.displayName = profile.data.display_name;
                     return done(null, profile);
                 }
                 ));
 
-                passport.use('twitchapp', new TwitchStrategy({
+                passport.use('twitchapp', new OAuth2Strategy({
+                    authorizationURL: 'https://id.twitch.tv/oauth2/authorize',
+                    tokenURL: 'https://id.twitch.tv/oauth2/token',
                     clientID: TWITCH_CLIENT_ID_DEPLOYED,
                     clientSecret: TWITCH_CLIENT_SECRET_DEPLOYED,
                     callbackURL: tmpDeployedBaseCallback + "auth/twitch/callback",
-                    scope: "user_read"
+                    state: true
                 },
                 function(accessToken, refreshToken, profile, done) {
                     return done(null, profile);
