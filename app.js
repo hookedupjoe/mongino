@@ -360,6 +360,25 @@ function initAuth2(theExpress, theIsDeployed){
         });
     });
 
+     
+    tmpApp.get('/appinit.js', function (req, res, next) {
+        console.log(req.session);
+
+        var tmpHTML = [];
+        var tmpProvider = 'local';
+        if( req.session && req.session.passport && req.session.passport.user && req.session.passport.user.provider){
+            tmpProvider = req.session.passport.user.provider;
+        }
+        tmpHTML.push('(function (ActionAppCore, $) {');
+        tmpHTML.push('    ActionAppCore.mongino = ActionAppCore.mongino || {};');
+        tmpHTML.push('    ActionAppCore.mongino.user = ActionAppCore.mongino.user || {};');
+        tmpHTML.push('    ActionAppCore.mongino.user.displayName="' + req.authUser.displayName + '";');
+        tmpHTML.push('    ActionAppCore.mongino.user.provider="' + tmpProvider + '";');
+        tmpHTML.push('})(ActionAppCore, $);');
+        res.send(tmpHTML.join(''));
+
+    });
+
 
         
     tmpApp.get('/pagelogin', function (req, res, next) {
