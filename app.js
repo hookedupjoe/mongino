@@ -370,16 +370,19 @@ function initAuth2(theExpress, theIsDeployed){
 
             var tmpUser = {};
             var tmpUserID = '';
-            if (req.session && req.session.passport && req.session.passport.user) {
-                var tmpUserInfo = req.session.passport.user;
-                var tmpSource = tmpUserInfo.provider;
-                tmpUserID = tmpUserInfo.id;
-                tmpUser.userid = tmpUserInfo.id;
-                if (tmpSource) {
-                    tmpUser.userid = tmpSource + '-' + tmpUser.userid;
-                }
-                tmpUser.displayName = tmpUserInfo.displayName || '';
+            if( req.authUser && req.authUser.id ){
+                tmpUserID = req.authUser.id;
             }
+            // if (req.session && req.session.passport && req.session.passport.user) {
+            //     var tmpUserInfo = req.session.passport.user;
+            //     var tmpSource = tmpUserInfo.provider;
+            //     tmpUserID = tmpUserInfo.id;
+            //     tmpUser.userid = tmpUserInfo.id;
+            //     if (tmpSource) {
+            //         tmpUser.userid = tmpSource + '-' + tmpUser.userid;
+            //     }
+            //     tmpUser.displayName = tmpUserInfo.displayName || '';
+            // }
             var tmpLoginURL = '/pagelogin?type=page';
             //tmpLoginURL += '&page=' + req.originalUrl;
             var tmpIsAllowed = false;
@@ -393,8 +396,9 @@ function initAuth2(theExpress, theIsDeployed){
                 }
             } else {
                 var tmpDBName = req.originalUrl.replace(/\//g, '');
-                tmpDBName = $.MongoManager.options.prefix.db + tmpDBName;
                 tmpLoginURL += '&page=/' + tmpDBName + '/';;
+
+                tmpDBName = $.MongoManager.options.prefix.db + tmpDBName;
                 tmpIsAllowed = await $.AuthMgr.isAllowed(tmpUserID, { db: tmpDBName }, 0);
             }
 
@@ -433,6 +437,7 @@ function initAuth2(theExpress, theIsDeployed){
         tmpHTML.push('    ActionAppCore.mongino = ActionAppCore.mongino || {};');
         tmpHTML.push('    ActionAppCore.mongino.user = ActionAppCore.mongino.user || {};');
         tmpHTML.push('    ActionAppCore.mongino.user.displayName="' + req.authUser.displayName + '";');
+        tmpHTML.push('    ActionAppCore.mongino.user.id="' + req.authUser.id + '";');
         tmpHTML.push('    ActionAppCore.mongino.user.provider="' + tmpProvider + '";');
         tmpHTML.push('})(ActionAppCore, $);');
         res.send(tmpHTML.join(''));
@@ -713,7 +718,6 @@ function setup() {
             }
 
             if( $.designerConfig.passport.twitch ){
-                console.log('tmpBaseCallback + "auth/twitch/callback"',tmpBaseCallback + "auth/twitch/callback")
                 passport.use('twitch', new OAuth2Strategy({
                     authorizationURL: 'https://id.twitch.tv/oauth2/authorize',
                     tokenURL: 'https://id.twitch.tv/oauth2/token',
