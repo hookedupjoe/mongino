@@ -16,34 +16,10 @@
         "ctl": "layout",
         "name": "lo",
         "north": [{
-          ctl: 'div',
-          name: 'toolbar',
-          hidden: true,
-          content: [{
-            "ctl": "ui",
-            "name": "search-toolbar",
-            "classes": "labeled icon compact pad5",
-            hidden: false,
-            "content": [ {
-              "ctl": "button",
-              "toLeft": true,
-              "color": "blue",
-              "icon": "plus",
-              compact: true,
-              "name": "btn-page-tb-new",
-              "label": "Add Account",
-              "onClick": {
-                "run": "action",
-                "action": "newDoc"
-  
-              }
-            }]
-          },
-            {
-              ctl: 'divider',
-              fitted: true,
-              clearing: true
-            }]
+          ctl: "control",
+          name: "header",
+          catalog: "_designer",
+          controlname: "MainHeader"
         }],
         "center": [{
           ctl: "control",
@@ -117,7 +93,7 @@
     ControlCode._onInit = _onInit;
     function _onInit() {
       var tmpThis = this;
-      
+      this.parts.header.setHeader('System Administration')
       //--- temp
       this.dashData = {
         isLoading:true,
@@ -253,7 +229,7 @@
             ControlCode._onInit = _onInit;
             function _onInit() {
               var tmpThis = this;
-              
+              this.parts.header.setHeader('System Administration')
               //--- temp
               this.dashData = {
                 isLoading:true,

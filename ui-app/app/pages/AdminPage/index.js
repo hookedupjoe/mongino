@@ -18,11 +18,7 @@ var thisPageSpecs = {
     //~layoutOptions//~
 thisPageSpecs.layoutOptions = {
         baseURL: pageBaseURL,
-         north: {
-          source: '_designer',
-          control: "MainHeader",
-          name :'header'
-        },
+         north: false,
         east: false,
         west: false,
         center: {
@@ -30,11 +26,7 @@ thisPageSpecs.layoutOptions = {
           control: "UserAdminDashboard",
           name :'body'
         },
-        south: {
-          source: '_designer',
-          control: "MainStatusBar",
-          name :'statusbar'
-        }
+        south: false
     }
 //~layoutOptions~//~
 
@@ -74,7 +66,7 @@ thisPageSpecs.required = {
         ThisPage.initOnFirstLoad().then(
             function () {
                 //~_onFirstLoad//~
-
+                
 //~_onFirstLoad~//~
                 ThisPage._onActivate();
             }
