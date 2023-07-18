@@ -80,6 +80,11 @@ meAuthManager.extUserLogin = async function(theUser, theOptions){
     return new Promise( async function (resolve, reject) {
         try {
             var tmpUser = theUser;
+            var tmpToAdd = {
+                username: tmpUser.id,
+                provider: tmpUser.provider,
+                displayName: tmpUser.displayName
+            }
             
             var tmpAccount = await $.MongoManager.getAccount('_home');
             var tmpDB = await tmpAccount.getDatabase($.MongoManager.options.names.directory);
@@ -88,12 +93,12 @@ meAuthManager.extUserLogin = async function(theUser, theOptions){
             var tmpMongoDB = tmpDB.getMongoDB();
             
             var tmpFilter, tmpDocs;
-            tmpFilter = {"__doctype": tmpDocType,"id": tmpUser.id}; 
+            tmpFilter = {"__doctype": tmpDocType,"username": tmpUser.id}; 
             tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
             if( (tmpDocs) && tmpDocs.length == 1){
                 resolve(true);
             } else {
-                await self.saveExtUser({data:theUser});
+                await self.saveExtUser({data:tmpToAdd});
                 resolve(true);
             }   
       
@@ -296,7 +301,6 @@ meAuthManager.saveAclEntry = async function(theEntry){
 }
 
 
-
 meAuthManager.recycleUsers = async function(theOptions){
     return new Promise( async function (resolve, reject) {
         try {
@@ -305,6 +309,10 @@ meAuthManager.recycleUsers = async function(theOptions){
             tmpDB = await tmpAccount.getDatabase($.MongoManager.options.names.directory);
 
             var tmpDocType = 'user';
+            if( theOptions && theOptions.options && theOptions.options.type == 'external'){
+                tmpDocType = 'externaluser';
+            }
+
             var tmpCollName =$.MongoManager.options.prefix.datatype + tmpDocType;
 
             var tmpProcIds = [];
@@ -321,7 +329,6 @@ meAuthManager.recycleUsers = async function(theOptions){
             tmpRet = $.merge(false, tmpRet, tmpRunRet);
 
             resolve(tmpRet);
-
         }
         catch (error) {
             console.log('Err : ' + error);

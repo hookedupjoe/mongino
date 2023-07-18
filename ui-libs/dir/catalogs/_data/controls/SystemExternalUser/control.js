@@ -23,7 +23,7 @@
 					"label": "User ID",
 					"type":"password",
 					"ctl": "field",
-					"name": "id",
+					"name": "username",
 					"req": true
 				},
 				{

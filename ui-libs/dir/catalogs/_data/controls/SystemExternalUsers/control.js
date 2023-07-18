@@ -253,7 +253,7 @@
     var tmpSelected = tmpViewer.getSelectedKeys();
     var self = this;
     var tmpData = {
-      options: {acltype:'system'},
+      options: {type:'external'},
       ids: tmpSelected
     };
 
@@ -265,7 +265,7 @@
       formSubmit: false,
       data: tmpData,
       dataContext: this,
-      url: tmpBaseURL + 'appdata/auth/recycle-acl-entries.json'
+      url: tmpBaseURL + 'appdata/auth/recycle-users.json'
     };
 
     ThisApp.apiCall(tmpPostOptions).then(function() {
