@@ -204,7 +204,7 @@ function processAuth(req, res, next) {
         var tmpDispName = tmpUser.displayName || tmpUserData.displayName || tmpUser.display_name || tmpUserData.display_name
         req.authUser = {
             id: tmpUserKey,
-            provider: tmpUser.provider || 'unknown',
+            provider: tmpUser.provider || 'local',
             displayName: tmpDispName
         }
         //--- ToDo: Cache user info?
@@ -456,7 +456,9 @@ function initAuth2(theExpress, theIsDeployed){
 
     tmpApp.get('/authcomplete', async function (req, res, next) {
         if( req.authUser && req.authUser.id ){
-            await $.AuthMgr.extUserLogin(req.authUser)
+            if( req.authUser.provider && req.authUser.provider != 'local'){
+                await $.AuthMgr.extUserLogin(req.authUser);
+            }
         }
         ejs.renderFile('views/authcomplete.ejs', {},
             {}, function (err, template) {
