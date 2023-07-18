@@ -20,10 +20,10 @@
 			"ctl": "fieldrow",
 			"items": [
 				{
-					"label": "Username",
+					"label": "User ID",
 					"type":"password",
 					"ctl": "field",
-					"name": "username",
+					"name": "id",
 					"req": true
 				},
 				{
@@ -38,15 +38,10 @@
 		{
 			"label": "Display Name",
 			"ctl": "field",
-			"name": "displayname",
+			"name": "displayName",
 			"req": false
 		},
-		{
-					"label": "Email",
-					"ctl": "field",
-					"name": "email",
-					"req": false
-				},
+		
 			{
 				"name": "__doctype",
 				"ctl": "hidden",

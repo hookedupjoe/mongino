@@ -152,7 +152,7 @@
     // Define columns based on Tabulator column documentation
     var tmpTableCols = [{
       "title": "Display Name",
-      "field": "displayname",
+      "field": "displayName",
       "width":"300"
     },
       {
@@ -169,7 +169,7 @@
       tableConfig: {
          movableColumns: true,
         initialSort: [ {
-          column: "displayname",
+          column: "displayName",
           dir: "asc"
         }]
       },

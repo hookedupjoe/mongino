@@ -40,7 +40,7 @@ meAuthManager.saveUser = async function(theUser, theOptions){
             var tmpAddRet = false;
             var tmpID = tmpUser.data._id || false;
             if( tmpID == 'system_admin_user'){
-                reject('Invalid requeset');
+                reject('Invalid request');
             }
             //--- Remove ID (even if blank) for add / edit operations
             if( tmpUser.data.hasOwnProperty('_id')){
@@ -74,6 +74,39 @@ meAuthManager.saveUser = async function(theUser, theOptions){
 
 }
 
+
+meAuthManager.extUserLogin = async function(theUser, theOptions){
+    var self = this;
+    return new Promise( async function (resolve, reject) {
+        try {
+            var tmpUser = theUser;
+            
+            var tmpAccount = await $.MongoManager.getAccount('_home');
+            var tmpDB = await tmpAccount.getDatabase($.MongoManager.options.names.directory);
+            var tmpDocType = 'externaluser';
+            var tmpCollName = $.MongoManager.options.prefix.datatype + tmpDocType;
+            var tmpMongoDB = tmpDB.getMongoDB();
+            
+            var tmpFilter, tmpDocs;
+            tmpFilter = {"__doctype": tmpDocType,"id": tmpUser.id}; 
+            tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
+            if( (tmpDocs) && tmpDocs.length == 1){
+                resolve(true);
+            } else {
+                await self.saveExtUser({data:theUser});
+                resolve(true);
+            }   
+      
+
+        }
+        catch (error) {
+            console.log('Err : ' + error);
+            reject(error);
+        }
+
+    });
+
+}
 meAuthManager.getExtUsers = async function(){
     return new Promise( async function (resolve, reject) {
         try {
@@ -167,11 +200,16 @@ meAuthManager.saveExtUser = async function(theUser, theOptions){
             var tmpDB = await tmpAccount.getDatabase($.MongoManager.options.names.directory);
             var tmpDocType = 'externaluser';
             var tmpCollName = $.MongoManager.options.prefix.datatype + tmpDocType;
-
+            if( !(tmpUser.data) ){
+                reject('no data');
+            }
+            if( !(tmpUser.data.__doctype) ){
+                tmpUser.data.__doctype = 'externaluser';
+            }
             var tmpAddRet = false;
             var tmpID = tmpUser.data._id || false;
             if( tmpID == 'system_admin_user'){
-                reject('Invalid requeset');
+                reject('Invalid request');
             }
             //--- Remove ID (even if blank) for add / edit operations
             if( tmpUser.data.hasOwnProperty('_id')){

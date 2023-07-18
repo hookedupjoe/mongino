@@ -183,12 +183,7 @@ app.all('*', mAllowHeaders);
 const MongoStore = require('connect-mongo');
 var passport = require('passport');
 $.passport = passport;
-
-
-
 function processAuth(req, res, next) {
-    //console.log('processAuth',req.session)
-
     //--- ToDo: Cache user info?
     // if( req.session && req.session.authUser ){
     //     req.authUser = req.session.authUser;
@@ -459,7 +454,10 @@ function initAuth2(theExpress, theIsDeployed){
             });
     });
 
-    tmpApp.get('/authcomplete', function (req, res, next) {
+    tmpApp.get('/authcomplete', async function (req, res, next) {
+        if( req.authUser && req.authUser.id ){
+            await $.AuthMgr.extUserLogin(req.authUser)
+        }
         ejs.renderFile('views/authcomplete.ejs', {},
             {}, function (err, template) {
                 if (err) {
