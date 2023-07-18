@@ -289,16 +289,12 @@
         ids: tmpSelected
       };
   
-      // tmpData.accountid = this.currentAccount; //ToDo: dyno
-      // tmpData.dbname = 'mongino-demoapp1';
-      //tmpData.doctype = 'fieldstest';
-  
       var tmpBaseURL = ActionAppCore.ActAppData.rootPath;
       var tmpPostOptions = {
         formSubmit: false,
         dataContext: this,
         data: tmpData,
-        url: tmpBaseURL + 'appdata/api/recycle-docs.json?open'
+        url: tmpBaseURL + 'appdata/auth/recycle-users.json?open'
       };
   
       ThisApp.apiCall(tmpPostOptions).then(function() {

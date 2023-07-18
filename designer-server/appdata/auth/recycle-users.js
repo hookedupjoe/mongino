@@ -1,6 +1,6 @@
 'use strict';
-const THIS_MODULE_NAME = 'recycle-acl-entries';
-const THIS_MODULE_TITLE = 'Auth: Recycle ACL Entry Docs';
+const THIS_MODULE_NAME = 'recycle-users';
+const THIS_MODULE_TITLE = 'Auth: Recycle User Docs';
 
 module.exports.setup = function setup(scope) {
     var config = scope;
@@ -25,7 +25,7 @@ module.exports.setup = function setup(scope) {
                 throw("Bad JSON Passed")
             }
         }
-        return $.AuthMgr.recycleAclEntries(tmpBody);
+        return $.AuthMgr.recycleUsers(tmpBody);
     }
 
 

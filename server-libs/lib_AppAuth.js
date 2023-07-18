@@ -188,6 +188,43 @@ meAuthManager.saveAclEntry = async function(theEntry){
 
 }
 
+
+
+meAuthManager.recycleUsers = async function(theOptions){
+    return new Promise( async function (resolve, reject) {
+        try {
+            var tmpAccount = await $.MongoManager.getAccount();
+            var tmpDB = '';
+            tmpDB = await tmpAccount.getDatabase($.MongoManager.options.names.directory);
+
+            var tmpDocType = 'user';
+            var tmpCollName =$.MongoManager.options.prefix.datatype + tmpDocType;
+
+            var tmpProcIds = [];
+
+            var tmpColl = await tmpDB.getCollection(tmpCollName)
+            for( var iPos in theOptions.ids ){
+                var tmpID = theOptions.ids[iPos];
+                tmpProcIds.push(new ObjectId(tmpID));
+            }
+            var tmpUD =  { $set: { '__doctype' : '_deleted' } }
+            var tmpQuery = { _id: { $in: tmpProcIds } };
+            var tmpRunRet = await tmpColl.updateMany(tmpQuery, tmpUD);
+            var tmpRet = {success:true};
+            tmpRet = $.merge(false, tmpRet, tmpRunRet);
+
+            resolve(tmpRet);
+
+        }
+        catch (error) {
+            console.log('Err : ' + error);
+            reject(error);
+        }
+
+    });
+
+}
+
 meAuthManager.recycleAclEntries = async function(theOptions){
     return new Promise( async function (resolve, reject) {
         try {
