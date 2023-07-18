@@ -226,7 +226,7 @@
     var self = this;
 
     self.parts.mainform.prompt({
-      title: 'Edit Test Doc',
+      title: '',
       submitLabel: 'Save Changes',
       doc: tmpRow._row.data
     }).then(function(theSubmit,
