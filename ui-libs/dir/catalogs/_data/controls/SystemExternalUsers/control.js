@@ -31,6 +31,7 @@
               "color": "blue",
               "icon": "plus",
               compact: true,
+              hidden: true,
               "name": "btn-page-tb-new",
               "label": "Add",
               "onClick": {
@@ -46,7 +47,7 @@
                 "icon": "pencil",
                 compact: true,
                 "name": "btn-page-tb-edit",
-                "label": "Edit",  
+                "label": "Open",  
                 "onClick": {
                   "run": "action",
                   "action": "editDoc"
@@ -218,7 +219,8 @@
 
     self.parts.mainform.prompt({
       title: '',
-      submitLabel: 'Save Changes',
+      submitLabel: false,
+      cancelLabel: "Done",
       doc: tmpRow._row.data
     }).then(function(theSubmit,
       theData) {

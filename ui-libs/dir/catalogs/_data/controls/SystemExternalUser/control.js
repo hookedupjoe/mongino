@@ -58,7 +58,9 @@
 			}
 		
 	],
-	"options": {}
+	"options": {
+		readonly: true
+	}
 }
 
 	var ControlCode = {};

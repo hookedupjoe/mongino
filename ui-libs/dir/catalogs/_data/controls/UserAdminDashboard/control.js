@@ -78,7 +78,7 @@
       var tmpParams = {};
       this.tabs.openTab({
         tabname: tmpTabKey,
-        tabtitle: '<i class="icon ' + tmpIcon + ' blue"></i> ' + tmpTabTitle,
+        tabtitle: '<i class="icon ' + tmpIcon + ' orange"></i> ' + tmpTabTitle,
         controlname: 'SystemExternalUsers',
         catalog: '_data',
         closable: true,
