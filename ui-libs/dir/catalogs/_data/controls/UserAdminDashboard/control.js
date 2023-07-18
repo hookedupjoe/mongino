@@ -63,9 +63,29 @@
     }
     ControlCode.showUsersTable = showUsersTable;
     function showUsersTable(theParams, theTarget){
-        //var tmpParams = ThisApp.getActionParams(theParams, theTarget, ['any']);
+        var tmpParams = ThisApp.getActionParams(theParams, theTarget, ['usertype']);
+        console.log('tmpParams',tmpParams);
+        if( tmpParams.usertype == "external"){
+          return this.openExtUsersTab();
+        }
         this.openUsersTab();
     }
+    
+    ControlCode.openExtUsersTab = function(){
+      var tmpTabKey = 'tab-ext-sys-users';
+      var tmpTabTitle = 'External Users';
+      var tmpIcon = 'user';
+      var tmpParams = {};
+      this.tabs.openTab({
+        tabname: tmpTabKey,
+        tabtitle: '<i class="icon ' + tmpIcon + ' blue"></i> ' + tmpTabTitle,
+        controlname: 'SystemExternalUsers',
+        catalog: '_data',
+        closable: true,
+        setup: tmpParams
+      });
+    }
+    
   
     ControlCode.openUsersTab = function(){
       var tmpTabKey = 'tab-sys-users';
@@ -81,6 +101,7 @@
         setup: tmpParams
       });
     }
+    
     
     ControlCode.refreshDash = function(theContent, theOptTpl){
       this.loadDash(tmpThis.dashData,"UserAdminDashHome");
@@ -197,27 +218,11 @@
                 setup: tmpParams
               });
             }
-            ControlCode.showUsersTable = showUsersTable;
-            function showUsersTable(theParams, theTarget){
-                //var tmpParams = ThisApp.getActionParams(theParams, theTarget, ['any']);
-                this.openUsersTab();
-            }
-          
-            ControlCode.openUsersTab = function(){
-              var tmpTabKey = 'tab-sys-users';
-              var tmpTabTitle = 'Users';
-              var tmpIcon = 'user';
-              var tmpParams = {};
-              this.tabs.openTab({
-                tabname: tmpTabKey,
-                tabtitle: '<i class="icon ' + tmpIcon + ' blue"></i> ' + tmpTabTitle,
-                controlname: 'SystemUsers',
-                catalog: '_data',
-                closable: true,
-                setup: tmpParams
-              });
-            }
             
+
+         
+            
+           
             ControlCode.refreshDash = function(theContent, theOptTpl){
               this.loadDash(tmpThis.dashData,"UserAdminDashHome");
             }

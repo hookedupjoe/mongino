@@ -74,6 +74,25 @@ meAuthManager.saveUser = async function(theUser, theOptions){
 
 }
 
+meAuthManager.getExtUsers = async function(){
+    return new Promise( async function (resolve, reject) {
+        try {
+            var tmpAccount = await $.MongoManager.getAccount('_home');
+            var tmpDB = await tmpAccount.getDatabase($.MongoManager.options.names.directory);
+            var tmpDocType = 'externaluser';
+            var tmpMongoDB = tmpDB.getMongoDB();
+            var tmpDocs = await tmpMongoDB.collection($.MongoManager.options.prefix.datatype + tmpDocType).find().filter({__doctype:tmpDocType}).toArray();
+            var tmpRet = {success:true};
+            tmpRet = $.merge(false, tmpRet, {data:tmpDocs});
+            resolve(tmpRet);
+        }
+        catch (error) {
+            console.log('Err : ' + error);
+            reject(error);
+        }
+    });
+}
+
 meAuthManager.getUsers = async function(){
     return new Promise( async function (resolve, reject) {
         try {
@@ -116,6 +135,7 @@ meAuthManager.getSystemAclEntries = async function(theOptions){
     });
 }
 
+
 meAuthManager.getAclEntries = async function(theOptions){
     return new Promise( async function (resolve, reject) {
         try {
@@ -136,6 +156,55 @@ meAuthManager.getAclEntries = async function(theOptions){
         }
     });
 }
+
+
+meAuthManager.saveExtUser = async function(theUser, theOptions){
+    return new Promise( async function (resolve, reject) {
+        try {
+            var tmpUser = theUser;
+            
+            var tmpAccount = await $.MongoManager.getAccount('_home');
+            var tmpDB = await tmpAccount.getDatabase($.MongoManager.options.names.directory);
+            var tmpDocType = 'externaluser';
+            var tmpCollName = $.MongoManager.options.prefix.datatype + tmpDocType;
+
+            var tmpAddRet = false;
+            var tmpID = tmpUser.data._id || false;
+            if( tmpID == 'system_admin_user'){
+                reject('Invalid requeset');
+            }
+            //--- Remove ID (even if blank) for add / edit operations
+            if( tmpUser.data.hasOwnProperty('_id')){
+                delete tmpUser.data._id;
+            }
+            if( tmpUser.data.password ){
+                tmpUser.data.password = await bcrypt.hash(tmpUser.data.password, 10);
+            }
+            
+            if( tmpID ){
+                var tmpCollection = await tmpDB.getCollection(tmpCollName);
+                var tmpUD =  { $set: tmpUser.data };
+                tmpAddRet = await tmpCollection.updateOne({_id: new ObjectId(tmpID)}, tmpUD)
+
+            } else {
+                tmpAddRet = await tmpDB.createDoc(tmpCollName, tmpUser.data);
+            }
+           
+            var tmpRet = {success:true};
+            tmpRet = $.merge(false, tmpRet, tmpAddRet);
+
+            resolve(tmpRet);
+
+        }
+        catch (error) {
+            console.log('Err : ' + error);
+            reject(error);
+        }
+
+    });
+
+}
+
 
 meAuthManager.saveAclEntry = async function(theEntry){
     return new Promise( async function (resolve, reject) {
