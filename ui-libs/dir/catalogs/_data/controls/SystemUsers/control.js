@@ -10,7 +10,7 @@
         content: [{
           "ctl": "control",
           "catalog": "_data",
-          "controlname": "ActAppUser",
+          "controlname": "SystemUser",
           "name": "mainform"
         }]
       },
@@ -101,7 +101,7 @@
     }
     ControlCode.getControlInfo = function(){
         return {
-          name: 'ActAppUsers',
+          name: 'SystemUsers',
           usage: 'To manage users.'
         }  
     }

@@ -75,7 +75,7 @@
       this.tabs.openTab({
         tabname: tmpTabKey,
         tabtitle: '<i class="icon ' + tmpIcon + ' blue"></i> ' + tmpTabTitle,
-        controlname: 'ActAppUsers',
+        controlname: 'SystemUsers',
         catalog: '_data',
         closable: true,
         setup: tmpParams
@@ -211,7 +211,7 @@
               this.tabs.openTab({
                 tabname: tmpTabKey,
                 tabtitle: '<i class="icon ' + tmpIcon + ' blue"></i> ' + tmpTabTitle,
-                controlname: 'ActAppUsers',
+                controlname: 'SystemUsers',
                 catalog: '_data',
                 closable: true,
                 setup: tmpParams
