@@ -12,8 +12,7 @@
 
   var tmpDataPages = [
     'AppDataPage',
-    'AdminPage',
-    'SystemACLPage'
+    'AdminPage'
   ]
 
   var tmpPageNames = [   
