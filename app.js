@@ -396,7 +396,7 @@ function initAuth2(theExpress, theIsDeployed){
                 }
             } else {
                 var tmpDBName = req.originalUrl.replace(/\//g, '');
-                tmpLoginURL += '&page=/' + tmpDBName + '/';;
+                tmpLoginURL += '&page=/' + tmpDBName + '/';
 
                 tmpDBName = $.MongoManager.options.prefix.db + tmpDBName;
                 tmpIsAllowed = await $.AuthMgr.isAllowed(tmpUserID, { db: tmpDBName }, 0);
