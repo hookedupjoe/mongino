@@ -5,7 +5,7 @@
     //~thisPageSpecs//~
 var thisPageSpecs = {
 	"pageName": "AdminPage",
-	"pageTitle": "Users",
+	"pageTitle": "Admin",
 	"navOptions": {
 		"topLink": true,
 		"sideLink": true
@@ -25,14 +25,9 @@ thisPageSpecs.layoutOptions = {
         },
         east: false,
         west: false,
-        waswest: {
-          source: '_designer',
-          control: "TabsContainer",
-          name :'nav'
-        },
         center: {
           source: '_data',
-          control: "ActAppUsers",
+          control: "UserAdminDashboard",
           name :'body'
         },
         south: {

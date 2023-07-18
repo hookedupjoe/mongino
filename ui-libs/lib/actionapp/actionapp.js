@@ -6535,7 +6535,7 @@ License: LGPL
     }
 
     meInstance.getParentControl = function () {
-        if( this.context.control ){
+        if( this.context.control && this.context.control.context && this.context.control.context.this && this.context.control.context.this.controller ){
             return this.context.control.context.this.controller;
         }
         return false;
@@ -8011,7 +8011,7 @@ License: LGPL
                                 return tmpToRun.apply(this, [tmpActParams]);
                             } else {
                                 //--- Automatically run up the chain to find action
-                                console.warn("Action not found for " + tmpAction)
+                                //console.warn("Action not found for " + tmpAction)
                             }
                         } else {
                             console.warn("Not yet implemented for source " + tmpSource)
@@ -8076,7 +8076,7 @@ License: LGPL
             //return tmpToRun.call(theAction, theTarget, this.getEl());
             return tmpToRun.apply(this, [theAction, theTarget, this.getEl()]);
         } else {
-            console.warn("Action not found for " + tmpAction)
+            //console.warn("Action not found for " + tmpAction)
             return;
         }
 
