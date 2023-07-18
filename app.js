@@ -743,6 +743,8 @@ function setup() {
                     state: true
                 },
                 function(accessToken, refreshToken, profile, done) {
+                    profile.provider = "twitch";
+                    profile.displayName = profile.data.display_name;
                     return done(null, profile);
                 }
                 ));
