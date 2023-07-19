@@ -6,6 +6,13 @@ html, body {
   font-family: Calibri, Tahoma, Geneva, sans-serif;
 }
 
+.cleanzone {
+  -webkit-box-sizing: unset;
+  box-sizing: unset;
+  font-size:unset;
+  font-family: unset;  
+}
+
 .fluid-field {
   width: 100%;
 }
