@@ -159,7 +159,7 @@
 
     // Define columns based on Tabulator column documentation
     var tmpTableCols = [{
-      "title": "Name",
+      "title": "Username",
       "field": "entryname",
       "width":"300"
     },
