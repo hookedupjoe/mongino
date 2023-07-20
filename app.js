@@ -164,7 +164,7 @@ var express = require('express'),
     bodyParser = require('body-parser');
 
 //--- Use standard body and cookie parsers
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '1000kb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 function mAllowHeaders(req, res, next) {
@@ -811,7 +811,7 @@ function setup() {
 
 
             //--- Use standard body and cookie parsers
-            deployed.use(bodyParser.json());
+            deployed.use(bodyParser.json({ limit: '1000kb' }));
             deployed.use(bodyParser.urlencoded({ extended: false }));
             deployed.use(cookieParser());
 
