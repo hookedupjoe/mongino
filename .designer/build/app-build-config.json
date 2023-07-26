@@ -36,7 +36,7 @@
 			"prefix": "//actionapp.hookedup.com"
 		}
 	],
-	"libraries": [		
+	"libraries": [
 		{
 			"name": "d3",
 			"label": "d3",
@@ -55,6 +55,34 @@
 				"<script src=\"{{LIBRARY-LOCATION}}/lib/monaco/vs/loader.js\"></script>",
 				"<script src=\"{{LIBRARY-LOCATION}}/lib/monaco/vs/editor/editor.main.nls.js\"></script>",
 				"<script src=\"{{LIBRARY-LOCATION}}/lib/monaco/vs/editor/editor.main.js\"></script>"
+			]
+		},
+		{
+			"name": "threejs",
+			"label": "three.js",
+			"js": [
+				"<script type=\"importmap\">",
+" {",
+"  \"imports\": {",
+"  \"three\": \"{{LIBRARY-LOCATION}}/lib/threejs/three.module.js\",",
+"  \"three/addons/\": \"{{LIBRARY-LOCATION}}/lib/threejs/addons/\"",
+" }",
+"}",
+"</script>",
+"  <script type=\"module\">",
+"",
+"    import * as THREE from 'three';",
+"",
+"    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';",
+"    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';",
+"    import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';",
+"",
+"    window.THREE = THREE;",
+"    window.OrbitControls = OrbitControls;",
+"    window.GLTFLoader = GLTFLoader;",
+"    window.RGBELoader = RGBELoader;",
+"    ",
+"  </script>"
 			]
 		},
 		{
