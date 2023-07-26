@@ -57,6 +57,7 @@ if( process.env.PASSPORT_BASE_CALLBACK_DEPLOYED ){
 
 // Override passport profile function to get user profile from Twitch API
 OAuth2Strategy.prototype.userProfile = function(accessToken, done) {
+//--- Use this token for admin use APIs --> console.log('accessToken',accessToken);
     var options = {
       url: 'https://api.twitch.tv/helix/users',
       method: 'GET',
@@ -474,10 +475,17 @@ function initAuth2(theExpress, theIsDeployed){
         tmpApp.get('/auth/google',
         passport.authenticate('google'+tmpPostFix, { scope: ['profile', 'email'] }));
     }
-
+ /*  Example of admin level scopees
+    ,
+            "channel:moderate",
+            "chat:edit",
+            "chat:read"
+    */
     if( $.designerConfig.passport.twitch ){
         tmpApp.get('/auth/twitch',
-        passport.authenticate('twitch'+tmpPostFix, { scope: ['user_read'] }));
+        passport.authenticate('twitch'+tmpPostFix, { scope: [
+            'user_read'
+        ] }));
     }
 
     if( $.designerConfig.passport.github ){
