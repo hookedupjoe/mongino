@@ -417,6 +417,10 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
     ActionAppCore.createModule("site");
     ActionAppCore.createModule("plugin");
     ActionAppCore.createModule("extension");
+
+    ActionAppCore.layoutResizeEvent =  new Event("layoutresize");
+   
+
 })(ActionAppCore, $);
 
 //--- jQuery utility additions --- --- --- --- --- --- --- --- --- --- --- --- 
@@ -3017,11 +3021,21 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
     me.siteLayout = null;
 
 
+    me.resizeNotify = function(){
+        var tmpAll = ThisApp.getByAttr$({sysuse:'resizeAlert'});
+        if( tmpAll.length > 0){
+            for ( var i = 0 ; i < tmpAll.length ; i++ ){
+                var tmpEl = tmpAll[i];
+                tmpEl.dispatchEvent(ActionAppCore.layoutResizeEvent);
+            }
+        }
+    }
     me.refreshLayouts = ActionAppCore.debounce(function (theTargetEl) {
         if (ThisApp.siteLayout) {
             ThisApp.siteLayout.resizeAll();
         }
         ThisApp.publish('resize');
+        ThisApp.resizeNotify();
     }, 200);
 
     me.resizeLayouts = function (name, $pane, paneState) {
@@ -8350,6 +8364,15 @@ License: LGPL
                 if (isFunc(tmpThis._onInit)) {
                     tmpThis._onInit();
                 }
+                
+                //--- Add flag that a resize notification is desired
+                var tmpBaseEl = tmpThis.getEl();
+                tmpBaseEl.attr("sysuse", "resizeAlert");
+                tmpBaseEl.on("layoutresize", function (){
+                    if( typeof(tmpThis._onResize) == 'function' ){
+                        tmpThis._onResize();
+                    }
+                })
                 
                 if( tmpThis.parentControl && tmpThis.parentControl.subscribe){
                     tmpThis.subscribeEvent(tmpThis.parentControl, 'resized', tmpThis._onParentResizeEvent.bind(tmpThis) );
