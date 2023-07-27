@@ -422,19 +422,16 @@ function getAddon(theType,theName){
     }
     import("/lib/threejs/three.module.js").then(function(theModule){
           window.THREE = theModule;
-          console.log('got 3')
           var tmpToLoad = [];
           tmpToLoad.push(getAddon('controls','OrbitControls'))
           tmpToLoad.push(getAddon('loaders','GLTFLoader'))
           tmpToLoad.push(getAddon('loaders','RGBELoader'))
          $.whenAll(tmpToLoad).then(function(){
             ActionAppCore.threeJSLoaded = true;
-            console.log('loaded')
             ActionAppCore.publish('threejsloaded');
             dfd.resolve(true);
-           
          })
-         
+
     })
     return dfd.promise();
   }
