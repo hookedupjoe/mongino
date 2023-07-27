@@ -386,6 +386,59 @@ ActionAppCore.ActAppData = {
     }
 }
 
+ActionAppCore.initialLoaders = [];
+
+ActionAppCore.awaitInitialLoaders = function(){
+    var dfd = jQuery.Deferred();
+    if( ActionAppCore.useThreeJS === true){
+        ActionAppCore.initialLoaders.push(ActionAppCore.getThreeJS());
+    }
+    $.whenAll(ActionAppCore.initialLoaders).then(function(){
+        dfd.resolve(true);
+    })
+    return dfd.promise();
+}
+
+
+function getAddon(theType,theName){
+    var dfd = jQuery.Deferred();
+    var tmpURL = "/lib/threejs/addons/" + theType + "/" + theName + ".js";
+    import(tmpURL).then(function(theModule){
+        window[theName] = theModule[theName];
+      dfd.resolve(true);
+    })
+    return dfd.promise();
+  }
+
+
+  //--- ToDo: Refactor as generic import loaded in required functionality
+  
+  ActionAppCore.getThreeJS = getThreeJS;
+  function getThreeJS(){
+    var dfd = jQuery.Deferred();
+    if(ActionAppCore.threeJSLoaded){
+      dfd.resolve(true);
+      return dfd.promise();
+    }
+    import("/lib/threejs/three.module.js").then(function(theModule){
+          window.THREE = theModule;
+          console.log('got 3')
+          var tmpToLoad = [];
+          tmpToLoad.push(getAddon('controls','OrbitControls'))
+          tmpToLoad.push(getAddon('loaders','GLTFLoader'))
+          tmpToLoad.push(getAddon('loaders','RGBELoader'))
+         $.whenAll(tmpToLoad).then(function(){
+            ActionAppCore.threeJSLoaded = true;
+            console.log('loaded')
+            ActionAppCore.publish('threejsloaded');
+            dfd.resolve(true);
+           
+         })
+         
+    })
+    return dfd.promise();
+  }
+
 //--- Global Spot
 window.ActionAppCore = window.ActionAppCore || ActionAppCore;
 
@@ -3237,6 +3290,9 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
             var tmpPromiseLoader = tmpInfoLoader();
             tmpDefs.push(tmpPromiseLoader);
         }
+        
+        //=== Externally added promise requests
+        tmpDefs.push(ActionAppCore.awaitInitialLoaders());
         
         
         $.whenAll(tmpDefs).then(function (theReply) {
