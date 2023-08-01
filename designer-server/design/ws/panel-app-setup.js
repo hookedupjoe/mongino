@@ -29,7 +29,7 @@ module.exports.setup = function setup(scope) {
         var tmpAppName = req.query.appname || req.query.name || req.query.filename || '';
         tmpAppName = tmpAppName.replace('.json', '')
 
-        var tmpDeployDirApp = tmpDeployDir + tmpAppName + '/';
+        var tmpDeployDirApp = tmpDeployDir + 'ui-apps/' + tmpAppName + '/';
         var tmpDeployDirCordova = tmpDeployDir + 'cordova/' + tmpAppName + '/';
         tmpDeployDir += tmpAppName + '/';
 
