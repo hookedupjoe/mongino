@@ -420,7 +420,7 @@ function getAddon(theType,theName){
       dfd.resolve(true);
       return dfd.promise();
     }
-    import("/lib/threejs/three.module.js").then(function(theModule){
+    import("/lib/threejs/build/three.module.js").then(function(theModule){
           window.THREE = theModule;
           var tmpToLoad = [];
           tmpToLoad.push(getAddon('controls','OrbitControls'))

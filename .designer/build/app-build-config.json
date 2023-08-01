@@ -64,7 +64,7 @@
 				"<script type=\"importmap\">",
 " {",
 "  \"imports\": {",
-"  \"three\": \"{{LIBRARY-LOCATION}}/lib/threejs/three.module.js\",",
+"  \"three\": \"{{LIBRARY-LOCATION}}/lib/threejs/build/three.module.js\",",
 "  \"three/addons/\": \"{{LIBRARY-LOCATION}}/lib/threejs/addons/\"",
 " }",
 "}",

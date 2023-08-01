@@ -72,71 +72,6 @@
   
   <!-- Optional Libraries - active to test in deigner -->
   <script src="lib/d3/d3.min.js"></script>
-  <script async src="/lib/threejs/es-module-shims.js"></script>
-
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "/lib/threejs/three.module.js",
-        "three/addons/": "/lib/threejs/addons/"
-      }
-    }
-  </script>
-
-  <script type="module">
-/*
-
-    function getAddon(theType,theName){
-      var dfd = jQuery.Deferred();
-      import("/lib/threejs/addons/" + theType + "/" + theName + ".js").then(function(theModule){
-        window[theName] = theModule;
-        dfd.resolve(true);
-      })
-      return dfd.promise();
-    }
-
-
-    //--- ToDo: Refactor as generic import loaded in required functionality
-    
-    ActionAppCore.getThreeJS = getThreeJS;
-    function getThreeJS(){
-      var dfd = jQuery.Deferred();
-      if(ActionAppCore.threeJSLoaded){
-        dfd.resolve(true);
-        return dfd.promise();
-      }
-      import("/lib/threejs/three.module.js").then(function(theModule){
-            window.THREE = theModule;
-            var tmpToLoad = [];
-            tmpToLoad.push(getAddon('controls','OrbitControls'))
-            tmpToLoad.push(getAddon('loaders','GLTFLoader'))
-            tmpToLoad.push(getAddon('loaders','RGBELoader'))
-           $.when(tmpToLoad).then(function(){
-            dfd.resolve(true);
-            ActionAppCore.publish('threejsloaded');
-            ActionAppCore.threeJSLoaded = true;
-           })
-           
-      })
-      return dfd.promise();
-    }
-    */
-    //ActionAppCore.initialLoaders.push(ActionAppCore.getThreeJS())
-
-    // import * as THREE from 'three';
-
-    // import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-    // import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-    // import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
-
-    // window.THREE = THREE;
-    // window.OrbitControls = OrbitControls;
-    // window.GLTFLoader = GLTFLoader;
-    // window.RGBELoader = RGBELoader;
-    
-    
-  </script>
-
 
   <!-- <script src="/lib/datatables/datatables.min.js"></script> -->
   <!-- <script src="/lib/jsTree/jstree.min.js"></script> -->
@@ -175,7 +110,7 @@
   <script src="/lib/actionapp/app-module.js"></script>
 
   <script >
-    ActionAppCore.useThreeJS = true;
+    //ActionAppCore.useThreeJS = true;
   </script>
 
   <!-- Application Launch Script -->
