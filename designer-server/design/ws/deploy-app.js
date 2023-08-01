@@ -88,8 +88,43 @@ module.exports.setup = function setup(scope) {
                 //--- Rebuild using defaults
                 await($.bld.buildApp(tmpAppName,scope,{deploy:true}));
 
+                var tmpBuildCfg = await($.bld.getBuildConfigJson(scope));
                 if( tmpAppDetails.cdn != 'cloud'){
-                    await($.fs.copy(scope.locals.path.uilibs + '/',tmpDeployBase + '/'));
+
+                    var alwaysThere = ['built-lib','dir','plugins','svg-catalog','webctl-catalog'];
+                    for( var iPos in alwaysThere ){
+                        var tmpName = alwaysThere[iPos];
+                        var tmpNewLibDir = tmpDeployBase + '/' + tmpName + '/';
+                        await($.fs.ensureDir(tmpNewLibDir));
+                        await($.fs.copy(scope.locals.path.uilibs + '/' + tmpName + '/',tmpNewLibDir));
+                    }
+                    
+                    var tmpNewLibBase = tmpDeployBase + '/lib/';
+                    await($.fs.ensureDir(tmpNewLibBase));
+    
+                    var tmpAppLibLookup = {};
+                    for( var iPos in tmpAppDetails.libraries){
+                        tmpAppLibLookup[tmpAppDetails.libraries[iPos]] = true;
+                    }
+    
+                    var tmpLibsToInc = tmpBuildCfg.systemlibs;
+                    for( var iPos in tmpBuildCfg.libraries){
+                        var tmpLibInfo = tmpBuildCfg.libraries[iPos];
+                        var tmpLibName = tmpLibInfo.name;
+                        if( tmpAppLibLookup[tmpLibName]){
+                            tmpLibsToInc.push({name:tmpLibName, base: tmpLibInfo.base})
+                        }
+    
+                    }
+
+                    for( var iPos in tmpLibsToInc){
+                        var tmpLibInfo = tmpLibsToInc[iPos];
+                        var tmpNewLibDir = tmpNewLibBase + tmpLibInfo.base + '/';
+                        await($.fs.ensureDir(tmpNewLibDir));
+                        var tmpFromDir = scope.locals.path.uilibs + '/lib/' + tmpLibInfo.base + '/';
+                        await($.fs.copy(tmpFromDir,tmpNewLibDir));
+                    }
+                    
                 }
                 // var tmpEPFrom = scope.locals.path.appdataendpoints + '/api/';
                 // var tmpEPTo = tmpDeployBase + 'server-app/appdata/api/';

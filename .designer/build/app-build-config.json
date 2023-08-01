@@ -36,67 +36,36 @@
 			"prefix": "//actionapp.hookedup.com"
 		}
 	],
-	"libraries": [
+	"systemlibs": [{
+		"name": "semantic",
+		"base": "semantic"
+	},
+	{
+		"name": "actionapp",
+		"base": "actionapp"
+	},
+	{
+		"name": "base",
+		"base": "base"
+	},
+	{
+		"name": "css",
+		"base": "css"
+	}],
+	"libraries": [	
 		{
-			"name": "d3",
-			"label": "d3",
+			"name": "ace",
+			"base": "ace",
+			"label": "Ace Editor",
 			"js": [
-				"<script src=\"{{LIBRARY-LOCATION}}/lib/d3/d3.min.js\"></script>"
-			]
-		},
-		{
-			"name": "Monaco",
-			"label": "Monaco Editor",
-			"css": [
-				"<link data-name=\"vs/editor/editor.main\" rel=\"stylesheet\" href=\"{{LIBRARY-LOCATION}}/lib/monaco/vs/editor/editor.main.css\">"
-			],
-			"js": [
-				"<script>var require = { paths: { 'vs': '{{LIBRARY-LOCATION}}/lib/monaco/vs' } };</script>",
-				"<script src=\"{{LIBRARY-LOCATION}}/lib/monaco/vs/loader.js\"></script>",
-				"<script src=\"{{LIBRARY-LOCATION}}/lib/monaco/vs/editor/editor.main.nls.js\"></script>",
-				"<script src=\"{{LIBRARY-LOCATION}}/lib/monaco/vs/editor/editor.main.js\"></script>"
-			]
-		},
-		{
-			"name": "threejs",
-			"label": "three.js",
-			"js": ["<script>ActionAppCore.useThreeJS = true;</script>",
-				"<script type=\"importmap\">",
-" {",
-"  \"imports\": {",
-"  \"three\": \"{{LIBRARY-LOCATION}}/lib/threejs/build/three.module.js\",",
-"  \"three/addons/\": \"{{LIBRARY-LOCATION}}/lib/threejs/addons/\"",
-" }",
-"}",
-"</script>",
-"  <script type=\"module\">",
-"",
-"    import * as THREE from 'three';",
-"",
-"    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';",
-"    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';",
-"    import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';",
-"",
-"    window.THREE = THREE;",
-"    window.OrbitControls = OrbitControls;",
-"    window.GLTFLoader = GLTFLoader;",
-"    window.RGBELoader = RGBELoader;",
-"    ",
-"  </script>"
-			]
-		},
-		{
-			"name": "jsTree",
-			"label": "jsTree Outline Control",
-			"css": [
-				"<link rel=\"stylesheet\" href=\"{{LIBRARY-LOCATION}}/lib/jsTree/themes/default/style.min.css\" />"
-			],
-			"js": [
-				"<script src=\"{{LIBRARY-LOCATION}}/lib/jsTree/jstree.min.js\"></script>"
+				"<script src=\"{{LIBRARY-LOCATION}}/lib/ace/ace.js\"></script>",
+				"<script src=\"{{LIBRARY-LOCATION}}/lib/ace/ext-language_tools.js\"></script>",
+				"<script src=\"{{LIBRARY-LOCATION}}/lib/ace/ext-beautify.js\"></script>"
 			]
 		},
 		{
 			"name": "audioMotionAnalyzer",
+			"base": "audioMotion",
 			"label": "audioMotion Music Engire",
 			"css": [
 				"<link rel=\"stylesheet\" href=\"{{LIBRARY-LOCATION}}/lib/audioMotion/styles.css\" />"
@@ -106,7 +75,31 @@
 			]
 		},
 		{
+			"name": "d3",
+			"base": "d3",
+			"label": "d3",
+			"js": [
+				"<script src=\"{{LIBRARY-LOCATION}}/lib/d3/d3.min.js\"></script>"
+			]
+		},
+		{
+			"name": "threejs",
+			"base": "threejs",
+			"label": "three.js",
+			"js": ["<script>ActionAppCore.useThreeJS = true;</script>",
+				"<script type=\"importmap\">",
+				" {",
+				"  \"imports\": {",
+				"  \"three\": \"{{LIBRARY-LOCATION}}/lib/threejs/build/three.module.js\",",
+				"  \"three/addons/\": \"{{LIBRARY-LOCATION}}/lib/threejs/addons/\"",
+				" }",
+				"}",
+				"  </script>"
+			]
+		},
+		{
 			"name": "p5js",
+			"base": "p5js",
 			"label": "p5js - Processing JavaScript",
 			"js": [
 				"<script src=\"{{LIBRARY-LOCATION}}/lib/p5js/p5.min.js\"></script>",
@@ -114,15 +107,22 @@
 			]
 		},
 		{
-			"name": "Ace",
-			"label": "Ace Editor",
+			"name": "tabulator",
+			"base": "tabulator",
+			"label": "Tabulator",
+			"css": [
+				"<link rel=\"stylesheet\" href=\"{{LIBRARY-LOCATION}}/lib/tabulator/css/tabulator.min.css\" />",
+				"<link rel=\"stylesheet\" href=\"{{LIBRARY-LOCATION}}/lib/tabulator/css/semantic-ui/tabulator_semantic-ui.min.css\" />"
+			],
 			"js": [
-				"<script src=\"{{LIBRARY-LOCATION}}/lib/ace/ace.js\"></script>",
-				"<script src=\"{{LIBRARY-LOCATION}}/lib/ace/addons/mongino-ace-plugin.js\"></script>"
+				"<script src=\"{{LIBRARY-LOCATION}}/lib/tabulator/js/tabulator.min.js\"></script>",
+				"<script src=\"{{LIBRARY-LOCATION}}/lib/tabulator/addons/moment.2.24.js\"></script>",
+				"<script src=\"{{LIBRARY-LOCATION}}/lib/tabulator/addons/xlsx.full.min.js\"></script>"
 			]
 		},
 		{
-			"name": "UDP",
+			"name": "udp",
+			"base": "udp",
 			"label": "Mobile UDP",
 			"js": [
 				"<script src=\"{{LIBRARY-LOCATION}}/lib/udp/udp.js\"></script>"
