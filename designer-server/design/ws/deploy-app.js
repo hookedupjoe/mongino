@@ -88,10 +88,9 @@ module.exports.setup = function setup(scope) {
                 //--- Rebuild using defaults
                 await($.bld.buildApp(tmpAppName,scope,{deploy:true}));
 
-                //---- Always using references to server library files for server deploys
-                // if( tmpAppDetails.cdn != 'cloud'){
-                //     await($.fs.copy(scope.locals.path.uilibs + '/',tmpDeployBase + '/ui-app/'));
-                // }
+                if( tmpAppDetails.cdn != 'cloud'){
+                    await($.fs.copy(scope.locals.path.uilibs + '/',tmpDeployBase + '/'));
+                }
                 // var tmpEPFrom = scope.locals.path.appdataendpoints + '/api/';
                 // var tmpEPTo = tmpDeployBase + 'server-app/appdata/api/';
 
