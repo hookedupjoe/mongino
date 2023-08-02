@@ -391,7 +391,7 @@ ActionAppCore.initialLoaders = [];
 ActionAppCore.awaitInitialLoaders = function(){
     var dfd = jQuery.Deferred();
     if( ActionAppCore.useThreeJS === true){
-        ActionAppCore.initialLoaders.push(ActionAppCore.getThreeJS());
+        ActionAppCore.initialLoaders.push(ActionAppCore.three.getThreeJS());
     }
     $.whenAll(ActionAppCore.initialLoaders).then(function(){
         dfd.resolve(true);
@@ -433,7 +433,17 @@ function importTo(theBaseURL, theModName, theTarget){
     return dfd.promise();
   }  
   
-  ActionAppCore.getThreeJSAddOn = getThreeJSAddOn;
+  
+  ActionAppCore.three = {
+    defaultAddons: [
+        {type:'controls', name: 'OrbitControls'},
+        {type:'loaders', name: 'GLTFLoader'},
+        {type:'loaders', name: 'RGBELoader'}
+    ],
+    addons: {}
+  }
+
+  ActionAppCore.three.getThreeJSAddOn = getThreeJSAddOn;
   function getThreeJSAddOn(theOptions){
     if(!(theOptions && theOptions.type && theOptions.name)){
       return rejectedPromise('missing required info')
@@ -442,7 +452,7 @@ function importTo(theBaseURL, theModName, theTarget){
     return importTo(tmpBaseURL, theOptions.name, ActionAppCore.three.addons);
   }
 
-  ActionAppCore.getThreeJSAddOns = getThreeJSAddOns;
+  ActionAppCore.three.getThreeJSAddOns = getThreeJSAddOns;
   function getThreeJSAddOns(theOptions){
     var dfd = jQuery.Deferred();
     var tmpOptions = theOptions || {};
@@ -462,19 +472,11 @@ function importTo(theBaseURL, theModName, theTarget){
     return dfd.promise();
   }
 
-  ActionAppCore.three = {
-    defaultAddons: [
-        {type:'controls', name: 'OrbitControls'},
-        {type:'loaders', name: 'GLTFLoader'},
-        {type:'loaders', name: 'RGBELoader'}
-    ],
-    addons: {}
-  }
 
-  ActionAppCore.getThreeJS = getThreeJS;
+  ActionAppCore.three.getThreeJS = getThreeJS;
   function getThreeJS(){
     var dfd = jQuery.Deferred();
-    if(ActionAppCore.threeJSLoaded){
+    if(ActionAppCore.three.threeJSLoaded){
       dfd.resolve(true);
       return dfd.promise();
     }
@@ -484,7 +486,7 @@ function importTo(theBaseURL, theModName, theTarget){
         ActionAppCore.three = ActionAppCore.three || {addons:{}, defaultAddons: []}
         ActionAppCore.three.THREE = THREE;
         getThreeJSAddOns({data:ActionAppCore.three.defaultAddons}).then(function(){
-            ActionAppCore.threeJSLoaded = true;
+            ActionAppCore.three.threeJSLoaded = true;
             ActionAppCore.publish('threejsloaded');
             dfd.resolve(true);
         })
