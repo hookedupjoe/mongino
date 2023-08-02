@@ -349,6 +349,10 @@ var ActionAppCore = {
     }
 };
 
+(function (ActionAppCore, $) {
+
+
+    
 ActionAppCore.ActAppData = {
     rootPath: '/',
     formatters: {
@@ -398,6 +402,7 @@ ActionAppCore.awaitInitialLoaders = function(){
     })
     return dfd.promise();
 }
+
 
 
 ActionAppCore.importTo = importTo;
@@ -493,6 +498,8 @@ function importTo(theBaseURL, theModName, theTarget){
     })
     return dfd.promise();
   }
+  
+})(ActionAppCore, $);
 
 //--- Global Spot
 window.ActionAppCore = window.ActionAppCore || ActionAppCore;
