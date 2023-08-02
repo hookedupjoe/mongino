@@ -109,10 +109,18 @@
   <!-- Application - Modules, etc -->
   <script src="/lib/actionapp/app-module.js"></script>
 
-  <script >
-    //ActionAppCore.useThreeJS = true;
+	<script>
+  ActionAppCore.useThreeJS = true;
+  ActionAppCore.three.addonBase = "/lib/threejs/addons/"
   </script>
-
+	<script type="importmap">
+	 {
+	  "imports": {
+	  "three": "/lib/threejs/build/three.module.js"
+	 }
+	}
+	</script>
+    
   <!-- Application Launch Script -->
   <script src="./app/app.js"></script>
 

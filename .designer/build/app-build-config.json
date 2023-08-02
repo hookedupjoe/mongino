@@ -86,15 +86,17 @@
 			"name": "threejs",
 			"base": "threejs",
 			"label": "three.js",
-			"js": ["<script>ActionAppCore.useThreeJS = true;</script>",
-				"<script type=\"importmap\">",
-				" {",
-				"  \"imports\": {",
-				"  \"three\": \"{{LIBRARY-LOCATION}}/lib/threejs/build/three.module.js\",",
-				"  \"three/addons/\": \"{{LIBRARY-LOCATION}}/lib/threejs/addons/\"",
-				" }",
-				"}",
-				"  </script>"
+			"js": ["<script>",
+			" ActionAppCore.useThreeJS = true;",
+			" ActionAppCore.three.addonBase = \"/lib/threejs/addons/\"",
+			"</script>",
+			"<script type=\"importmap\">",
+			" {",
+			"  \"imports\": {",
+			"  \"three\": \"/lib/threejs/build/three.module.js\"",
+			"  }",
+			" }",
+			"</script>"
 			]
 		},
 		{

@@ -403,15 +403,23 @@ ActionAppCore.awaitInitialLoaders = function(){
 ActionAppCore.importTo = importTo;
 function importTo(theBaseURL, theModName, theTarget){
     var dfd = jQuery.Deferred();
+    // dfd.resolve(true);
+    // return dfd.promise();
+
     if( !(theBaseURL && theModName) ){
         dfd.reject("theBaseURL and theModName required");
     } else {
         var tmpURL = theBaseURL + theModName + '.js';
-        var tmpTarget = theTarget || windows || {};
-        import(tmpURL).then(function(theModule){
-            tmpTarget[theModName] = theModule[theModName];
-          dfd.resolve(tmpTarget);
-        })
+        try {
+            var tmpTarget = theTarget || windows || {};
+            import(tmpURL).then(function(theModule){
+                tmpTarget[theModName] = theModule[theModName];
+              dfd.resolve(tmpTarget);
+            })
+        } catch (error) {
+            dfd.reject(error.toString())
+            
+        }
     }
     return dfd.promise();
   }
@@ -430,7 +438,7 @@ function importTo(theBaseURL, theModName, theTarget){
     if(!(theOptions && theOptions.type && theOptions.name)){
       return rejectedPromise('missing required info')
     }
-    var tmpBaseURL =  "../threejs/addons/" + theOptions.type + '/';          
+    var tmpBaseURL = ActionAppCore.three.addonBase + theOptions.type + '/';     
     return importTo(tmpBaseURL, theOptions.name, ActionAppCore.three.addons);
   }
 
@@ -471,7 +479,7 @@ function importTo(theBaseURL, theModName, theTarget){
       return dfd.promise();
     }
     //--- Get and load commonly used modules when using three.js
-    import("/lib/threejs/build/three.module.js").then(function(theModule){
+    import("three").then(function(theModule){
         window.THREE = theModule;
         ActionAppCore.three = ActionAppCore.three || {addons:{}, defaultAddons: []}
         ActionAppCore.three.THREE = THREE;
