@@ -712,6 +712,12 @@ font-size:18px;
 }
 
 
+body[appheader="false"] .site-layout-north {
+  display:none !important;
+}
+
+  
+
 .ui.menu .item.plain {
 position: inherit;
 }
