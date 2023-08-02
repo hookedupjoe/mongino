@@ -50,7 +50,7 @@
   <title>Mongino</title>
 </head>
 
-<body>
+<body appheader="false">
   <div appuse="side-menu" class="ui sidebar right inverted labeled icon left inline vertical menu">
   </div>
   <div class="site-layout-north" style="background-color:#2b3443;">
