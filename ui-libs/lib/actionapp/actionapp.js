@@ -400,19 +400,69 @@ ActionAppCore.awaitInitialLoaders = function(){
 }
 
 
-function getAddon(theType,theName){
+ActionAppCore.importTo = importTo;
+function importTo(theBaseURL, theModName, theTarget){
     var dfd = jQuery.Deferred();
-    var tmpURL = "/lib/threejs/addons/" + theType + "/" + theName + ".js";
-    import(tmpURL).then(function(theModule){
-        window[theName] = theModule[theName];
-      dfd.resolve(true);
-    })
+    if( !(theBaseURL && theModName) ){
+        dfd.reject("theBaseURL and theModName required");
+    } else {
+        var tmpURL = theBaseURL + theModName + '.js';
+        var tmpTarget = theTarget || windows || {};
+        import(tmpURL).then(function(theModule){
+            tmpTarget[theModName] = theModule[theModName];
+          dfd.resolve(tmpTarget);
+        })
+    }
     return dfd.promise();
   }
 
 
-  //--- ToDo: Refactor as generic import loaded in required functionality
+
+
+  function rejectedPromise(theReason){
+    var dfd = jQuery.Deferred();
+    dfd.reject(theReason || 'unknown reason');
+    return dfd.promise();
+  }  
   
+  ActionAppCore.getThreeJSAddOn = getThreeJSAddOn;
+  function getThreeJSAddOn(theOptions){
+    if(!(theOptions && theOptions.type && theOptions.name)){
+      return rejectedPromise('missing required info')
+    }
+    var tmpBaseURL =  "../threejs/addons/" + theOptions.type + '/';          
+    return importTo(tmpBaseURL, theOptions.name, ActionAppCore.three.addons);
+  }
+
+  ActionAppCore.getThreeJSAddOns = getThreeJSAddOns;
+  function getThreeJSAddOns(theOptions){
+    var dfd = jQuery.Deferred();
+    var tmpOptions = theOptions || {};
+    var tmpAddOns = tmpOptions.data || [];
+    var tmpToLoad = [];
+    for (var iPos in tmpAddOns){
+        var tmpAddOn = tmpAddOns[iPos];
+        tmpToLoad.push(getThreeJSAddOn(tmpAddOn));
+    }
+    if( tmpToLoad.length > 0){
+        $.whenAll(tmpToLoad).then(function(){
+            dfd.resolve(true);
+        })
+    } else {
+        dfd.resolve(true);
+    }
+    return dfd.promise();
+  }
+
+  ActionAppCore.three = {
+    defaultAddons: [
+        {type:'controls', name: 'OrbitControls'},
+        {type:'loaders', name: 'GLTFLoader'},
+        {type:'loaders', name: 'RGBELoader'}
+    ],
+    addons: {}
+  }
+
   ActionAppCore.getThreeJS = getThreeJS;
   function getThreeJS(){
     var dfd = jQuery.Deferred();
@@ -420,18 +470,16 @@ function getAddon(theType,theName){
       dfd.resolve(true);
       return dfd.promise();
     }
+    //--- Get and load commonly used modules when using three.js
     import("/lib/threejs/build/three.module.js").then(function(theModule){
-          window.THREE = theModule;
-          var tmpToLoad = [];
-          tmpToLoad.push(getAddon('controls','OrbitControls'))
-          tmpToLoad.push(getAddon('loaders','GLTFLoader'))
-          tmpToLoad.push(getAddon('loaders','RGBELoader'))
-         $.whenAll(tmpToLoad).then(function(){
+        window.THREE = theModule;
+        ActionAppCore.three = ActionAppCore.three || {addons:{}, defaultAddons: []}
+        ActionAppCore.three.THREE = THREE;
+        getThreeJSAddOns({data:ActionAppCore.three.defaultAddons}).then(function(){
             ActionAppCore.threeJSLoaded = true;
             ActionAppCore.publish('threejsloaded');
             dfd.resolve(true);
-         })
-
+        })
     })
     return dfd.promise();
   }
