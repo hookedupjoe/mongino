@@ -89,13 +89,6 @@ License: LGPL
 
     }
 
-    //===== PAGE-ACTIONS-START-loadASpot
-    actions.loadASpot = loadASpot;
-    function loadASpot(){
-        ThisPage.loadSpot("funspot", "We are having fun now")
-    };
-    //===== PAGE-ACTIONS-END-loadASpot
-
     //===== PAGE-ACTIONS-START
     actions.setupWS = setupWS;
     function setupWS(){
