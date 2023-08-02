@@ -3364,6 +3364,10 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
                     dfd.resolve(false)
                 } else {
                     ThisApp.hideLoading();
+                    var tmpCustomHeader = ( theAppConfig && theAppConfig.customHeader == true);
+                    if( !(tmpCustomHeader) ){
+                        $('body').attr('appheader','');
+                    }
                     tmpThis.postInit(theAppConfig);
                     dfd.resolve(true);
                 }
