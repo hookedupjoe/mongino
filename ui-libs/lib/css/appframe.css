@@ -952,3 +952,7 @@ div.ui.message.floating {
   padding-right:7px !important;
   padding-left:4px !important;
 }
+
+body.pushable.clearback {
+  background-color: rgba(0, 0, 0, 0) !important;
+}
