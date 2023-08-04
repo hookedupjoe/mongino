@@ -100,13 +100,6 @@
 			"js": ["<script>",
 			" ActionAppCore.useThreeJS = true;",
 			" ActionAppCore.three.addonBase = \"/lib/threejs/addons/\"",
-			"</script>",
-			"<script type=\"importmap\">",
-			" {",
-			"  \"imports\": {",
-			"  \"three\": \"/lib/threejs/build/three.module.js\"",
-			"  }",
-			" }",
 			"</script>"
 			]
 		},

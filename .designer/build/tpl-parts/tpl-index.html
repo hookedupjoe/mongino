@@ -52,7 +52,6 @@
   <div appuse="site:global-context-menu"></div>
 
   <!--   End of page *****************************************  -->
-
   <!-- Support Libraries - Pre-Built Version -->
   <script src="{{LIBRARY-LOCATION}}/built-lib/support-libs.js"></script>
   <script src="{{LIBRARY-LOCATION}}/lib/semantic/dist/semantic.min.js"></script>
@@ -68,6 +67,15 @@
   <script src="{{LIBRARY-LOCATION}}/lib/tabulator/addons/moment.2.24.js"></script>
   <script src="{{LIBRARY-LOCATION}}/lib/tabulator/addons/xlsx.full.min.js"></script>
 
+
+  <!-- ToDo Move / Unify -->
+  <script type="importmap">
+    {
+     "imports": {
+     "three": "/lib/threejs/build/three.module.js"
+    }
+   }
+   </script>  
 
   <!-- Optional Plugins -->
   {{OPTIONAL-PLUGINS}}
