@@ -721,15 +721,21 @@ export default class AudioMotionAnalyzer {
 	 * Disconnects audio sources from the analyzer
 	 *
 	 * @param [{object|array}] a connected AudioNode object or an array of such objects; if undefined, all connected nodes are disconnected
+	 * @param {boolean} [stopTracks] if true, stops the track when disconnected
 	 */
-	disconnectInput( sources ) {
+	disconnectInput( sources, stopTracks ) {
 		if ( ! sources )
 			sources = Array.from( this._sources );
 		else if ( ! Array.isArray( sources ) )
 			sources = [ sources ];
 
 		for ( const node of sources ) {
-			const idx = this._sources.indexOf( node );
+			const idx = this._sources.indexOf( node );			
+			if (stopTracks && node.mediaStream){
+				for ( const ats of node.mediaStream.getAudioTracks() ){
+					ats.stop();
+				}
+			}
 			if ( idx >= 0 ) {
 				node.disconnect( this._input );
 				this._sources.splice( idx, 1 );
