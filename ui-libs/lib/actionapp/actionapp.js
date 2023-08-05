@@ -4236,6 +4236,7 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
         getObjectAsEncodedForm: ActionAppCore.util.getObjectAsEncodedForm,
         convertToJsonLive: convertToJsonLive,
         convertFromJsonLive: convertFromJsonLive,
+        clearToTop: clearToTop,
         clone: function (theObj) {
             if (typeof (theObj) !== 'object') {
                 throw ("Objects can only be cloned");
@@ -4279,6 +4280,23 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
         }
     }
 
+
+    function clearBack(theEl) {
+        $(theEl).css('background-color', 'rgba(0, 0, 0, 0)');
+    }
+    function clearToTop(theEl) {
+        var tmpEl = theEl;
+        for (var i = 0; i < 40; i++) {
+            clearBack(tmpEl);
+            tmpEl = $(tmpEl).parent();
+            if (!(tmpEl)) {
+            return;
+            }
+        }
+        $('body').addClass('clearback');
+    }
+
+      
 })(ActionAppCore, $);
 
 
