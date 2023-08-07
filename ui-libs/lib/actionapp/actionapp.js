@@ -4430,6 +4430,10 @@ License: LGPL
 
     var me = SitePage.prototype;
 
+    me.showSubPage = function(theAction, theTargetObj, theOptionalParent){
+        ThisApp.showSubPage(theAction, theTargetObj, (theOptionalParent || this.getParent$()))
+    }
+
     me.getAppName = function(){
         //--- If running the app, use app info
         if( ActionAppCore.appInfo && ActionAppCore.appInfo.name ){
@@ -5744,6 +5748,7 @@ License: LGPL
         theApp.registerActionDelegate(pluginConfig.ns, runAction);
         return this;
     }
+
 
 
 
