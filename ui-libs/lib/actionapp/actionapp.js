@@ -2942,30 +2942,35 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
                     ThisApp._apiCallFailCount++;
                 }
                 if( theError.status == 403 || theError.status == 401 ){
-                    
-                    //--- Do not keep running fail action
-                    if( ThisApp._apiCallFailCount < 2 && ActionAppCore.apiFailAction ){
-                        var tmpPromise = ActionAppCore.apiFailAction();
-                        if( tmpPromise && tmpPromise.then ){
-                            tmpPromise.then(function(){
-                                if( theOptions._retryCounter ){
-                                    theOptions._retryCounter++
-                                } else {
-                                    theOptions._retryCounter = 1;
-                                }
-                                ThisApp.apiCall(theOptions).then(function(theRetryResp){
-                                    //--- ToDo: Check for second failure?
-                                    ThisApp.hideLoading(tmpLoaderOptions);
-                                    dfd.resolve(theRetryResp);
+                    if( ActionAppCore.apiFailAction ){
+                        //--- Do not keep running fail action
+                        if( ThisApp._apiCallFailCount < 2 && ActionAppCore.apiFailAction ){
+                            var tmpPromise = ActionAppCore.apiFailAction();
+                            if( tmpPromise && tmpPromise.then ){
+                                tmpPromise.then(function(){
+                                    if( theOptions._retryCounter ){
+                                        theOptions._retryCounter++
+                                    } else {
+                                        theOptions._retryCounter = 1;
+                                    }
+                                    ThisApp.apiCall(theOptions).then(function(theRetryResp){
+                                        //--- ToDo: Check for second failure?
+                                        ThisApp.hideLoading(tmpLoaderOptions);
+                                        dfd.resolve(theRetryResp);
+                                    })
                                 })
-                            })
-                        } else {
-                            //--- ToDo: If function does not know to wait, do what?
-    
+                            } else {
+                                //--- ToDo: If function does not know to wait, do what?
+                                dfd.reject('apiFailAction did not reply')
+                            }
                         }
+                    } else {
+                        //console.error('permission issue',theError);                
+                        dfd.reject(theError)
                     }
+                   
                 } else {
-                    console.error('error in api call',theError);                
+                    //console.error('error in api call',theError);                
                     dfd.reject(theError)
                 }
                 
