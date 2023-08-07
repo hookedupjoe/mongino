@@ -2979,7 +2979,7 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
     
             //--- Auto Detect data, convert data and use POST
             if (tmpOptions.data) {
-                tmpOptions.method = 'POST';
+                tmpOptions.method = tmpOptions.method || 'POST';
                 if (tmpAsForm) {
                     if (typeof (tmpOptions.data) == 'object') {
                         tmpOptions.data = ThisApp.util.getObjectAsEncodedForm(tmpOptions.data);
