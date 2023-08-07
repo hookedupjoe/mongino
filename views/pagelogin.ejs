@@ -60,8 +60,15 @@
 
 <% if(designerConfig.passport && designerConfig.passport.github){ %>
   <a href="/auth/github" class="ui button blue"><i class="icon github"></i> Log-In via GitHub</a>
-
 <% } %>
+
+<% if(designerConfig.passport && designerConfig.passport.amazon){ %>
+  <a href="/auth/amazon" class="ui button blue"><i class="icon amazon"></i> Log-In via Amazon</a>
+<% } %>
+<% if(designerConfig.passport && designerConfig.passport.spotify){ %>
+  <a href="/auth/spotify" class="ui button blue"><i class="icon spotify"></i> Log-In via Spotify</a>
+<% } %>
+
 
 <% if(designerConfig.passport && (designerConfig.passport.github || designerConfig.passport.google || designerConfig.passport.twitch)){ %>
   <br /><br /> 

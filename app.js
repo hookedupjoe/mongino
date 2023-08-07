@@ -23,6 +23,9 @@ const LocalStrategy = require('passport-local').Strategy
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 const GitHubStrategy = require('passport-github2').Strategy;
 const OAuth2Strategy = require('passport-oauth').OAuth2Strategy;
+const AmazonStrategy = require('passport-amazon').Strategy;
+const SpotifyStrategy = require('passport-spotify').Strategy;
+
 var request        = require('request');
 
 
@@ -37,6 +40,18 @@ const GITHUB_CLIENT_SECRET = process.env.GITHUB_SECRET;
 
 const GITHUB_CLIENT_ID_DEPLOYED = process.env.GITHUB_CLIENT_ID_DEPLOYED;
 const GITHUB_CLIENT_SECRET_DEPLOYED = process.env.GITHUB_SECRET_DEPLOYED;
+
+const AMAZON_CLIENT_ID = process.env.AMAZON_CLIENT_ID;
+const AMAZON_CLIENT_SECRET = process.env.AMAZON_SECRET;
+
+const AMAZON_CLIENT_ID_DEPLOYED = process.env.AMAZON_CLIENT_ID_DEPLOYED;
+const AMAZON_CLIENT_SECRET_DEPLOYED = process.env.AMAZON_SECRET_DEPLOYED;
+
+const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
+const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_SECRET;
+
+const SPOTIFY_CLIENT_ID_DEPLOYED = process.env.SPOTIFY_CLIENT_ID_DEPLOYED;
+const SPOTIFY_CLIENT_SECRET_DEPLOYED = process.env.SPOTIFY_SECRET_DEPLOYED;
 
 const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
 const TWITCH_CLIENT_SECRET = process.env.TWITCH_SECRET;
@@ -137,6 +152,12 @@ $.designerConfig.passport = {};
     }
     if( GITHUB_CLIENT_ID ){
         $.designerConfig.passport.github = true;
+    }
+    if( AMAZON_CLIENT_ID ){
+        $.designerConfig.passport.amazon = true;
+    }
+    if( SPOTIFY_CLIENT_ID ){
+        $.designerConfig.passport.spotify = true;
     }
     if( TWITCH_CLIENT_ID ){
         $.designerConfig.passport.twitch = true;
@@ -303,6 +324,21 @@ function initOAuth(theExpress, theIsDeployed){
         res.redirect('/authcomplete');
         }
     );
+
+    tmpApp.get('/auth/amazon/callback',
+    passport.authenticate('amazon'+tmpPostFix, { failureRedirect: '/error' }),
+    function (req, res) {
+    res.redirect('/authcomplete');
+    }
+    );
+
+    tmpApp.get('/auth/spotify/callback',
+    passport.authenticate('spotify'+tmpPostFix, { failureRedirect: '/error' }),
+    function (req, res) {
+    res.redirect('/authcomplete');
+    }
+    );
+
 
     tmpApp.get('/auth/twitch/callback',
         passport.authenticate('twitch'+tmpPostFix, { failureRedirect: '/error' }),
@@ -491,6 +527,17 @@ function initAuth2(theExpress, theIsDeployed){
     if( $.designerConfig.passport.github ){
         tmpApp.get('/auth/github',
         passport.authenticate('github'+tmpPostFix, { scope: ['profile', 'email'] }));
+    }
+
+    //, 'amazon_music:access'
+    if( $.designerConfig.passport.amazon ){
+        tmpApp.get('/auth/amazon',
+        passport.authenticate('amazon'+tmpPostFix, { scope: ['profile'] }));
+    }
+
+    if( $.designerConfig.passport.amazon ){
+        tmpApp.get('/auth/spotify',
+        passport.authenticate('spotify'+tmpPostFix, { scope: ['user-read-email','user-read-playback-state', 'user-modify-playback-state','user-read-currently-playing', 'app-remote-control', 'streaming'] }));
     }
 
     tmpApp.post("/login", passport.authenticate('local', {
@@ -724,6 +771,53 @@ function setup() {
                 ));
 
             }
+
+            if( $.designerConfig.passport.spotify ){
+                passport.use('spotify', new SpotifyStrategy({
+                    clientID: SPOTIFY_CLIENT_ID,
+                    clientSecret: SPOTIFY_CLIENT_SECRET,
+                    callbackURL: tmpBaseCallback + "auth/spotify/callback",
+                    passReqToCallback: true,
+                    },
+                    function (accessToken, refreshToken, profile, done) {
+                    return done(null, profile);
+                    }
+                ));
+                passport.use('spotifyapp', new SpotifyStrategy({
+                    clientID: SPOTIFY_CLIENT_ID_DEPLOYED,
+                    clientSecret: SPOTIFY_CLIENT_SECRET_DEPLOYED,
+                    callbackURL: tmpBaseCallback + "auth/spotify/callback"
+                    },
+                    function (accessToken, refreshToken, profile, done) {
+                    return done(null, profile);
+                    }
+                ));
+
+            }
+            
+
+            if( $.designerConfig.passport.spotify ){
+                passport.use('amazon', new AmazonStrategy({
+                    clientID: AMAZON_CLIENT_ID,
+                    clientSecret: AMAZON_CLIENT_SECRET,
+                    callbackURL: tmpBaseCallback + "auth/amazon/callback"
+                    },
+                    function (accessToken, refreshToken, profile, done) {
+                    return done(null, profile);
+                    }
+                ));
+                passport.use('amazonapp', new AmazonStrategy({
+                    clientID: AMAZON_CLIENT_ID_DEPLOYED,
+                    clientSecret: AMAZON_CLIENT_SECRET_DEPLOYED,
+                    callbackURL: tmpBaseCallback + "auth/amazon/callback"
+                    },
+                    function (accessToken, refreshToken, profile, done) {
+                    return done(null, profile);
+                    }
+                ));
+            }
+            
+
 
             if( $.designerConfig.passport.twitch ){
                 passport.use('twitch', new OAuth2Strategy({
