@@ -796,7 +796,7 @@ function setup() {
             }
             
 
-            if( $.designerConfig.passport.spotify ){
+            if( $.designerConfig.passport.amazon ){
                 passport.use('amazon', new AmazonStrategy({
                     clientID: AMAZON_CLIENT_ID,
                     clientSecret: AMAZON_CLIENT_SECRET,
