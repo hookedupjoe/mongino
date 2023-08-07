@@ -242,8 +242,15 @@ var ActionAppCore = {
         if (typeof (tmpOptions) == 'string') {
             tmpOptions = { url: tmpOptions };
         }
-        if( ActionAppCore.apiCallOptions && typeof(ActionAppCore.apiCallOptions.filterOptions) == 'function'){
-            ActionAppCore.apiCallOptions.filterOptions(tmpOptions);
+        
+        if( tmpOptions.authToken ){
+            tmpOptions.beforeSend = function( xhr ) {
+                xhr.setRequestHeader( "Authorization",  "Bearer " + tmpOptions.authToken );
+            }
+        } else {
+            if( ActionAppCore.apiCallOptions && typeof(ActionAppCore.apiCallOptions.filterOptions) == 'function'){
+                ActionAppCore.apiCallOptions.filterOptions(tmpOptions);
+            }
         }
 
         var tmpAsForm = (tmpOptions.formSubmit === true);
@@ -2896,11 +2903,18 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
         }
         $.when(tmpDoPreActionPromise).then(function () {
             //--- This may change the filter options, so do this after the onBeforeRun
+                    
+        if( tmpOptions.authToken ){
+            tmpOptions.beforeSend = function( xhr ) {
+                xhr.setRequestHeader( "Authorization",  "Bearer " + tmpOptions.authToken );
+            }
+        } else {
             if( ActionAppCore.apiCallOptions && typeof(ActionAppCore.apiCallOptions.filterOptions) == 'function'){
                 ActionAppCore.apiCallOptions.filterOptions(tmpOptions);
             }
+        }
 
-            //--- Done with onBeforeLoad if called .. do the api call now
+        //--- Done with onBeforeLoad if called .. do the api call now
             var tmpAsForm = (tmpOptions.formSubmit === true);
 
             var tmpURL = tmpOptions.url;
