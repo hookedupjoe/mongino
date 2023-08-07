@@ -4228,14 +4228,21 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
         return false;
       }
       
+    function rejectedPromise(theReason){
+        var dfd = jQuery.Deferred();
+        dfd.reject(theReason || 'unknown reason');
+        return dfd.promise();
+    }  
+    
     //ThisApp.util...
     var utilFunctions = {
         MIN_TOUCH_DISTANCE: 20,
         isReactClass: isReactClass,
+        rejectedPromise: rejectedPromise,
         removeItemOnce: removeItemOnce,
         removeItemAll: removeItemAll,
         itemTouchStart: itemTouchStart,
-        touchIsClick: touchIsClick,
+        touchIsClick: touchIsClick,    
         isPage: isPage,
         isStr: isStr,
         isFunc: isFunc,
