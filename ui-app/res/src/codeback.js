@@ -5,8 +5,9 @@ const code = params.get("code");
 if (!code) {
     redirectToAuthCodeFlow(clientId);
 } else {
-    const accessToken = await getAccessToken(clientId, code);
-    sessionStorage.setItem('spotifyAccessToken', accessToken);
+    //const accessToken = await getAccessToken(clientId, code);
+    //sessionStorage.setItem('spotifyAccessToken', accessToken);
+    sessionStorage.setItem('codebackcode', code);
     window.location = '/SpotifyController/'
     // const profile = await fetchProfile(accessToken);
     // console.log(profile); // Profile data logs to console
@@ -15,6 +16,7 @@ if (!code) {
 
 export async function getAccessToken(clientId, code) {
     const verifier = localStorage.getItem("verifier");
+    console.log('v read',verifier)
 
     const params = new URLSearchParams();
     params.append("client_id", clientId);
@@ -52,7 +54,9 @@ export async function redirectToAuthCodeFlow(clientId) {
     const verifier = generateCodeVerifier(128);
     const challenge = await generateCodeChallenge(verifier);
 
+    //localStorage.setItem("verifier set", verifier);
     localStorage.setItem("verifier", verifier);
+    console.log('set verifier',verifier);
 
     const params = new URLSearchParams();
     params.append("client_id", clientId);
