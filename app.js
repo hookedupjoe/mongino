@@ -491,6 +491,19 @@ function initAuth2(theExpress, theIsDeployed){
             });
     });
 
+    
+
+    tmpApp.get('/codeback', async function (req, res, next) {
+        ejs.renderFile('views/codeback.ejs', {},
+            {}, function (err, template) {
+                if (err) {
+                    throw err;
+                } else {
+                    res.end(template);
+                }
+            });
+    });
+
     tmpApp.get('/authcomplete', async function (req, res, next) {
         if( req.authUser && req.authUser.id ){
             if( req.authUser.provider && req.authUser.provider != 'local'){
@@ -535,9 +548,9 @@ function initAuth2(theExpress, theIsDeployed){
         passport.authenticate('amazon'+tmpPostFix, { scope: ['profile'] }));
     }
 
-    if( $.designerConfig.passport.amazon ){
+    if( $.designerConfig.passport.spotify ){
         tmpApp.get('/auth/spotify',
-        passport.authenticate('spotify'+tmpPostFix, { scope: ['user-read-email','user-read-playback-state', 'user-modify-playback-state','user-read-currently-playing', 'app-remote-control', 'streaming'] }));
+        passport.authenticate('spotify'+tmpPostFix, { scope: ['user-read-private','user-read-email','user-read-playback-state', 'user-modify-playback-state','user-read-currently-playing', 'app-remote-control', 'streaming'] }));
     }
 
     tmpApp.post("/login", passport.authenticate('local', {
@@ -776,8 +789,7 @@ function setup() {
                 passport.use('spotify', new SpotifyStrategy({
                     clientID: SPOTIFY_CLIENT_ID,
                     clientSecret: SPOTIFY_CLIENT_SECRET,
-                    callbackURL: tmpBaseCallback + "auth/spotify/callback",
-                    passReqToCallback: true,
+                    callbackURL: tmpBaseCallback + "auth/spotify/callback"
                     },
                     function (accessToken, refreshToken, profile, done) {
                     return done(null, profile);
