@@ -3963,7 +3963,7 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
 
         for (var iPos = 0; iPos < tmpMax; iPos++) {
             if (tmpAtEl.hasClass('ui-layout-pane') || tmpAtEl.hasClass('app-layout-pane')) {
-                return true;
+                return tmpAtEl;
             }
             tmpAtEl.css('height', '100%');
             tmpAtEl = tmpAtEl.parent();
