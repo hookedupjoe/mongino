@@ -139,6 +139,12 @@ module.exports.setup = function setup(scope) {
                     "list": "Hide app header|y",
                     "label": "Hide Header?"
                   },
+                  {
+                    "ctl": "checkboxlist",
+                    "name": "externaldeploy",
+                    "list": "Deploy Externally|y",
+                    "label": "Standalone"
+                  },
 
                   {
                     "ctl": "hidden",

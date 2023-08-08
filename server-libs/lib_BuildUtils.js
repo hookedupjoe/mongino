@@ -424,6 +424,12 @@ function buildApp(theAppName, scope, theOptions) {
             tmpOptLibCSS = bld.replaceAll(tmpOptLibCSS, "{{LIBRARY-LOCATION}}", (tmpLibLoc.prefix || ''));
             tmpPluginsText = bld.replaceAll(tmpPluginsText, "{{LIBRARY-LOCATION}}", (tmpLibLoc.prefix || ''));
 
+            var tmpServerSupportFiles = '';
+            if( tmpAppDetails.externaldeploy != 'y' ){
+                tmpServerSupportFiles = '<script src="/appinit.js"></script>';
+            }
+            
+            
             var tmpIndexMap = {
                 "{{LIBRARY-LOCATION}}": tmpLibLoc.prefix || '',
                 "{{OPTIONAL-LIB-CSS}}": tmpOptLibCSS,
@@ -433,6 +439,7 @@ function buildApp(theAppName, scope, theOptions) {
                 "{{APP-TITLE}}": tmpTitle,
                 "{{OPTIONAL-PLUGINS}}": tmpPluginsText,
                 "{{OPTIONAL-LIB-JS}}": tmpOptLibJS,
+                "{{SERVER-SUPPORT-FILES}}": tmpServerSupportFiles,
                 "NORTH:STYLE;": tmpHeaderIndex
             }
 
