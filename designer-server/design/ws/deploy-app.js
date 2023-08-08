@@ -51,7 +51,7 @@ module.exports.setup = function setup(scope) {
                 }
 
                 tmpPrefix = tmpPrefix || tmpAppDetails.prefix || ('mongino-' + tmpAppName)
-                var tmpDeployDirUI = tmpDeployDir + '/ui-apps/'
+                var tmpDeployDirUI = tmpDeployDir + 'ui-apps/'
                 var tmpDeployBase = tmpDeployDirUI + tmpAppName + '/';
                 var tmpDeployTemp = tmpDeployDirUI + "temp_files" + '/';
 
@@ -99,7 +99,7 @@ module.exports.setup = function setup(scope) {
                         await($.fs.copy(scope.locals.path.uilibs + '/' + tmpName + '/',tmpNewLibDir));
                     }
                     
-                    var tmpNewLibBase = tmpDeployBase + '/lib/';
+                    var tmpNewLibBase = tmpDeployBase + 'lib/';
                     await($.fs.ensureDir(tmpNewLibBase));
     
                     var tmpAppLibLookup = {};
