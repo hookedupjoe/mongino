@@ -271,8 +271,17 @@ function buildApp(theAppName, scope, theOptions) {
             if (tmpOptions.deployType === 'cordova') {
                 tmpAppDetails.cdn = 'mobile'
             }
-
+            
             var tmpLibLoc = tmpLibLocs[tmpAppDetails.cdn] || 'local';
+            //--- Always use 
+            console.log( 'tmpAppDetails.externaldeploy', tmpAppDetails.externaldeploy);
+            if (tmpOptions.deploy === true) {
+                if( tmpAppDetails.externaldeploy && tmpAppDetails.externaldeploy[0] == 'y' ){
+                    
+                    tmpLibLoc = {prefix:'.'};
+                    console.log( 'tmpLibLoc', tmpLibLoc);
+                }
+            }
             
             var tmpOptLibCSS = '';
             var tmpOptLibJS = '';
@@ -425,7 +434,8 @@ function buildApp(theAppName, scope, theOptions) {
             tmpPluginsText = bld.replaceAll(tmpPluginsText, "{{LIBRARY-LOCATION}}", (tmpLibLoc.prefix || ''));
 
             var tmpServerSupportFiles = '';
-            if( tmpAppDetails.externaldeploy != 'y' ){
+
+            if( !(tmpAppDetails.externaldeploy) || tmpAppDetails.externaldeploy[0] != 'y' ){
                 tmpServerSupportFiles = '<script src="/appinit.js"></script>';
             }
             

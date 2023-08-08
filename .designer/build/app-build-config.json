@@ -28,7 +28,7 @@
 		{
 			"name": "local",
 			"label": "Local",
-			"prefix": "."
+			"prefix": ""
 		},
 		{
 			"name": "cloud",
