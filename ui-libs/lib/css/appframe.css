@@ -584,6 +584,11 @@ cursor: pointer;
 background-color: transparent;
 }
 
+
+[action],[myaction],[pageaction] {
+  cursor: pointer; 
+  }
+  
 /* Semantic 2.3 not working as expected, work arounds for "top attached", etc */
 .ontop {
 padding-bottom:0px;
