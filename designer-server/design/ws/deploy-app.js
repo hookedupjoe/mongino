@@ -112,7 +112,10 @@ module.exports.setup = function setup(scope) {
                         var tmpLibInfo = tmpBuildCfg.libraries[iPos];
                         var tmpLibName = tmpLibInfo.name;
                         if( tmpAppLibLookup[tmpLibName]){
-                            tmpLibsToInc.push({name:tmpLibName, base: tmpLibInfo.base})
+                            //--- If No Base, these are external files (rare)
+                            if( tmpLibInfo.base ){
+                                tmpLibsToInc.push({name:tmpLibName, base: tmpLibInfo.base})
+                            }
                         }
     
                     }
