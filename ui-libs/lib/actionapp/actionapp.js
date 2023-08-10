@@ -153,7 +153,6 @@ var ActionAppCore = {
         return tmpRet;
     },    
     util: {
-        
         getStylesAsObject(theString){
             var regex = /([\w-]*)\s*:\s*([^;]*)/g;
             var match, properties={};
@@ -2165,7 +2164,7 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
         }
         return tmpRet;
     }
-
+   
     /**
      * getByAttr$
      *    - returns a jQuery element collection (which may be one) that matches the attributes passed
@@ -4263,6 +4262,23 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
         convertToJsonLive: convertToJsonLive,
         convertFromJsonLive: convertFromJsonLive,
         clearToTop: clearToTop,
+        getEl$(theEl){
+            var tmpEl = theEl;
+            if (!this.isjQuery(tmpEl)){
+                tmpEl = $(tmpEl);            
+            }
+            return tmpEl;
+        },
+        addTempLoader(theEl){
+            var tmpEl = this.getEl$(theEl);
+            if(tmpEl)
+                tmpEl.append('<div appuse="actAppTempLoader" class="ui active dimmer"><div class="ui loader"></div></div>');
+        },
+        removeTempLoader(theEl){
+            var tmpEl = this.getEl$(theEl);
+            if(tmpEl)
+            ThisApp.getByAttr$({appuse:"actAppTempLoader"},tmpEl).remove();
+        },
         clone: function (theObj) {
             if (typeof (theObj) !== 'object') {
                 throw ("Objects can only be cloned");
@@ -4306,6 +4322,7 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
         }
     }
 
+    
 
     function clearBack(theEl) {
         $(theEl).css('background-color', 'rgba(0, 0, 0, 0)');
