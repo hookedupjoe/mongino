@@ -645,27 +645,6 @@ app.get('/designer/details.js', async function (req, res, next) {
     return res.send(tmpRet);
 });
 
-try {
-    //--- ToDo: Make this optional.
-    const chokidar = require('chokidar');
-    var tmpWatchDir = scope.locals.path.root + "/designer-server"
-    //--> Watch All (CLOSE BEFORE COMMIT!)-->      var tmpWatchDir = scope.locals.path.root;
-
-    chokidar.watch(tmpWatchDir, { ignored: /index\.js$/ })
-        .on('change', (path) => {
-            try {
-                if (require.cache[path]) delete require.cache[path];
-                console.log('New file loaded for ' + path);
-            } catch (theChangeError) {
-                console.log("Could not hot update: " + path);
-                console.log("The reason: " + theChangeError);
-            }
-        });
-} catch (ex) {
-    console.log('Not hot reading, chokidar not installed on dev side')
-}
-
-
 
 function setup() {
 
@@ -728,6 +707,52 @@ function setup() {
             }
 
             await $.appIndexRefresh();
+
+
+
+
+            const chokidar = require('chokidar');
+
+            try {
+                //--- ToDo: Make this optional.
+                var tmpWatchDir = scope.locals.path.root + "/designer-server"
+                //--> Watch All (CLOSE BEFORE COMMIT!)-->      var tmpWatchDir = scope.locals.path.root;
+
+                chokidar.watch(tmpWatchDir, { ignored: /index\.js$/ })
+                    .on('change', (path) => {
+                        try {
+                            if (require.cache[path]) delete require.cache[path];
+                            console.log('New file loaded for ' + path);
+                        } catch (theChangeError) {
+                            console.log("Could not hot update: " + path);
+                            console.log("The reason: " + theChangeError);
+                        }
+                    });
+            } catch (ex) {
+
+                console.log('Error, chokidar',ex)
+            }
+
+            try {
+                //--- Application backend updates hot swappable
+                var tmpAppServerFilesLoc = scope.locals.path.ws.uiAppServers
+                chokidar.watch(tmpAppServerFilesLoc, { ignored: /index\.js$/ })
+                    .on('change', (path) => {
+                        try {
+                            if (require.cache[path]) delete require.cache[path];
+                            console.log('New file loaded for ' + path);
+                        } catch (theChangeError) {
+                            console.log("Could not hot update: " + path);
+                            console.log("The reason: " + theChangeError);
+                        }
+                    });
+            } catch (ex) {
+                console.log('error in watch setup for apps',ex)
+            }
+
+
+
+
 
             app.use(express.static(scope.locals.path.root + '/ui-libs'));
             app.use(express.static(scope.locals.path.root + '/common'));
@@ -919,27 +944,12 @@ function setup() {
                     var url = parse(request.url);
                     var pathname = url.pathname;
                     if (pathname === '/main' && wssMain) {
-                    wssMain.handleUpgrade(request, socket, head, function done(ws) {
-                        wssMain.emit('connection', ws, request);
-                    });
-                    } else if (pathname === '/design/ws/ws-status') {
-                        //--- setup and run-> handleWebsockUpgrade
-                        pathname = pathname.replace('/design','');
-                        var tmpFilePath = scope.locals.path.design + pathname + '.js';
-                        console.log( 'tmpFilePath app', tmpFilePath);
-                        var tmpProcessReq = require(tmpFilePath);
-                        if (typeof(tmpProcessReq.setup) == 'function') {
-                            //var tmpToRun = tmpProcessReq.handleWebsockUpgrade(request, socket, head);
-                            var tmpWSS = tmpProcessReq.setup(scope, {websocket:true});
-                            tmpWSS.handleUpgrade(request, socket, head, function done(ws) {
-                                tmpWSS.emit('connection', ws, request);
-                            });
-                        }
-                        
+                        wssMain.handleUpgrade(request, socket, head, function done(ws) {
+                            wssMain.emit('connection', ws, request);
+                        });
                     } else {
                         var params = new URLSearchParams(url.query);
-
-                        var tmpAppID = params.get('app');
+                        var tmpAppID = params.get('app') || '';
                         if( tmpAppID ){
                             var tmpType = 'actions';
                             var tmpName = 'run-test2';
