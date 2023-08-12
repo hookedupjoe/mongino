@@ -375,16 +375,6 @@ License: LGPL
 								"name": "save-app-setup"
 							},
 							{
-								"ctl": "a",
-								"classes": "ui button basic blue",
-								"attr": {
-									href: "",
-									target: ""
-								},
-								text: "Open in VS Code",
-								"name": "open-in-code-link"
-							},
-							{
 								"ctl": "button",
 								"color": "blue",
 								"onClick": {
@@ -403,6 +393,26 @@ License: LGPL
 								},
 								text: "ACL",
 								"name": "btn-open-acl"
+							},
+							{
+								"ctl": "a",
+								"classes": "ui button basic blue",
+								"attr": {
+									href: "",
+									target: ""
+								},
+								text: "Open Server in VS Code",
+								"name": "open-server-in-code-link"
+							},
+							{
+								"ctl": "a",
+								"classes": "ui button basic blue",
+								"attr": {
+									href: "",
+									target: ""
+								},
+								text: "Open in UI VS Code",
+								"name": "open-in-code-link"
 							},
 							{
 								"ctl": "divider",
@@ -473,6 +483,7 @@ License: LGPL
 
 		var tmpSetupInfo = this.getSetupInfo();
 		var tmpAppPath = this.parts.setupinfo.controlSpec.controlConfig.options.links.path;
+		var tmpAppServerPath = this.parts.setupinfo.controlSpec.controlConfig.options.links.serverPath;
 		var tmpDeployPath = this.parts.setupinfo.controlSpec.controlConfig.options.links.deploy;
 		var tmpDeployExtPath = this.parts.setupinfo.controlSpec.controlConfig.options.links.deployExt;
 		var tmpCordovaPath = this.parts.setupinfo.controlSpec.controlConfig.options.links.cordova;
@@ -480,6 +491,8 @@ License: LGPL
 		this.details.deploy = tmpDeployPath;
 		this.details.deployExt = tmpDeployExtPath;
 		this.details.cordova = tmpCordovaPath;
+		this.details.serverPath = tmpAppServerPath;
+
 		this.details.apptitle = tmpSetupInfo.title || this.details.appname;
 		var tmpTitle = this.details.appname;
 		if (this.details.apptitle) {
@@ -494,6 +507,11 @@ License: LGPL
 		var tmpDeployLink = this.getItemEl('deploy-in-code-link');
 		tmpDeployLink.attr('href', "vscode://file/" + this.details.deploy);
 		tmpDeployLink.attr('target', "app-deploy-code-" + this.details.appname);
+
+		var tmpCodeLink = this.getItemEl('open-server-in-code-link');
+		tmpCodeLink.attr('href', "vscode://file/" + this.details.serverPath);
+		tmpCodeLink.attr('target', "app-server-code-" + this.details.appname);
+		console.log( 'this.details', this.details);
 
 
 		var tmpMobileLink = this.getItemEl('cordova-in-code-link');

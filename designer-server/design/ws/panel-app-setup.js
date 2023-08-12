@@ -26,6 +26,7 @@ module.exports.setup = function setup(scope) {
         var tmpWSDir = scope.locals.path.ws.uiApps;
         var tmpDeployDir = scope.locals.path.ws.deploy;
         var tmpDeployExtDir = scope.locals.path.ws.deployExt;
+        var tmpAppServersBase = scope.locals.path.ws.uiAppServers;
 
         var tmpAppName = req.query.appname || req.query.name || req.query.filename || '';
         tmpAppName = tmpAppName.replace('.json', '')
@@ -37,6 +38,9 @@ module.exports.setup = function setup(scope) {
         tmpDeployDir += tmpAppName + '/';
 
         var tmpAppBase = tmpWSDir + tmpAppName + '/';
+        var tmpAppServerBase = tmpAppServersBase + tmpAppName + '/';
+        console.log('tmpAppServerBase',tmpAppServerBase)
+
         var tmpAppDetails = await($.bld.getJsonFile(tmpAppBase + 'app-info.json'))
 
         var tmpPagesBase = tmpAppBase + '/app/pages/';
@@ -100,6 +104,7 @@ module.exports.setup = function setup(scope) {
             "padding": false,
             "links": {
               "path": tmpAppBase,
+              "serverPath": tmpAppServerBase,
               "deploy": tmpDeployDirApp,
               "deployExt": tmpDeployExtDirApp,
               "cordova": tmpDeployDirCordova

@@ -97,7 +97,7 @@ module.exports.setup = function setup(scope) {
 
         try {
             
-        var tmpFilePath = scope.locals.path.appserver + tmpAppID + '/' + tmpType + '/' + tmpName + '.js';
+        var tmpFilePath = scope.locals.path.appserver + tmpAppID + '/appserver/' + tmpType + '/' + tmpName + '.js';
         var tmpProcessReq = require(tmpFilePath);
         if (typeof(tmpProcessReq.setup) == 'function') {
             var tmpToRun = tmpProcessReq.setup(scope);
