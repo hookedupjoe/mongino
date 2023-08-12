@@ -39,7 +39,6 @@ module.exports.setup = function setup(scope) {
 
         var tmpAppBase = tmpWSDir + tmpAppName + '/';
         var tmpAppServerBase = tmpAppServersBase + tmpAppName + '/';
-        console.log('tmpAppServerBase',tmpAppServerBase)
 
         var tmpAppDetails = await($.bld.getJsonFile(tmpAppBase + 'app-info.json'))
 
@@ -61,8 +60,6 @@ module.exports.setup = function setup(scope) {
           }
         }
         
-
-        // console.log( 'tmpBuildCfg', tmpBuildCfg);
 
         var tmpAppTpls = tmpBuildCfg.applicationTemplates || [];
         var tmpAppsList = [];

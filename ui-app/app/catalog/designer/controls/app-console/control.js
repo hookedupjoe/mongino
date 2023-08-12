@@ -511,7 +511,6 @@ License: LGPL
 		var tmpCodeLink = this.getItemEl('open-server-in-code-link');
 		tmpCodeLink.attr('href', "vscode://file/" + this.details.serverPath);
 		tmpCodeLink.attr('target', "app-server-code-" + this.details.appname);
-		console.log( 'this.details', this.details);
 
 
 		var tmpMobileLink = this.getItemEl('cordova-in-code-link');
@@ -759,7 +758,6 @@ License: LGPL
 			alert("No app to open");
 			return;
 		}
-		console.log("disabled");
 		//ThisApp.apiCall({ url: 'design/ws/launch-app?appname=' + tmpAppName })
 	};
 

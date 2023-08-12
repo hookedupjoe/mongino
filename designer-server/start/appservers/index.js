@@ -24,12 +24,9 @@ module.exports.setup = function setup(scope) {
 
         var tmpAppID = req.headers['act-app-id'] || '';
         if( !(tmpAppID) ){
-            console.log('req.headers.referer',req.headers.referer);
             const tmpURL = new URL(req.headers.referer);
-            console.log(tmpURL.origin);
             var tmpAppName = req.headers.referer.replace(tmpURL.origin,'').replace(/\//g,'');
             tmpAppID = tmpAppName;
-            console.log( 'tmpAppName', tmpAppName);
         }
         if( tmpAppID ){
             //--- Always use header value, even if appid passed
@@ -73,10 +70,7 @@ module.exports.setup = function setup(scope) {
         //--- May have passed anonymous?
         if( req.authUser ){
             var tmpDBName = req.body.dbname;
-            //console.log('tmpDBN', tmpDBName);
-            //console.log('req.authUser',req.authUser);
             tmpIsAllowed = await $.AuthMgr.isAllowed(req.authUser.id,{db:req.body.dbname}, tmpAccessType)
-            //console.log('tmpIsAllowed from check',tmpIsAllowed);
         }
 
         

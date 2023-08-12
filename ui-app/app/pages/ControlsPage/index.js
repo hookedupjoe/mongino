@@ -469,10 +469,7 @@ License: LGPL
             testFunction: tmpFunc
         }
         var tmpAsStringable = ThisApp.util.convertToJsonLive(tmpToSave);
-        console.log('tmpAsStringable', tmpAsStringable);
         var tmpAsString = JSON.stringify(tmpAsStringable);
-
-        console.log('tmpAsString', tmpAsString);
 
         var tmpFromString = ThisApp.util.convertFromJsonLive(tmpAsString);
         console.log('tmpFromString', tmpFromString);
