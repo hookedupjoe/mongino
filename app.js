@@ -13,8 +13,8 @@ var path = require('path'),
     deployedScope = {},
     scope = {};
 
-    const { WebSocketServer } = require('ws');
-    const { parse } = require('url');
+const { WebSocketServer } = require('ws');
+const { parse } = require('url');
 
 var https = require('https');
 const jwt = require('jsonwebtoken');
@@ -137,12 +137,14 @@ scope.locals.path.start = scope.locals.path.root + "/designer-server";
 scope.locals.path.libraries = scope.locals.path.root + "/server-libs";
 
 var $ = require(scope.locals.path.libraries + '/globalUtilities.js').$;
+$.classes = $.classes || {}
+$.classes.WebSocketServer = WebSocketServer;
 //--- Passport Auth ------------------
 var isUsingPassport = (process.env.AUTH_TYPE == 'passport');
 
 //--- POC WS
 var isUsingWebsockets = true; //ToDo: Pull from somewhere if used
-var wss = false;
+var wssMain = false;
 
 $.isUsingPassport = isUsingPassport;
 
@@ -852,7 +854,6 @@ function setup() {
                     state: true
                 },
                 function(accessToken, refreshToken, profile, done) {
-                    //console.log('profile',profile);
                     profile.provider = "twitch";
                     profile.displayName = profile.data.display_name;
                     return done(null, profile);
@@ -901,34 +902,77 @@ function setup() {
             }
 
             if( isUsingWebsockets ){
-                //wss = new WebSocketServer({ server });
-                wss = new WebSocketServer({ noServer: true });
-            
-                wss.on('connection', function connection(ws) {
+                wssMain = new WebSocketServer({ noServer: true });
+                wssMain.on('connection', function connection(ws) {
                     ws.on('error', console.error);
-                
-                ws.on('message', function message(data) {
-                    console.log('Mongino main ws received: %s', data);
-                });
-                
-                ws.send('Mongino main ws says hello');
+                    ws.on('message', function message(data) {
+                        console.log('Mongino main ws received: %s', data);
+                    });
+                    ws.send('Mongino main ws says hello');
                 });
 
                
             }
 
             server.on('upgrade', function upgrade(request, socket, head) {
-                const { pathname } = parse(request.url);
-              console.log( 'upgrade',pathname);
-                if (pathname === '/main') {
-                  wss.handleUpgrade(request, socket, head, function done(ws) {
-                    wss.emit('connection', ws, request);
-                  });
-                } else {
-                  socket.destroy();
+                try {
+                    var url = parse(request.url);
+                    var pathname = url.pathname;
+                    if (pathname === '/main' && wssMain) {
+                    wssMain.handleUpgrade(request, socket, head, function done(ws) {
+                        wssMain.emit('connection', ws, request);
+                    });
+                    } else if (pathname === '/design/ws/ws-status') {
+                        //--- setup and run-> handleWebsockUpgrade
+                        pathname = pathname.replace('/design','');
+                        var tmpFilePath = scope.locals.path.design + pathname + '.js';
+                        console.log( 'tmpFilePath app', tmpFilePath);
+                        var tmpProcessReq = require(tmpFilePath);
+                        if (typeof(tmpProcessReq.setup) == 'function') {
+                            //var tmpToRun = tmpProcessReq.handleWebsockUpgrade(request, socket, head);
+                            var tmpWSS = tmpProcessReq.setup(scope, {websocket:true});
+                            tmpWSS.handleUpgrade(request, socket, head, function done(ws) {
+                                tmpWSS.emit('connection', ws, request);
+                            });
+                        }
+                        
+                    } else {
+                        var params = new URLSearchParams(url.query);
+
+                        var tmpAppID = params.get('app');
+                        if( tmpAppID ){
+                            var tmpType = 'actions';
+                            var tmpName = 'run-test2';
+                            var tmpFilePath = scope.locals.path.appserver + tmpAppID + '/appserver/' + tmpType + '/' + tmpName + '.js';
+                            var tmpAppWSReq = require(tmpFilePath);
+                            if (typeof(tmpAppWSReq.setup) == 'function') {
+                                var tmpWSS = tmpAppWSReq.setup(scope, {websocket:true, wssc:WebSocketServer});
+                                if( tmpWSS && tmpWSS.handleUpgrade ){
+                                        tmpWSS.handleUpgrade(request, socket, head, function done(ws) {
+                                            tmpWSS.emit('connection', ws, request);
+                                        });
+                                } else {
+                                    console.error('no winsock process available',tmpURL)
+                                    socket.destroy();
+                                }
+                            }
+                        } else {
+                            //--- no valid winsock implementtion
+                            console.error('no appid / winsock available',tmpURL)
+                            socket.destroy();
+                        }
+                        
+                        
+
+
+                        
+                    }
+                
+                } catch (error) {
+                    console.log('error',error);
+                    socket.destroy();
                 }
-            });
-              
+            });  
 
             server.listen(port, '0.0.0.0');
             

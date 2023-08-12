@@ -1,11 +1,14 @@
 'use strict';
 const THIS_MODULE_NAME = 'ws-status';
 const THIS_MODULE_TITLE = 'Create websock interface for real time status';
-
-module.exports.setup = function setup(scope) {
+var isSetup = false;
+var wssMain = false;
+module.exports.setup = function setup(scope, options) {
     var config = scope;
+    var options = options || {};
     var $ = config.locals.$;
 
+    console.log( 'isSetup', isSetup);
     function Route() {
         this.name = THIS_MODULE_NAME;
         this.title = THIS_MODULE_TITLE;
@@ -14,6 +17,29 @@ module.exports.setup = function setup(scope) {
 
     var $ = config.locals.$;
     var bld = $.bld;
+
+    if( options.websocket === true ){
+        const { WebSocketServer } = require('ws');
+
+        if( !isSetup ){
+            wssMain = new WebSocketServer({ noServer: true });
+            wssMain.on('connection', function connection(ws) {
+                ws.on('error', console.error);
+                ws.on('message', function message(data) {
+                    console.log('ws-status received: %s', data);
+                    ws.send('ws-status says howdy');
+                });
+                ws.send('ws-status says welcome');
+            });
+            isSetup = true;
+            console.log('new websock')
+        }
+        
+        return wssMain;
+    }
+   
+
+
 
     //--- Load the prototype
     base.run = function (req, res, next) {
@@ -38,7 +64,7 @@ module.exports.setup = function setup(scope) {
 
     }
 
-
+   
 
 
 
