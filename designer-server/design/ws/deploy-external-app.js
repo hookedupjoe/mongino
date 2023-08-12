@@ -103,7 +103,6 @@ module.exports.setup = function setup(scope) {
                 
                 var tmpNewLibBase = tmpDeployBase + 'ui-app/lib/';
                 await($.fs.ensureDir(tmpNewLibBase));
-                //console.log('tmpNewLibBase',tmpNewLibBase);
 
                 var tmpAppLibLookup = {};
                 for( var iPos in tmpAppDetails.libraries){
@@ -128,7 +127,6 @@ module.exports.setup = function setup(scope) {
                     var tmpNewLibDir = tmpNewLibBase + tmpLibInfo.base + '/';
                     await($.fs.ensureDir(tmpNewLibDir));
                     var tmpFromDir = scope.locals.path.uilibs + '/lib/' + tmpLibInfo.base + '/';
-                    console.log( 'tmpNewLibDir', tmpNewLibDir);
                     await($.fs.copy(tmpFromDir,tmpNewLibDir));
                 }
                 

@@ -148,7 +148,6 @@ function getDirApps() {
 
 
 function updateCatSetup(theName, theSetupDetails, scope) {
-    // console.log( 'updateCatSetup', theName, theSetupDetails);
     var self = this;
     return new Promise( async function (resolve, reject) {
         try {
@@ -161,9 +160,7 @@ function updateCatSetup(theName, theSetupDetails, scope) {
             var tmpWSDir = scope.locals.path.ws.catalogs;
 
             var tmpAppBase = tmpWSDir + tmpName + '/';
-            // console.log( 'Saving to ', tmpAppBase, theSetupDetails);
             await(utils.saveJsonFile(tmpAppBase + 'cat-info.json', theSetupDetails))
-            //await(buildApp(tmpName, scope));
 
             var tmpRet = {
                 status: true,
@@ -185,7 +182,6 @@ function updateCatSetup(theName, theSetupDetails, scope) {
 }
 
 function updateAppSetup(theAppName, theSetupDetails, scope) {
-    // console.log( 'updateAppSetup', theAppName, theSetupDetails);
     var self = this;
     return new Promise( async function (resolve, reject) {
         try {
@@ -198,7 +194,6 @@ function updateAppSetup(theAppName, theSetupDetails, scope) {
             var tmpWSDir = scope.locals.path.ws.uiApps;
 
             var tmpAppBase = tmpWSDir + tmpAppName + '/';
-            // console.log( 'Saving to ', tmpAppBase, theSetupDetails);
             await(utils.saveJsonFile(tmpAppBase + 'app-info.json', theSetupDetails))
             await(buildApp(tmpAppName, scope));
             
@@ -223,7 +218,6 @@ function updateAppSetup(theAppName, theSetupDetails, scope) {
 }
 
 function buildApp(theAppName, scope, theOptions) {
-    console.log( 'buildApp', theOptions);
     var self = this;
     return new Promise( async function (resolve, reject) {
         try {
@@ -438,14 +432,11 @@ function buildApp(theAppName, scope, theOptions) {
             tmpPluginsText = bld.replaceAll(tmpPluginsText, "{{LIBRARY-LOCATION}}", (tmpLibLoc.prefix || ''));
 
             var tmpServerSupportFiles = '';
-            console.log( 'tmpServerSupportFiles before', tmpServerSupportFiles);
             if((!(tmpAppDetails.externaldeploy) || tmpAppDetails.externaldeploy[0] != 'y' )){
                 tmpServerSupportFiles = '<script src="/appinit.js"></script>';
-                console.log( 'tmpServerSupportFiles after', tmpServerSupportFiles);
             }
             if( tmpOptions.external ){
                 tmpServerSupportFiles = '';
-                console.log( 'tmpServerSupportFiles after 2', tmpServerSupportFiles);
             }
             
             
@@ -473,7 +464,6 @@ function buildApp(theAppName, scope, theOptions) {
             
             tmpIndex = utils.replaceFromMap(tmpIndex, tmpIndexMap);
             var tmpReplaceFN = tmpAppBase + 'index.html';
-            console.log( 'tmpReplaceFN', tmpReplaceFN);
             await(utils.replaceFile(tmpAppBase + 'index.html', tmpIndex))
 
             tmpApp = utils.replaceFromMap(tmpApp, tmpAppMap);
