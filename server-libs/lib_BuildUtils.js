@@ -275,7 +275,7 @@ function buildApp(theAppName, scope, theOptions) {
             var tmpLibLoc = tmpLibLocs[tmpAppDetails.cdn] || 'local';
             //--- Always use 
             if (tmpOptions.deploy === true) {
-                if( tmpAppDetails.externaldeploy && tmpAppDetails.externaldeploy[0] == 'y' ){
+                if( tmpOptions.external || (tmpAppDetails.externaldeploy && tmpAppDetails.externaldeploy[0] == 'y' )){
                     tmpLibLoc = {prefix:'.'};
                 }
             }

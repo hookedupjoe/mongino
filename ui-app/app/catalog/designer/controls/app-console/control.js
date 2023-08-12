@@ -295,6 +295,31 @@ License: LGPL
 								},
 								text: "Open Mobile Deployment in VS Code",
 								"name": "cordova-in-code-link"
+							},
+							{
+								ctl: "divider",
+								fitted: true,
+								clearing: true,
+								"name":"external-sep"
+							},
+							{
+								"ctl": "button",
+								"onClick": {
+									"run": "action",
+									"action": "createExternalAppDeployment"
+								},
+								text: "Build External App",
+								"name": "build-deploy-external"
+							},
+							{
+								"ctl": "a",
+								"classes": "ui button basic blue",
+								"attr": {
+									href: "",
+									target: ""
+								},
+								text: "Open External Deployment in VS Code",
+								"name": "external-in-code-link"
 							}
 
 						]
@@ -412,6 +437,7 @@ License: LGPL
 		saveAppSetup: saveAppSetup,
 		updateAppSetup: updateAppSetup,
 		createAppDeployment: createAppDeployment,
+		createExternalAppDeployment: createExternalAppDeployment,
 		createCordovaDeployment: createCordovaDeployment,
 		vscodeDeployment: vscodeDeployment,
 		rebuildApp: rebuildApp,
@@ -471,6 +497,13 @@ License: LGPL
 		var tmpMobileLink = this.getItemEl('cordova-in-code-link');
 		tmpMobileLink.attr('href', "vscode://file/" + this.details.cordova);
 		tmpMobileLink.attr('target', "app-cordova-code-" + this.details.appname);
+
+		var tmpExtAppLink = this.getItemEl('external-in-code-link');
+		tmpExtAppLink.attr('href', "vscode://file/" + this.details.deploy + 'Ext');
+		tmpExtAppLink.attr('target', "app-external-code-" + this.details.appname);
+
+		
+
 
 		if( !(ActionAppCore.designerDetails && ActionAppCore.designerDetails.config && ActionAppCore.designerDetails.config.isUsingData) ){
 			var tmpDataTab = this.getByAttr$({
@@ -641,6 +674,18 @@ License: LGPL
 			return;
 		}
 		var tmpURL = 'design/ws/deploy-app?appname=' + tmpAppName
+		ThisApp.apiCall({ url: tmpURL }).then(function (theReply) {
+			ThisApp.appMessage("Done, open in VS code to review and deploy.", "s", { show: true });
+		})
+	};
+
+	function createExternalAppDeployment() {
+		var tmpAppName = this.params.appname || ''
+		if (!(tmpAppName)) {
+			alert("No app to open, contact the developer", "System Error", "e");
+			return;
+		}
+		var tmpURL = 'design/ws/deploy-external-app?appname=' + tmpAppName
 		ThisApp.apiCall({ url: tmpURL }).then(function (theReply) {
 			ThisApp.appMessage("Done, open in VS code to review and deploy.", "s", { show: true });
 		})
