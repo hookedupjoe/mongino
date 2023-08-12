@@ -78,29 +78,29 @@ module.exports.setup = function setup(scope) {
 
 
                 await($.fs.copy(tmpServerFilesLoc,tmpDeployBase));
-                var tmpManifestText = await($.bld.getTextFile(tmpDeployBase + 'manifest.yml'));
-                tmpManifestText = tmpManifestText.replace('{{URL-PREFIX}}', tmpPrefix);
-                await($.fs.writeFile(tmpDeployBase + 'manifest.yml',tmpManifestText))
+                // var tmpManifestText = await($.bld.getTextFile(tmpDeployBase + 'manifest.yml'));
+                // tmpManifestText = tmpManifestText.replace('{{URL-PREFIX}}', tmpPrefix);
+                // await($.fs.writeFile(tmpDeployBase + 'manifest.yml',tmpManifestText))
 
                 //--- Rebuild using defaults
                 await($.bld.buildApp(tmpAppName,scope,{deploy:true, external: true}));
 
-                if( tmpAppDetails.cdn != 'cloud'){
-                    await($.fs.copy(scope.locals.path.uilibs + '/',tmpDeployBase + '/ui-app/'));
-                }
+                // if( tmpAppDetails.cdn != 'cloud'){
+                //     await($.fs.copy(scope.locals.path.uilibs + '/',tmpDeployBase + '/ui-app/'));
+                // }
                 //ToDo: this....
-                /*
+                
                 if( tmpAppDetails.cdn != 'cloud'){
 
                     var alwaysThere = ['built-lib','dir','plugins','svg-catalog','webctl-catalog'];
                     for( var iPos in alwaysThere ){
                         var tmpName = alwaysThere[iPos];
-                        var tmpNewLibDir = tmpDeployBase + '/' + tmpName + '/';
+                        var tmpNewLibDir = tmpDeployBase + '/ui-app/' + tmpName + '/';
                         await($.fs.ensureDir(tmpNewLibDir));
                         await($.fs.copy(scope.locals.path.uilibs + '/' + tmpName + '/',tmpNewLibDir));
                     }
                     
-                    var tmpNewLibBase = tmpDeployBase + 'lib/';
+                    var tmpNewLibBase = tmpDeployBase + '/ui-app/lib/';
                     await($.fs.ensureDir(tmpNewLibBase));
     
                     var tmpAppLibLookup = {};
@@ -130,7 +130,14 @@ module.exports.setup = function setup(scope) {
                     }
                     
                 }
-                 */
+                
+
+
+
+
+
+
+
                 var tmpEPFrom = scope.locals.path.appdataendpoints + '/api/';
                 var tmpEPTo = tmpDeployBase + 'server-app/appdata/api/';
 

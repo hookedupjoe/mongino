@@ -474,9 +474,11 @@ License: LGPL
 		var tmpSetupInfo = this.getSetupInfo();
 		var tmpAppPath = this.parts.setupinfo.controlSpec.controlConfig.options.links.path;
 		var tmpDeployPath = this.parts.setupinfo.controlSpec.controlConfig.options.links.deploy;
+		var tmpDeployExtPath = this.parts.setupinfo.controlSpec.controlConfig.options.links.deployExt;
 		var tmpCordovaPath = this.parts.setupinfo.controlSpec.controlConfig.options.links.cordova;
 		this.details.path = tmpAppPath;
 		this.details.deploy = tmpDeployPath;
+		this.details.deployExt = tmpDeployExtPath;
 		this.details.cordova = tmpCordovaPath;
 		this.details.apptitle = tmpSetupInfo.title || this.details.appname;
 		var tmpTitle = this.details.appname;
@@ -499,7 +501,7 @@ License: LGPL
 		tmpMobileLink.attr('target', "app-cordova-code-" + this.details.appname);
 
 		var tmpExtAppLink = this.getItemEl('external-in-code-link');
-		tmpExtAppLink.attr('href', "vscode://file/" + this.details.deploy + 'Ext');
+		tmpExtAppLink.attr('href', "vscode://file/" + this.details.deployExt);
 		tmpExtAppLink.attr('target', "app-external-code-" + this.details.appname);
 
 		
