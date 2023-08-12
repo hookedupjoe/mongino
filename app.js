@@ -13,6 +13,9 @@ var path = require('path'),
     deployedScope = {},
     scope = {};
 
+    const { WebSocketServer } = require('ws');
+    const { parse } = require('url');
+
 var https = require('https');
 const jwt = require('jsonwebtoken');
 const ejs = require('ejs');
@@ -136,8 +139,15 @@ scope.locals.path.libraries = scope.locals.path.root + "/server-libs";
 var $ = require(scope.locals.path.libraries + '/globalUtilities.js').$;
 //--- Passport Auth ------------------
 var isUsingPassport = (process.env.AUTH_TYPE == 'passport');
+
+//--- POC WS
+var isUsingWebsockets = true; //ToDo: Pull from somewhere if used
+var wss = false;
+
 $.isUsingPassport = isUsingPassport;
 
+//--- POC WS
+$.isUsingWebsockets = isUsingWebsockets
 
 $.designerConfig = {};
 
@@ -889,7 +899,39 @@ function setup() {
             } else {
                 var server = http.createServer(app);
             }
+
+            if( isUsingWebsockets ){
+                //wss = new WebSocketServer({ server });
+                wss = new WebSocketServer({ noServer: true });
+            
+                wss.on('connection', function connection(ws) {
+                    ws.on('error', console.error);
+                
+                ws.on('message', function message(data) {
+                    console.log('Mongino main ws received: %s', data);
+                });
+                
+                ws.send('Mongino main ws says hello');
+                });
+
+               
+            }
+
+            server.on('upgrade', function upgrade(request, socket, head) {
+                const { pathname } = parse(request.url);
+              console.log( 'upgrade',pathname);
+                if (pathname === '/main') {
+                  wss.handleUpgrade(request, socket, head, function done(ws) {
+                    wss.emit('connection', ws, request);
+                  });
+                } else {
+                  socket.destroy();
+                }
+            });
+              
+
             server.listen(port, '0.0.0.0');
+            
 
             //--- Show port in console
             server.on('listening', onListening(server));
