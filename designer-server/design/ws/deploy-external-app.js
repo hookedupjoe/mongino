@@ -84,52 +84,55 @@ module.exports.setup = function setup(scope) {
 
                 //--- Rebuild using defaults
                 await($.bld.buildApp(tmpAppName,scope,{deploy:true, external: true}));
+                var tmpBuildCfg = await($.bld.getBuildConfigJson(scope));
 
                 // if( tmpAppDetails.cdn != 'cloud'){
                 //     await($.fs.copy(scope.locals.path.uilibs + '/',tmpDeployBase + '/ui-app/'));
                 // }
                 //ToDo: this....
                 
-                if( tmpAppDetails.cdn != 'cloud'){
+                
 
-                    var alwaysThere = ['built-lib','dir','plugins','svg-catalog','webctl-catalog'];
-                    for( var iPos in alwaysThere ){
-                        var tmpName = alwaysThere[iPos];
-                        var tmpNewLibDir = tmpDeployBase + '/ui-app/' + tmpName + '/';
-                        await($.fs.ensureDir(tmpNewLibDir));
-                        await($.fs.copy(scope.locals.path.uilibs + '/' + tmpName + '/',tmpNewLibDir));
-                    }
-                    
-                    var tmpNewLibBase = tmpDeployBase + '/ui-app/lib/';
-                    await($.fs.ensureDir(tmpNewLibBase));
-    
-                    var tmpAppLibLookup = {};
-                    for( var iPos in tmpAppDetails.libraries){
-                        tmpAppLibLookup[tmpAppDetails.libraries[iPos]] = true;
-                    }
-    
-                    var tmpLibsToInc = tmpBuildCfg.systemlibs;
-                    for( var iPos in tmpBuildCfg.libraries){
-                        var tmpLibInfo = tmpBuildCfg.libraries[iPos];
-                        var tmpLibName = tmpLibInfo.name;
-                        if( tmpAppLibLookup[tmpLibName]){
-                            //--- If No Base, these are external files (rare)
-                            if( tmpLibInfo.base ){
-                                tmpLibsToInc.push({name:tmpLibName, base: tmpLibInfo.base})
-                            }
-                        }
-    
-                    }
-
-                    for( var iPos in tmpLibsToInc){
-                        var tmpLibInfo = tmpLibsToInc[iPos];
-                        var tmpNewLibDir = tmpNewLibBase + tmpLibInfo.base + '/';
-                        await($.fs.ensureDir(tmpNewLibDir));
-                        var tmpFromDir = scope.locals.path.uilibs + '/lib/' + tmpLibInfo.base + '/';
-                        await($.fs.copy(tmpFromDir,tmpNewLibDir));
-                    }
-                    
+                var alwaysThere = ['built-lib','dir','plugins','svg-catalog','webctl-catalog'];
+                for( var iPos in alwaysThere ){
+                    var tmpName = alwaysThere[iPos];
+                    var tmpNewLibDir = tmpDeployBase + 'ui-app/' + tmpName + '/';
+                    await($.fs.ensureDir(tmpNewLibDir));
+                    await($.fs.copy(scope.locals.path.uilibs + '/' + tmpName + '/',tmpNewLibDir));
                 }
+                
+                var tmpNewLibBase = tmpDeployBase + 'ui-app/lib/';
+                await($.fs.ensureDir(tmpNewLibBase));
+                //console.log('tmpNewLibBase',tmpNewLibBase);
+
+                var tmpAppLibLookup = {};
+                for( var iPos in tmpAppDetails.libraries){
+                    tmpAppLibLookup[tmpAppDetails.libraries[iPos]] = true;
+                }
+
+                var tmpLibsToInc = tmpBuildCfg.systemlibs;
+                for( var iPos in tmpBuildCfg.libraries){
+                    var tmpLibInfo = tmpBuildCfg.libraries[iPos];
+                    var tmpLibName = tmpLibInfo.name;
+                    if( tmpAppLibLookup[tmpLibName]){
+                        //--- If No Base, these are external files (rare)
+                        if( tmpLibInfo.base ){
+                            tmpLibsToInc.push({name:tmpLibName, base: tmpLibInfo.base})
+                        }
+                    }
+
+                }
+
+                for( var iPos in tmpLibsToInc){
+                    var tmpLibInfo = tmpLibsToInc[iPos];
+                    var tmpNewLibDir = tmpNewLibBase + tmpLibInfo.base + '/';
+                    await($.fs.ensureDir(tmpNewLibDir));
+                    var tmpFromDir = scope.locals.path.uilibs + '/lib/' + tmpLibInfo.base + '/';
+                    console.log( 'tmpNewLibDir', tmpNewLibDir);
+                    await($.fs.copy(tmpFromDir,tmpNewLibDir));
+                }
+                
+            
                 
 
 

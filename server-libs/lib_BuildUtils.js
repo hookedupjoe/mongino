@@ -223,6 +223,7 @@ function updateAppSetup(theAppName, theSetupDetails, scope) {
 }
 
 function buildApp(theAppName, scope, theOptions) {
+    console.log( 'buildApp', theOptions);
     var self = this;
     return new Promise( async function (resolve, reject) {
         try {
@@ -236,6 +237,7 @@ function buildApp(theAppName, scope, theOptions) {
 
             var tmpWSDir = scope.locals.path.ws.uiApps;
             var tmpDeployDir = scope.locals.path.ws.deploy;
+            var tmpDeployExtDir = scope.locals.path.ws.deployExt;
 
             var tmpAppBase = tmpWSDir + tmpAppName + '/';
             var tmpAppDetails = await(utils.getJsonFile(tmpAppBase + 'app-info.json'))
@@ -255,7 +257,12 @@ function buildApp(theAppName, scope, theOptions) {
                 tmpAppDetails.cdn = tmpOptions.cdn;
             }
             if (tmpOptions.deploy === true) {
-                tmpAppBase = tmpDeployDir;
+                if( tmpOptions.external === true ){
+                    tmpAppBase = tmpDeployExtDir + tmpAppName + '/ui-app/';
+                } else {
+                    tmpAppBase = tmpDeployDir;
+                }
+                
             } else {
                 tmpAppDetails.cdn = 'local';
             }
@@ -431,9 +438,14 @@ function buildApp(theAppName, scope, theOptions) {
             tmpPluginsText = bld.replaceAll(tmpPluginsText, "{{LIBRARY-LOCATION}}", (tmpLibLoc.prefix || ''));
 
             var tmpServerSupportFiles = '';
-
-            if( !(tmpAppDetails.externaldeploy) || tmpAppDetails.externaldeploy[0] != 'y' ){
+            console.log( 'tmpServerSupportFiles before', tmpServerSupportFiles);
+            if((!(tmpAppDetails.externaldeploy) || tmpAppDetails.externaldeploy[0] != 'y' )){
                 tmpServerSupportFiles = '<script src="/appinit.js"></script>';
+                console.log( 'tmpServerSupportFiles after', tmpServerSupportFiles);
+            }
+            if( tmpOptions.external ){
+                tmpServerSupportFiles = '';
+                console.log( 'tmpServerSupportFiles after 2', tmpServerSupportFiles);
             }
             
             
@@ -458,9 +470,10 @@ function buildApp(theAppName, scope, theOptions) {
                 "{{OPTIONAL-APP-CODE}}": "",
                 "{{INIT_OPTIONS}}": tmpHeaderApp
             }
-
-            tmpIndex = utils.replaceFromMap(tmpIndex, tmpIndexMap);
             
+            tmpIndex = utils.replaceFromMap(tmpIndex, tmpIndexMap);
+            var tmpReplaceFN = tmpAppBase + 'index.html';
+            console.log( 'tmpReplaceFN', tmpReplaceFN);
             await(utils.replaceFile(tmpAppBase + 'index.html', tmpIndex))
 
             tmpApp = utils.replaceFromMap(tmpApp, tmpAppMap);
