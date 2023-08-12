@@ -75,7 +75,16 @@ module.exports.setup = function setup(scope) {
                 await($.fs.remove(tmpDeployTemp));
 
                 var tmpServerFilesLoc = scope.locals.path.designer + '/build/tpl-servers/ui-app/';
+                var tmpAppServerFilesLoc = scope.locals.path.ws.uiAppServers + tmpAppName + '/appserver/';
+                var tmpAppServerTarget = tmpDeployBase + 'server-app/';
+                var tmpAppServerTargetEndpoints = tmpAppServerTarget + 'appserver/';
 
+await($.fs.ensureDir(tmpAppServerFilesLoc));
+await($.fs.ensureDir(tmpAppServerTarget));
+await($.fs.ensureDir(tmpAppServerTargetEndpoints));
+
+//--- Copy custom server side API calls to server side
+await($.fs.copy(tmpAppServerFilesLoc,tmpAppServerTargetEndpoints));
 
                 await($.fs.copy(tmpServerFilesLoc,tmpDeployBase));
                 // var tmpManifestText = await($.bld.getTextFile(tmpDeployBase + 'manifest.yml'));
