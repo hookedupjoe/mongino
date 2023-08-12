@@ -23,6 +23,14 @@ module.exports.setup = function setup(scope) {
 
 
         var tmpAppID = req.headers['act-app-id'] || '';
+        if( !(tmpAppID) ){
+            console.log('req.headers.referer',req.headers.referer);
+            const tmpURL = new URL(req.headers.referer);
+            console.log(tmpURL.origin);
+            var tmpAppName = req.headers.referer.replace(tmpURL.origin,'').replace(/\//g,'');
+            tmpAppID = tmpAppName;
+            console.log( 'tmpAppName', tmpAppName);
+        }
         if( tmpAppID ){
             //--- Always use header value, even if appid passed
             req.body.appid = tmpAppID;

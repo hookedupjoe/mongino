@@ -13,16 +13,23 @@ module.exports.setup = function (app, scope) {
 
     var express = require('express');
     
-    var svrRouter = express.Router(),
-    svrRoute = require('./svr/index').setup(scope);
+    // var svrRouter = express.Router(),
+    // svrRoute = require('./svr/index').setup(scope);
 
-    svrRouter.all('/*', svrRoute);
-    app.use('/svr/',svrRouter);
+    // svrRouter.all('/*', svrRoute);
+    // app.use('/svr/',svrRouter);
 
-    var dataRouter = express.Router(),
-    dataRoute = require('./appdata/index').setup(scope);
-    dataRouter.all('/:type/:name*', dataRoute);
-    dataRouter.all('/*', dataRoute);
-    app.use('/appdata/',dataRouter);
+    // var dataRouter = express.Router(),
+    // dataRoute = require('./appdata/index').setup(scope);
+    // dataRouter.all('/:type/:name*', dataRoute);
+    // dataRouter.all('/*', dataRoute);
+    // app.use('/appdata/',dataRouter);
+
+    var uiAppRouter = express.Router(),
+    uiAppRoute = require('./appservers/index').setup(scope);
+    uiAppRouter.all('/:type/:name*', uiAppRoute);
+    uiAppRouter.all('/*', uiAppRoute);
+    app.use('/appserver/',uiAppRouter);
+
 
 };
