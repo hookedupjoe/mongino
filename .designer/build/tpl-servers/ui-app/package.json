@@ -1,9 +1,15 @@
 {
   "name": "mongino-change-this-name",
+  "description": "A Mongino App",
   "version": "1.0.0",
+  "main": "app.js",
   "scripts": {
     "init": "npm install",
+    "electron": "electron .",
     "start": "node app.js"
+  },
+  "devDependencies": {
+    "electron": "^25.5.0"
   },
   "dependencies": {
     "body-parser": "^1.15.2",

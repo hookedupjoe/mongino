@@ -1,27 +1,28 @@
 var express = require('express');
 var http = require('http');
-var app = express();
+var webApp = express();
+const { app, BrowserWindow } = require('electron')
 var path = require('path');
 
 const { WebSocketServer } = require('ws');
 const { parse } = require('url');
 
-app.all('*', function(req, res, next) {
+webApp.all('*', function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     next();
  });
 
 
-app.use(express.static('ui-app'));
+ webApp.use(express.static('ui-app'));
 
 cookieParser = require('cookie-parser'),
 bodyParser = require('body-parser');
 
 //--- Use standard body and cookie parsers
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
+webApp.use(bodyParser.json());
+webApp.use(bodyParser.urlencoded({ extended: false }));
+webApp.use(cookieParser());
 
 
 var scope = {};
@@ -40,8 +41,8 @@ $.scope = scope;
 $.classes = $.classes || {}
 $.classes.WebSocketServer = WebSocketServer;
 
-require('./server-app/start').setup(app, scope);
-var server = http.createServer(app);
+require('./server-app/start').setup(webApp, scope);
+var server = http.createServer(webApp);
 
 server.on('upgrade', function upgrade(request, socket, head) {
     try {
@@ -86,3 +87,19 @@ server.listen(process.env.PORT || 33462, function () {
         console.log("");
     }
 });
+
+if( app && app.whenReady ){
+    const createWindow = () => {
+        const win = new BrowserWindow({
+          width: 800,
+          height: 600
+        })
+      
+        win.loadFile('ui-app/index.html')
+        win.openDevTools();
+      }
+    
+      app.whenReady().then(() => {
+        createWindow()
+      })  
+}
