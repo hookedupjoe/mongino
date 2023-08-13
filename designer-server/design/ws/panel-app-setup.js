@@ -148,8 +148,8 @@ module.exports.setup = function setup(scope) {
                   {
                     "ctl": "checkboxlist",
                     "name": "externaldeploy",
-                    "list": "Deploy Externally|y",
-                    "label": "Standalone"
+                    "list": "Deploy As Standalone UI?|y",
+                    "label": "Standalone UI Only App"
                   },
 
                   {

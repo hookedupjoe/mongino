@@ -949,14 +949,21 @@ function setup() {
                         });
                     } else {
                         var params = new URLSearchParams(url.query);
+                        var tmpParts = pathname.split('/');
+                        if( !(tmpParts.length == 4 && tmpParts[0] == '') ){
+                            console.error('unexpected url',tmpURL)
+                            socket.destroy();
+                            return;
+                        }
+
+                        var tmpURLBase = tmpParts.join('/');
+                
                         var tmpAppID = params.get('app') || '';
                         if( tmpAppID ){
-                            var tmpType = 'actions';
-                            var tmpName = 'run-test2';
-                            var tmpFilePath = scope.locals.path.appserver + tmpAppID + '/appserver/' + tmpType + '/' + tmpName + '.js';
+                            var tmpFilePath = scope.locals.path.appserver + tmpAppID + tmpURLBase + '.js';
                             var tmpAppWSReq = require(tmpFilePath);
                             if (typeof(tmpAppWSReq.setup) == 'function') {
-                                var tmpWSS = tmpAppWSReq.setup(scope, {websocket:true, wssc:WebSocketServer});
+                                var tmpWSS = tmpAppWSReq.setup(scope, {websocket:true});
                                 if( tmpWSS && tmpWSS.handleUpgrade ){
                                         tmpWSS.handleUpgrade(request, socket, head, function done(ws) {
                                             tmpWSS.emit('connection', ws, request);

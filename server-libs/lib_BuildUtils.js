@@ -6,6 +6,8 @@
 */
 'use strict';
 
+const { ensureDir } = require("fs-extra");
+
 let $ = require("./globalUtilities").$;
 
 
@@ -192,8 +194,8 @@ function updateAppSetup(theAppName, theSetupDetails, scope) {
             }
 
             var tmpWSDir = scope.locals.path.ws.uiApps;
-
             var tmpAppBase = tmpWSDir + tmpAppName + '/';
+
             await(utils.saveJsonFile(tmpAppBase + 'app-info.json', theSetupDetails))
             await(buildApp(tmpAppName, scope));
             
@@ -232,9 +234,19 @@ function buildApp(theAppName, scope, theOptions) {
             var tmpWSDir = scope.locals.path.ws.uiApps;
             var tmpDeployDir = scope.locals.path.ws.deploy;
             var tmpDeployExtDir = scope.locals.path.ws.deployExt;
+            var tmpServerDir = scope.locals.path.ws.uiAppServers;
 
             var tmpAppBase = tmpWSDir + tmpAppName + '/';
             var tmpAppDetails = await(utils.getJsonFile(tmpAppBase + 'app-info.json'))
+
+            var tmpAppServerBase = tmpServerDir + tmpAppName + '/';
+            await($.fs.ensureDir(tmpAppServerBase));
+
+            if( !( await $.fs.exists(tmpAppServerBase + 'appserver/'))){
+                await($.fs.ensureDir(tmpAppServerBase + 'appserver/'));
+                var tmpSamplesDir = scope.locals.path.designer + '/build/tpl-servers/samples/appserver-sample/';
+                await($.fs.copy(tmpSamplesDir,tmpAppServerBase + 'appserver/'));
+            }
 
             if (tmpOptions.deployType === 'cordova') {
                 tmpDeployDir += 'cordova/';
