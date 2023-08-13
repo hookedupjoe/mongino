@@ -5,8 +5,10 @@
   "main": "app.js",
   "scripts": {
     "init": "npm install",
+    "start": "node app.js",
     "electron": "electron .",
-    "start": "node app.js"
+    "electrondev": "electron . --showdev",
+    "electronframeless": "electron . --hideframe"
   },
   "devDependencies": {
     "electron": "^25.5.0"
