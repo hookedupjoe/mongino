@@ -1,5 +1,6 @@
 var express = require('express');
 var http = require('http');
+require('dotenv').config();
 var webApp = express();
 const { app, BrowserWindow } = require('electron')
 var path = require('path');

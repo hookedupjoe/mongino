@@ -15,6 +15,7 @@
     "body-parser": "^1.15.2",
     "child_process": "^1.0.2",
     "cookie-parser": "^1.4.3",
+    "dotenv": "^16.3.1",
     "express": "^4.16.3",
     "fs-extra": "^7.0.1",
     "gulp-replace": "^0.6.1",
