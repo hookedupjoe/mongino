@@ -223,7 +223,7 @@ License: LGPL
 									href: "tbd",
 									target: "app-tbd"
 								},
-								text: "Preview Now",
+								text: "Open Preview Site",
 								"name": "preview-link"
 							},
 							{
@@ -234,6 +234,10 @@ License: LGPL
 								},
 								text: "Rebuild",
 								"name": "rebuild-app"
+							},
+							{
+								"ctl":"message",
+								"text":"Rebuild is automatic when setup changes. "
 							}
 						]
 					},
@@ -269,7 +273,7 @@ License: LGPL
 									href: "tbd",
 									target: "app-tbd"
 								},
-								text: "Open Deployed",
+								text: "Open Deployed Site",
 								"name": "open-deploy-link"
 							},
 							{
