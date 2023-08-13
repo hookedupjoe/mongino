@@ -243,13 +243,24 @@ License: LGPL
 						"ctl": "tab",
 						"content": [
 							{
-								"ctl": "button",
+								"ctl": "div",
+								"classes": "ui button orange",
 								"onClick": {
 									"run": "action",
 									"action": "createAppDeployment"
 								},
 								text: "Build Deployment",
 								"name": "build-deploy-app"
+							},
+							{
+								"ctl": "a",
+								"classes": "ui button violet",
+								"attr": {
+									href: "",
+									target: ""
+								},
+								text: "Open Deployment in VS Code",
+								"name": "deploy-in-code-link"
 							},
 							{
 								"ctl": "a",
@@ -262,23 +273,14 @@ License: LGPL
 								"name": "open-deploy-link"
 							},
 							{
-								"ctl": "a",
-								"classes": "ui button basic blue",
-								"attr": {
-									href: "",
-									target: ""
-								},
-								text: "Open Deployment in VS Code",
-								"name": "deploy-in-code-link"
-							},
-							{
 								ctl: "divider",
 								fitted: true,
 								clearing: true,
 								"name":"cordova-sep"
 							},
 							{
-								"ctl": "button",
+								"ctl": "div",
+								"classes": "ui button orange",
 								"onClick": {
 									"run": "action",
 									"action": "createCordovaDeployment"
@@ -288,7 +290,7 @@ License: LGPL
 							},
 							{
 								"ctl": "a",
-								"classes": "ui button basic blue",
+								"classes": "ui button violet",
 								"attr": {
 									href: "",
 									target: ""
@@ -303,7 +305,8 @@ License: LGPL
 								"name":"external-sep"
 							},
 							{
-								"ctl": "button",
+								"ctl": "div",
+								"classes": "ui button orange",
 								"onClick": {
 									"run": "action",
 									"action": "createExternalAppDeployment"
@@ -313,7 +316,7 @@ License: LGPL
 							},
 							{
 								"ctl": "a",
-								"classes": "ui button basic blue",
+								"classes": "ui button violet",
 								"attr": {
 									href: "",
 									target: ""
@@ -376,12 +379,13 @@ License: LGPL
 							},
 							{
 								"ctl": "button",
-								"color": "blue",
+								"color": "blue basic icon",
+								"icon": "recycle",
 								"onClick": {
 									"run": "action",
 									"action": "refreshSetupInfo"
 								},
-								text: "Refresh",
+								text: "",
 								"name": "btn-refresh-setup"
 							},{
 								"ctl": "button",
@@ -395,8 +399,14 @@ License: LGPL
 								"name": "btn-open-acl"
 							},
 							{
+								ctl: "divider",
+								fitted: true,
+								clearing: true,
+								"name":"external-sep-vscode"
+							},
+							{
 								"ctl": "a",
-								"classes": "ui button basic blue",
+								"classes": "ui button purple",
 								"attr": {
 									href: "",
 									target: ""
@@ -406,12 +416,12 @@ License: LGPL
 							},
 							{
 								"ctl": "a",
-								"classes": "ui button basic blue",
+								"classes": "ui button violet",
 								"attr": {
 									href: "",
 									target: ""
 								},
-								text: "Open in UI VS Code",
+								text: "Open UI in VS Code",
 								"name": "open-in-code-link"
 							},
 							{
