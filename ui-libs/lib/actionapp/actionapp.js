@@ -459,7 +459,9 @@ function importTo(theBaseURL, theModName, theTarget){
     if(!(theOptions && theOptions.type && theOptions.name)){
       return rejectedPromise('missing required info')
     }
-    var tmpBaseURL = ActionAppCore.three.addonBase + theOptions.type + '/';     
+    var tmpBaseAddOnURL = ActionAppCore.three.addonBase;
+    tmpBaseAddOnURL = tmpBaseAddOnURL.replace('./','../../');
+    var tmpBaseURL = tmpBaseAddOnURL + theOptions.type + '/';     
     return importTo(tmpBaseURL, theOptions.name, ActionAppCore.three.addons);
   }
 

@@ -99,7 +99,7 @@
 			"label": "three.js",
 			"js": ["<script>",
 			" ActionAppCore.useThreeJS = true;",
-			" ActionAppCore.three.addonBase = \"/lib/threejs/addons/\"",
+			" ActionAppCore.three.addonBase = \"{{LIBRARY-LOCATION}}/lib/threejs/addons/\"",
 			"</script>"
 			]
 		},
