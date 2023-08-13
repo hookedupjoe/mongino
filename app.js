@@ -619,11 +619,15 @@ function initAuth2(theExpress, theIsDeployed){
 
 
 }
-passport.use(new LocalStrategy(authUser))
 
-initAuth(app);
-initAuth2(app);
-initAuth(deployed);
+
+//=== Must have Mongo data enabled to use any security
+if( $.designerConfig.isUsingData ){
+    passport.use(new LocalStrategy(authUser))
+    initAuth(app);
+    initAuth2(app);
+    initAuth(deployed);
+}
 
 
 app.get('/designer/details.js', async function (req, res, next) {
