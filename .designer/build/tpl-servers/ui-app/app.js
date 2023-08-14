@@ -4,6 +4,7 @@ require('dotenv').config();
 var webApp = express();
 const { app, BrowserWindow } = require('electron')
 var path = require('path');
+const chokidar = require('chokidar');
 
 const { WebSocket, WebSocketServer } = require('ws');
 const { parse } = require('url');
@@ -46,6 +47,7 @@ if (args && args.length) {
     }
 }
 
+
 webApp.all('*', function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
@@ -80,6 +82,23 @@ $.scope = scope;
 $.classes = $.classes || {}
 $.classes.WebSocketServer = WebSocketServer;
 $.classes.WebSocket = WebSocket;
+
+try {
+    //--- Application backend updates hot swappable
+    var tmpAppServerFilesLoc = $.scope.locals.path.start + '/appserver/';
+    chokidar.watch(tmpAppServerFilesLoc, { ignored: /index\.js$/ })
+        .on('change', (path) => {
+            try {
+                if (require.cache[path]) delete require.cache[path];
+                console.log('New file loaded for ' + path);
+            } catch (theChangeError) {
+                console.log("Could not hot update: " + path);
+                console.log("The reason: " + theChangeError);
+            }
+        });
+} catch (ex) {
+    console.log('error in watch setup for apps',ex)
+}
 
 require('./server-app/start').setup(webApp, scope);
 var server = http.createServer(webApp);
