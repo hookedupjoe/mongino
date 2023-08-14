@@ -5,7 +5,7 @@ var webApp = express();
 const { app, BrowserWindow } = require('electron')
 var path = require('path');
 
-const { WebSocketServer } = require('ws');
+const { WebSocket, WebSocketServer } = require('ws');
 const { parse } = require('url');
 
 const args = process.argv
@@ -79,6 +79,7 @@ $.scope = scope;
 
 $.classes = $.classes || {}
 $.classes.WebSocketServer = WebSocketServer;
+$.classes.WebSocket = WebSocket;
 
 require('./server-app/start').setup(webApp, scope);
 var server = http.createServer(webApp);
