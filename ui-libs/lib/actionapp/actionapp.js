@@ -4239,10 +4239,20 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
         dfd.reject(theReason || 'unknown reason');
         return dfd.promise();
     }  
+
+    function isElectron(theUserAgent){
+        var tmpUserAgent = theUserAgent || navigator.userAgent;
+        if( tmpUserAgent ){
+            return (tmpUserAgent.toLowerCase().indexOf(' electron/') > -1)
+        }
+        return false;
+    }
     
+
     //ThisApp.util...
     var utilFunctions = {
         MIN_TOUCH_DISTANCE: 20,
+        isElectron: isElectron,
         isReactClass: isReactClass,
         rejectedPromise: rejectedPromise,
         removeItemOnce: removeItemOnce,
