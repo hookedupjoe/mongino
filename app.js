@@ -955,7 +955,7 @@ function setup() {
                         var params = new URLSearchParams(url.query);
                         var tmpParts = pathname.split('/');
                         if( !(tmpParts.length == 4 && tmpParts[0] == '') ){
-                            console.error('unexpected url',tmpURL)
+                            console.error('unexpected url')
                             socket.destroy();
                             return;
                         }
@@ -973,13 +973,13 @@ function setup() {
                                             tmpWSS.emit('connection', ws, request);
                                         });
                                 } else {
-                                    console.error('no winsock process available',tmpURL)
+                                    console.error('no winsock process available')
                                     socket.destroy();
                                 }
                             }
                         } else {
                             //--- no valid winsock implementtion
-                            console.error('no appid / winsock available',tmpURL)
+                            console.error('no appid / winsock available')
                             socket.destroy();
                         }
                         

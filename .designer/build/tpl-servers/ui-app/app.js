@@ -2,7 +2,17 @@ var express = require('express');
 var http = require('http');
 require('dotenv').config();
 var webApp = express();
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
+const { contextBridge, ipcRenderer } = require('electron')
+
+
+function handleSetTitle (event, title) {
+    const webContents = event.sender
+    const win = BrowserWindow.fromWebContents(webContents)
+    win.setTitle(title)
+  }
+  
+
 var path = require('path');
 const chokidar = require('chokidar');
 
@@ -130,7 +140,7 @@ server.on('upgrade', function upgrade(request, socket, head) {
 
 
     } catch (error) {
-        console.log('error', error);
+        console.log('error in winsock processing', error);
         socket.destroy();
     }
 });
@@ -168,22 +178,54 @@ if (app && app.whenReady) {
     }
 
 
+    browserConfig.webPreferences = {
+        preload: path.join(__dirname, 'preload.js')
+    }
+
     const createWindow = () => {
         const win = new BrowserWindow(browserConfig)
 
+        ipcMain.on('set-title', (event, title) => {
+            const webContents = event.sender
+            const win = BrowserWindow.fromWebContents(webContents)
+            win.setTitle(title);
+            return 'title set';
+        })
+
+        win.once('ready-to-show', () => {
+            win.setMenuBarVisibility(false);
+            win.focus();
+            if (showDev == true) {
+                win.webContents.openDevTools();
+            }
+        })
 
         win.loadFile('ui-app/index.html');
-        win.setMenuBarVisibility(false);
-
-        win.focus();
-        if (showDev == true) {
-            win.webContents.openDevTools();
-        }
 
         return win;
     }
 
     app.whenReady().then(() => {
+        ipcMain.handle('ping', function(){return 'pong'})
+
+        ipcMain.handle('get-startup-info', function(){
+            return {
+                port: process.env.PORT || '33462'
+            }
+        })
+
+        ipcMain.handle('api', function(theEvent, theType, theName, theOptions){
+            var tmpFilePath = $.scope.locals.path.start + '/ipcapi/' + theType + '/' + theName + '.js';
+            var tmpProcessReq = require(tmpFilePath);
+            if (typeof(tmpProcessReq.setup) == 'function') {
+                var tmpToRun = tmpProcessReq.setup($.scope);
+                return tmpToRun(theType, theName, theOptions);
+            } else {
+                return ThisApp.util.rejectedPromise('invalid type or action')
+            }
+        //    return scope.locals.$.file.getJsonFile(scope.locals.path.root + '/test.json');
+        })
+        
         createWindow()
     })
 }
