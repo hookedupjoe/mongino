@@ -17,6 +17,9 @@ function setup(scope) {
     $.bld = require(scope.locals.path.libraries + '/lib_BuildUtils.js');
     $.auth = require(scope.locals.path.libraries + '/lib_AppAuth.js');
     $.auth.setup(scope);
+    $.ws = require(scope.locals.path.libraries + '/lib_Websocket.js');
+    $.ws.mgr.setup(scope);
+    //console.log('$.ws',$.ws);
 }
 
 module.exports.$ = $;

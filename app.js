@@ -137,9 +137,9 @@ scope.locals.path.start = scope.locals.path.root + "/designer-server";
 scope.locals.path.libraries = scope.locals.path.root + "/server-libs";
 
 var $ = require(scope.locals.path.libraries + '/globalUtilities.js').$;
-$.classes = $.classes || {}
-$.classes.WebSocketServer = WebSocketServer;
-$.classes.WebSocket = WebSocket;
+// $.classes = $.classes || {}
+// $.classes.WebSocketServer = WebSocketServer;
+// $.classes.WebSocket = WebSocket;
 //--- Passport Auth ------------------
 var isUsingPassport = (process.env.AUTH_TYPE == 'passport');
 
@@ -956,7 +956,6 @@ function setup() {
                     } else {
                         //var params = new URLSearchParams(url.query);
                         var tmpParts = pathname.split('/');
-                        //console.log('tmpParts',tmpParts);
                         if( !(tmpParts.length != 4 && tmpParts[0] == '') ){
                             console.error('unexpected url',pathname,tmpParts.length,tmpParts)
                             socket.destroy();
