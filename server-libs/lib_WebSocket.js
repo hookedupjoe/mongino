@@ -27,19 +27,24 @@ const WebSocketManager = class {
 const mgr = new WebSocketManager();
 
 //==== WebSocketRoom === === === === === === === === === === 
+
+//--- ToDo: Add periodic ping to assure clients still alive
 const WebSocketRoom = class {
     constructor(theOptions) {
       this.options = theOptions || {};
       this.name = this.options.name || 'default';
       this.server = this.options.server || false;
       this.onMessage = this.options.onMessage || false;
+      this.onSocketAdd = this.options.onSocketAdd || false;
+      this.onSocketRemove = this.options.onSocketRemove || false;
+
       var self = this;
       if( this.options.autoManage === true && this.server){
         //--- Automaically handle access management
 
         this.server.on('connection', function connection(ws,req) {
 
-            self.addSocket(ws,req);
+            self.addClient(ws,req);
             ws.on('close', function() {
                self.removeClient(this.id);
             })
@@ -61,7 +66,11 @@ const WebSocketRoom = class {
         this.clientIndex = {};
     }
 
-    addSocket(ws,req,onMessage){
+    getClientIndex(){
+        return this.clientIndex;
+    }
+
+    addSocket(ws,req){
         var self = this;
         this.addClient(ws,req);
 
@@ -72,7 +81,7 @@ const WebSocketRoom = class {
         })
 
         ws.on('message', function message(data, isBinary) {
-            onMessage(this.id,data,isBinary)
+          self.onMessage(this.id,data,isBinary)
         });
     }
 
@@ -82,21 +91,28 @@ const WebSocketRoom = class {
         }
         return false;
     }
+
     removeClient(theID){
         console.log('remove',theID);
         if(this.clientIndex[theID]){
             delete this.clientIndex[theID];
+        }
+        if( this.onSocketRemove ){
+            this.onSocketRemove(theID)
         }
         console.log('clientIndex',this.clientIndex);
     }
 
     addClient(ws,req){        
         //req.headers['sec-websocket-key'] || ... (use this?)
-        ws.id = mgr.getUniqueID();
+        ws.id = req.headers['sec-websocket-key'] || mgr.getUniqueID();
         console.log('add',ws.id);
         this.clientIndex[ws.id] = {
             id: ws.id,
             url:req.url
+        }
+        if( this.onSocketAdd ){
+            this.onSocketAdd(ws.id)
         }
         console.log('clientIndex',this.clientIndex);
     }
