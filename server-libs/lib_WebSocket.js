@@ -3,10 +3,7 @@
 */
 'use strict';
 
-//let $ = require("./globalUtilities").$;
 const { WebSocket, WebSocketServer } = require('ws');
-
-//$.WebSocketManager = new WebSocketManager();
 
 const WebSocketManager = class {
     constructor(theOptions) {
@@ -93,20 +90,16 @@ const WebSocketRoom = class {
     }
 
     removeClient(theID){
-        console.log('remove',theID);
         if(this.clientIndex[theID]){
             delete this.clientIndex[theID];
         }
         if( this.onSocketRemove ){
             this.onSocketRemove(theID)
         }
-        console.log('clientIndex',this.clientIndex);
     }
 
     addClient(ws,req){        
-        //req.headers['sec-websocket-key'] || ... (use this?)
         ws.id = req.headers['sec-websocket-key'] || mgr.getUniqueID();
-        console.log('add',ws.id);
         this.clientIndex[ws.id] = {
             id: ws.id,
             url:req.url
@@ -114,7 +107,6 @@ const WebSocketRoom = class {
         if( this.onSocketAdd ){
             this.onSocketAdd(ws.id)
         }
-        console.log('clientIndex',this.clientIndex);
     }
 
 
@@ -124,14 +116,7 @@ const WebSocketRoom = class {
   };
 
 
-  //module.exports.WebSocketManager = WebSocketManager;
   module.exports.WebSocketRoom = WebSocketRoom;
   module.exports.WebSocketServer = WebSocketServer;
   module.exports.WebSocket = WebSocket;
   module.exports.mgr = mgr;
-  
-
-// //--- Make classes available off the manager for ease of use
-// $.WebSocketManager.WebSocketRoom = WebSocketRoom;
-// $.WebSocketManager.WebSocketServer = WebSocketServer;
-// $.WebSocketManager.WebSocket = WebSocket;
