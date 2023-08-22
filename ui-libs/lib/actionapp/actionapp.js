@@ -161,6 +161,38 @@ var ActionAppCore = {
         return tmpRet;
     },    
     util: {
+        getWebsocketURL(theType, theName, theOptions) {
+            var tmpOptions = theOptions || {};
+            var electronHost = '';
+            if (this.isElectron()) {
+              electronHost = window.electronAPI.getPort();
+              if (electronHost) {
+                electronHost = 'localhost:' + electronHost;
+              }
+            }
+  
+            var tmpHost = electronHost || window.location.host || 'localhost:33462';
+            var tmpApp = window.location.pathname || '';
+  
+            if (tmpApp == '/') {
+              tmpApp = '';
+            }
+  
+            if (tmpApp) {
+              tmpApp = tmpApp.replace(/\//g, '');
+              tmpApp = '/' + tmpApp;
+            }
+            var tmpPrefix = 'wss://';
+            if (location.protocol == 'http:') {
+              tmpPrefix = 'ws://';
+            }
+            var tmpParams = tmpOptions.params || '';
+            if (tmpParams && !(tmpParams.startsWith('&'))) {
+              tmpParams = '&' + tmpParams;
+            }
+  
+            return tmpPrefix + tmpHost + tmpApp + '/appserver/' + theType + '/' + theName + "?open" + tmpParams
+        },
         isElectron(theUserAgent){
             var tmpUserAgent = theUserAgent || navigator.userAgent;
             if( tmpUserAgent ){
