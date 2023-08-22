@@ -182,7 +182,7 @@ var ActionAppCore = {
               tmpApp = tmpApp.replace(/\//g, '');
               tmpApp = '/' + tmpApp;
             }
-            var tmpPrefix = 'wss://';
+            var tmpPrefix = 'ws://';
             if (location.protocol == 'http:') {
               tmpPrefix = 'ws://';
             }
