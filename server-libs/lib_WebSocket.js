@@ -52,7 +52,7 @@ const WebSocketRoom = class {
                self.removeClient(this.id);
             })
 
-            ws.on('pong', function() {this.isAlive = true;console.log('pong',this.id)});
+            ws.on('pong', function() {this.isAlive = true;});
             ws.on('error', console.error);
             ws.on('message', function message(data, isBinary) {
                 if( self.onMessage ){
