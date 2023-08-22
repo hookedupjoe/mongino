@@ -13,7 +13,7 @@ var path = require('path'),
     deployedScope = {},
     scope = {};
 
-const { WebSocketServer } = require('ws');
+const { WebSocket, WebSocketServer } = require('ws');
 const { parse } = require('url');
 
 var https = require('https');
@@ -139,6 +139,7 @@ scope.locals.path.libraries = scope.locals.path.root + "/server-libs";
 var $ = require(scope.locals.path.libraries + '/globalUtilities.js').$;
 $.classes = $.classes || {}
 $.classes.WebSocketServer = WebSocketServer;
+$.classes.WebSocket = WebSocket;
 //--- Passport Auth ------------------
 var isUsingPassport = (process.env.AUTH_TYPE == 'passport');
 
@@ -947,24 +948,26 @@ function setup() {
                 try {
                     var url = parse(request.url);
                     var pathname = url.pathname;
+                    
                     if (pathname === '/main' && wssMain) {
                         wssMain.handleUpgrade(request, socket, head, function done(ws) {
                             wssMain.emit('connection', ws, request);
                         });
                     } else {
-                        var params = new URLSearchParams(url.query);
+                        //var params = new URLSearchParams(url.query);
                         var tmpParts = pathname.split('/');
-                        if( !(tmpParts.length == 4 && tmpParts[0] == '') ){
-                            console.error('unexpected url')
+                        //console.log('tmpParts',tmpParts);
+                        if( !(tmpParts.length != 4 && tmpParts[0] == '') ){
+                            console.error('unexpected url',pathname,tmpParts.length,tmpParts)
                             socket.destroy();
                             return;
                         }
 
                         var tmpURLBase = tmpParts.join('/');
                 
-                        var tmpAppID = params.get('app') || '';
+                        var tmpAppID = tmpParts[1];
                         if( tmpAppID ){
-                            var tmpFilePath = scope.locals.path.appserver + tmpAppID + tmpURLBase + '.js';
+                            var tmpFilePath = scope.locals.path.appserver + tmpURLBase + '.js';
                             var tmpAppWSReq = require(tmpFilePath);
                             if (typeof(tmpAppWSReq.setup) == 'function') {
                                 var tmpWSS = tmpAppWSReq.setup(scope, {websocket:true});
