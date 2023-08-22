@@ -25,7 +25,6 @@ const mgr = new WebSocketManager();
 
 //==== WebSocketRoom === === === === === === === === === === 
 
-//--- ToDo: Add periodic ping to assure clients still alive
 const WebSocketRoom = class {
     constructor(theOptions) {
       this.options = theOptions || {};
@@ -35,17 +34,25 @@ const WebSocketRoom = class {
       this.onSocketAdd = this.options.onSocketAdd || false;
       this.onSocketRemove = this.options.onSocketRemove || false;
 
+      //--- Set pingInterval t0 0 to not ping clients
+      //      else set using a MS value
+      this.pingInterval = this.options.pingInterval || 120000;
+
+      
       var self = this;
-      if( this.options.autoManage === true && this.server){
+      if( this.options.autoManage !== false && this.server){
         //--- Automaically handle access management
 
         this.server.on('connection', function connection(ws,req) {
+
+            ws.isAlive = true;
 
             self.addClient(ws,req);
             ws.on('close', function() {
                self.removeClient(this.id);
             })
 
+            ws.on('pong', function() {this.isAlive = true;console.log('pong',this.id)});
             ws.on('error', console.error);
             ws.on('message', function message(data, isBinary) {
                 if( self.onMessage ){
@@ -55,9 +62,26 @@ const WebSocketRoom = class {
             });
             
         });
+
+        if( this.pingInterval > 0 ){
+            const interval = setInterval(function ping() {
+                self.server.clients.forEach(function each(ws) {
+                    if (ws.isAlive === false) return ws.terminate();
+                    ws.isAlive = false;
+                    ws.ping();
+                });
+            }, this.pingInterval);
+            
+            this.server.on('close', function close() {
+                clearInterval(interval);
+            });
+        }
+
       }
+      
       this.reset();
     }
+
 
     reset(){
         this.clientIndex = {};
