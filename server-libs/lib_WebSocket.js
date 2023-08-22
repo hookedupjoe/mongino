@@ -91,20 +91,20 @@ const WebSocketRoom = class {
         return this.clientIndex;
     }
 
-    addSocket(ws,req){
-        var self = this;
-        this.addClient(ws,req);
+    // addSocket(ws,req){
+    //     var self = this;
+    //     this.addClient(ws,req);
 
-        ws.on('error', console.error);
+    //     ws.on('error', console.error);
 
-        ws.on('close', function() {
-            self.removeClient(this.id);
-        })
+    //     ws.on('close', function() {
+    //         self.removeClient(this.id);
+    //     })
 
-        ws.on('message', function message(data, isBinary) {
-          self.onMessage(this.id,data,isBinary)
-        });
-    }
+    //     ws.on('message', function message(data, isBinary) {
+    //       self.onMessage(this.id,data,isBinary)
+    //     });
+    // }
 
     getClient(theID){
         if(this.clientIndex[theID]){
@@ -132,7 +132,6 @@ const WebSocketRoom = class {
             this.onSocketAdd(ws.id)
         }
     }
-
 
     getRoomName() {
       return this.name;
