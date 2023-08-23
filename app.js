@@ -413,7 +413,6 @@ function initAuth2(theExpress, theIsDeployed){
     //-- When any directory is loaded (home page or tmpApp)
     tmpApp.all(/\/$/, async function (req, res, next) {
         try {
-
             var tmpUser = {};
             var tmpUserID = '';
             if( req.authUser && req.authUser.id ){
@@ -629,6 +628,7 @@ if( $.designerConfig.isUsingData ){
     initAuth(app);
     initAuth2(app);
     initAuth(deployed);
+    initAuth2(deployed, true);
 }
 
 
@@ -1074,7 +1074,7 @@ function setup() {
             require('./preview-server/start').setup(deployed, deployedScope);
       
             
-            initAuth2(deployed, true);
+            //initAuth2(deployed, true);
 
             
             // error handlers
