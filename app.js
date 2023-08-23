@@ -628,7 +628,7 @@ if( $.designerConfig.isUsingData ){
     initAuth(app);
     initAuth2(app);
     initAuth(deployed);
-    initAuth2(deployed, true);
+    //initAuth2(deployed, true);
 }
 
 
@@ -1074,7 +1074,7 @@ function setup() {
             require('./preview-server/start').setup(deployed, deployedScope);
       
             
-            //initAuth2(deployed, true);
+            initAuth2(deployed, true);
 
             
             // error handlers
