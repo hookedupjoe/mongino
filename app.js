@@ -458,57 +458,6 @@ function initAuth2(theExpress, theIsDeployed){
     }
 
     
-    // //-- When any directory is loaded (home page or tmpApp)
-    // tmpApp.all(/\/$/, async function (req, res, next) {
-    //     try {
-    //         var tmpUser = {};
-    //         var tmpUserID = '';
-    //         if( req.authUser && req.authUser.id ){
-    //             tmpUserID = req.authUser.id;
-    //         }
-    //         // if (req.session && req.session.passport && req.session.passport.user) {
-    //         //     var tmpUserInfo = req.session.passport.user;
-    //         //     var tmpSource = tmpUserInfo.provider;
-    //         //     tmpUserID = tmpUserInfo.id;
-    //         //     tmpUser.userid = tmpUserInfo.id;
-    //         //     if (tmpSource) {
-    //         //         tmpUser.userid = tmpSource + '-' + tmpUser.userid;
-    //         //     }
-    //         //     tmpUser.displayName = tmpUserInfo.displayName || '';
-    //         // }
-    //         var tmpLoginURL = '/pagelogin?type=page';
-    //         //tmpLoginURL += '&page=' + req.originalUrl;
-    //         var tmpIsAllowed = false;
-
-    //         if (req.originalUrl == '/' || !(req.originalUrl) ) {
-    //             if( !(tmpUserID) ){
-    //                 tmpIsAllowed = false;
-    //                 tmpLoginURL += '&page=/';
-    //             } else {
-    //                 tmpIsAllowed = await $.AuthMgr.isAllowed(tmpUserID, { system: 'design' }, 0);
-    //             }
-    //         } else {
-    //             var tmpDBName = req.originalUrl.replace(/\//g, '');
-    //             tmpLoginURL += '&page=/' + tmpDBName + '/';
-
-    //             tmpDBName = $.MongoManager.options.prefix.db + tmpDBName;
-    //             tmpIsAllowed = await $.AuthMgr.isAllowed(tmpUserID, { db: tmpDBName }, 0);
-    //         }
-
-    //         if (!tmpIsAllowed) {
-    //             res.redirect(tmpLoginURL);
-    //         }
-
-    //     } catch (error) {
-    //         console.error("Error in oath check", error);
-    //         //--- ToDo: Catch and show error message details to user and/or console?
-    //         res.redirect(tmpLoginURL);
-    //     }
-
-    //     next();
-    // });
-
-    
     
     tmpApp.post('/logout', function (req, res, next) {
         req.logout(function (err) {
