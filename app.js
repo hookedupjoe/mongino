@@ -191,6 +191,7 @@ deployedScope.locals = {
 deployedScope.locals.path.start = scope.locals.path.root + "/preview-server";
 deployedScope.locals.path.libraries = scope.locals.path.root + "/server-libs";
 
+
 const bcrypt = require("bcrypt")
 var express = require('express'),
     app = express(),
@@ -704,6 +705,10 @@ function setup() {
                 serverApps: tmpWSDirectory + "designer-servers/"
             }
 
+            deployedScope.locals.path.ws = {
+                uiAppServers: scope.locals.path.ws.deploy + "/ui-servers/",
+            }
+            
             await $.fs.ensureDir(scope.locals.path.ws.uiAppServers)
 
             if (homeAccountConfig) {
@@ -713,7 +718,58 @@ function setup() {
 
             await $.appIndexRefresh();
 
+            function processWSS(request, socket, head) {
+                try {
+                    var url = parse(request.url);
+                    var pathname = url.pathname;
+                    
+                    if (pathname === '/main' && wssMain) {
+                        wssMain.handleUpgrade(request, socket, head, function done(ws) {
+                            wssMain.emit('connection', ws, request);
+                        });
+                    } else {
+                        //var params = new URLSearchParams(url.query);
+                        var tmpParts = pathname.split('/');
+                        if( !(tmpParts.length != 4 && tmpParts[0] == '') ){
+                            console.error('unexpected url',pathname,tmpParts.length,tmpParts)
+                            socket.destroy();
+                            return;
+                        }
 
+                        var tmpURLBase = tmpParts.join('/');
+                
+                        var tmpAppID = tmpParts[1];
+                        if( tmpAppID ){
+                            var tmpFilePath = scope.locals.path.appserver + tmpURLBase + '.js';
+                            var tmpAppWSReq = require(tmpFilePath);
+                            if (typeof(tmpAppWSReq.setup) == 'function') {
+                                var tmpWSS = tmpAppWSReq.setup(scope, {websocket:true});
+                                if( tmpWSS && tmpWSS.handleUpgrade ){
+                                        tmpWSS.handleUpgrade(request, socket, head, function done(ws) {
+                                            tmpWSS.emit('connection', ws, request);
+                                        });
+                                } else {
+                                    console.error('no winsock process available')
+                                    socket.destroy();
+                                }
+                            }
+                        } else {
+                            //--- no valid winsock implementtion
+                            console.error('no appid / winsock available')
+                            socket.destroy();
+                        }
+                        
+                        
+
+
+                        
+                    }
+                
+                } catch (error) {
+                    console.log('error',error);
+                    socket.destroy();
+                }
+            }
 
 
             const chokidar = require('chokidar');
@@ -736,6 +792,25 @@ function setup() {
             } catch (ex) {
 
                 console.log('Error, chokidar',ex)
+            }
+
+            
+
+            try {
+                //--- Deployed backend updates hot swappable
+                var tmpAppServerFilesLoc = scope.locals.path.ws.deploy + "/ui-servers/"
+                chokidar.watch(tmpAppServerFilesLoc, { ignored: /index\.js$/ })
+                    .on('change', (path) => {
+                        try {
+                            if (require.cache[path]) delete require.cache[path];
+                            console.log('New file loaded for ' + path);
+                        } catch (theChangeError) {
+                            console.log("Could not hot update: " + path);
+                            console.log("The reason: " + theChangeError);
+                        }
+                    });
+            } catch (ex) {
+                console.log('error in watch setup for apps',ex)
             }
 
             try {
@@ -944,58 +1019,7 @@ function setup() {
                
             }
 
-            server.on('upgrade', function upgrade(request, socket, head) {
-                try {
-                    var url = parse(request.url);
-                    var pathname = url.pathname;
-                    
-                    if (pathname === '/main' && wssMain) {
-                        wssMain.handleUpgrade(request, socket, head, function done(ws) {
-                            wssMain.emit('connection', ws, request);
-                        });
-                    } else {
-                        //var params = new URLSearchParams(url.query);
-                        var tmpParts = pathname.split('/');
-                        if( !(tmpParts.length != 4 && tmpParts[0] == '') ){
-                            console.error('unexpected url',pathname,tmpParts.length,tmpParts)
-                            socket.destroy();
-                            return;
-                        }
-
-                        var tmpURLBase = tmpParts.join('/');
-                
-                        var tmpAppID = tmpParts[1];
-                        if( tmpAppID ){
-                            var tmpFilePath = scope.locals.path.appserver + tmpURLBase + '.js';
-                            var tmpAppWSReq = require(tmpFilePath);
-                            if (typeof(tmpAppWSReq.setup) == 'function') {
-                                var tmpWSS = tmpAppWSReq.setup(scope, {websocket:true});
-                                if( tmpWSS && tmpWSS.handleUpgrade ){
-                                        tmpWSS.handleUpgrade(request, socket, head, function done(ws) {
-                                            tmpWSS.emit('connection', ws, request);
-                                        });
-                                } else {
-                                    console.error('no winsock process available')
-                                    socket.destroy();
-                                }
-                            }
-                        } else {
-                            //--- no valid winsock implementtion
-                            console.error('no appid / winsock available')
-                            socket.destroy();
-                        }
-                        
-                        
-
-
-                        
-                    }
-                
-                } catch (error) {
-                    console.log('error',error);
-                    socket.destroy();
-                }
-            });  
+            server.on('upgrade', processWSS);  
 
             server.listen(port, '0.0.0.0');
             
@@ -1075,6 +1099,7 @@ function setup() {
             var portDeployed = process.env.DEPLOYEDPORT || 33481;
             serverDeployed.listen(portDeployed, '0.0.0.0');
 
+            serverDeployed.on('upgrade', processWSS);  
             //--- Show port in console
             serverDeployed.on('listening', onListeningDeployed(serverDeployed));
             function onListeningDeployed(serverDeployed) {
