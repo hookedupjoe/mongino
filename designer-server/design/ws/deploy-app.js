@@ -22,6 +22,7 @@ module.exports.setup = function setup(scope) {
         return new Promise( async function (resolve, reject) {
             try {
                 var tmpWSDir = scope.locals.path.ws.uiApps;
+                var tmpWSDirServer = scope.locals.path.ws.uiAppServers;
                 var tmpDeployDir = scope.locals.path.ws.deploy;
 
                 if( !(req.query.appname) ){
@@ -43,6 +44,7 @@ module.exports.setup = function setup(scope) {
                 }
               
                 var tmpAppBase = tmpWSDir + tmpAppName + '/';
+                var tmpAppBaseServer = tmpWSDirServer + tmpAppName + '/';
                 var tmpAppDetails = await($.bld.getJsonFile(tmpAppBase + 'app-info.json'))
                 var tmpAppTitle = tmpAppDetails.title || '';
 
@@ -51,12 +53,15 @@ module.exports.setup = function setup(scope) {
                 }
 
                 tmpPrefix = tmpPrefix || tmpAppDetails.prefix || ('mongino-' + tmpAppName)
-                var tmpDeployDirUI = tmpDeployDir + 'ui-apps/'
+                var tmpDeployDirUI = tmpDeployDir + 'ui-apps/'                
                 var tmpDeployBase = tmpDeployDirUI + tmpAppName + '/';
                 var tmpDeployTemp = tmpDeployDirUI + "temp_files" + '/';
 
+                var tmpDeployDirServer = tmpDeployDir + 'ui-servers/'
+                var tmpDeployBaseServer = tmpDeployDirServer + tmpAppName + '/';
+
                 await($.fs.ensureDir(tmpDeployBase));
-                //await($.fs.ensureDir(tmpDeployBase + '/ui-app'));
+                await($.fs.ensureDir(tmpDeployBaseServer));
 
                 await($.fs.ensureDir(tmpDeployTemp));
                 await($.fs.emptyDir(tmpDeployTemp));
@@ -72,7 +77,17 @@ module.exports.setup = function setup(scope) {
                 await($.fs.remove(tmpDeployGIT));
 
                 await($.fs.copy(tmpDeployTemp,tmpDeployBase));
-                
+
+                //--- Do the same process to remove .git for server side
+                await($.fs.emptyDir(tmpDeployTemp));
+                await($.fs.copy(tmpAppBaseServer,tmpDeployTemp));
+                var tmpDeployGIT = tmpDeployTemp + ".git/";
+                //-- Create if does not exists, so we can clean remove it
+                await($.fs.ensureDir(tmpDeployGIT));
+                await($.fs.remove(tmpDeployGIT));
+                await($.fs.copy(tmpDeployTemp,tmpDeployBaseServer));
+
+                //--- Remove temp dir when done
                 await($.fs.remove(tmpDeployTemp));
 
                 /*
