@@ -719,6 +719,7 @@ function setup() {
 
             function processWSS(request, socket, head) {
                 try {
+                    var tmpScope = this;
                     var url = parse(request.url);
                     var pathname = url.pathname;
                     
@@ -739,10 +740,11 @@ function setup() {
                 
                         var tmpAppID = tmpParts[1];
                         if( tmpAppID ){
-                            var tmpFilePath = scope.locals.path.appserver + tmpURLBase + '.js';
+                            var tmpFilePath = tmpScope.locals.path.appserver + tmpURLBase + '.js';
+                            console.log('tmpFilePath',tmpFilePath)
                             var tmpAppWSReq = require(tmpFilePath);
                             if (typeof(tmpAppWSReq.setup) == 'function') {
-                                var tmpWSS = tmpAppWSReq.setup(scope, {websocket:true});
+                                var tmpWSS = tmpAppWSReq.setup(tmpScope, {websocket:true});
                                 if( tmpWSS && tmpWSS.handleUpgrade ){
                                     try {
                                         tmpWSS.handleUpgrade(request, socket, head, function done(ws) {
@@ -1023,7 +1025,7 @@ function setup() {
                
             }
 
-            server.on('upgrade', processWSS);  
+            server.on('upgrade', processWSS.bind(scope));  
 
             server.listen(port, '0.0.0.0');
             
@@ -1103,7 +1105,7 @@ function setup() {
             var portDeployed = process.env.DEPLOYEDPORT || 33481;
             serverDeployed.listen(portDeployed, '0.0.0.0');
 
-            serverDeployed.on('upgrade', processWSS);  
+            serverDeployed.on('upgrade', processWSS.bind(deployedScope));  
             //--- Show port in console
             serverDeployed.on('listening', onListeningDeployed(serverDeployed));
             function onListeningDeployed(serverDeployed) {
