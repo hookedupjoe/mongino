@@ -1109,7 +1109,8 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
 
     me.initAppComponents = function (theOptionalTarget) {
         var tmpDDs = me.getByAttr$({ appcomp: 'dropdown' }, theOptionalTarget);
-        if (tmpDDs && tmpDDs.length) {
+        if (tmpDDs && tmpDDs.length) {           
+            
             tmpDDs.attr('appcomp', '')
                 .dropdown({
                     showOnFocus: false
@@ -1117,6 +1118,7 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
         }
         tmpDDs = me.getByAttr$({ appcomp: 'dropdownnav' }, theOptionalTarget);
         if (tmpDDs && tmpDDs.length) {
+            
             tmpDDs.attr('appcomp', '');
             tmpDDs.dropdown({
                 allowCategorySelection: true,
@@ -8531,11 +8533,18 @@ License: LGPL
 
             if (tmpDDs.length) {
                 this.liveIndex.dropdown = tmpDDs;
-                tmpDDs.dropdown({
-                    showOnFocus: false
-                })
-                    .attr('ctlcomp', '')
-                    .attr('appcomp', '');
+                for( var iPos = 0 ; iPos < tmpDDs.length ; iPos++){
+                    var tmpDD = $(tmpDDs.get(iPos));
+                    var tmpDir = tmpDD.attr('direction')|| '';
+                    var tmpOpt = {
+                        showOnFocus: false
+                    };
+
+                    if( tmpDir ){
+                        tmpOpt.direction = tmpDir;
+                    }
+                    tmpDD.dropdown(tmpOpt).attr('ctlcomp', '').attr('appcomp', '');
+                }
             }
 
             var tmpCBs = ThisApp.getByAttr$({ ctlcomp: 'checkbox' }, tmpEl);
@@ -10140,7 +10149,7 @@ License: LGPL
 
     me.ControlDropDown = {
         getDesignSpecs: function(theControlName, theOptions, theControlObj){ 
-			var tmpPropList = ['name','ctl','label','req','classes','styles','hidden','note','noteColor','placeholder','list','multi']; 
+			var tmpPropList = ['name','ctl','label','req','classes','styles','hidden','note','noteColor','placeholder','list','multi','direction']; 
 			return tmpPropList
 		},
         setFieldNote: commonSetFieldNote, setFieldMessage: commonSetFieldMessage,
@@ -10158,6 +10167,7 @@ License: LGPL
             if (tmpObject.multi === true) {
                 tmpMulti = 'multiple';
             }
+
 
             var tmpDispOnly = (tmpObject.readonly === true);
             var tmpSpecs = theControlObj.getConfig();
@@ -10186,11 +10196,19 @@ License: LGPL
                 tmpDDAttr += ' disabled full ';
                 tmpReq = '';
             }
+
+            
+            var tmpExtrAttr = '';
+            if ( tmpObject.direction ){
+                tmpExtrAttr += ' direction="' + tmpObject.direction + '" ';
+            }
+
             var tmpSizeName = '';
             if (tmpObject.size && tmpObject.size > 0 && tmpObject.size < 17) {
                 tmpSizeName = getNumName(tmpObject.size)
                 tmpSizeName = ' ' + tmpSizeName + ' wide ';
             }
+            
             tmpHTML.push('<div controls fieldwrap name="' + theObject.name + '" class="' + tmpSizeName + tmpReq + ' field" ' + tmpStyle + '>')
             if (theObject.label) {
                 tmpHTML.push('<label>')
@@ -10211,7 +10229,7 @@ License: LGPL
             if (tmpObject.default != '' && tmpObject.default !== undefined && tmpObject.default !== 'undefined') {
                 tmpDefaultValHTML = ' value="' + tmpObject.default + '" ';
             }
-            tmpHTML.push('\n            <div ctlcomp="dropdown" class="ui selection ' + tmpDDAttr + tmpMulti + ' dropdown">')
+            tmpHTML.push('\n            <div ctlcomp="dropdown" ' + tmpExtrAttr + ' class="ui selection ' + tmpDDAttr + tmpMulti + ' dropdown">')
             tmpHTML.push('\n                <div class="default text">Select</div>')
             tmpHTML.push('\n                <i class="dropdown icon"></i>')
             tmpHTML.push('\n                <input ' + tmpDefaultValHTML + ' controls field type="hidden" name="' + theObject.name + '" >')
