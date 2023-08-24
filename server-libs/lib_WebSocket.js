@@ -30,6 +30,7 @@ const WebSocketRoom = class {
       this.options = theOptions || {};
       this.name = this.options.name || 'default';
       this.server = this.options.server || false;
+      this.onConnect = this.options.onConnect || false;
       this.onMessage = this.options.onMessage || false;
       this.onSocketAdd = this.options.onSocketAdd || false;
       this.onSocketRemove = this.options.onSocketRemove || false;
@@ -58,8 +59,12 @@ const WebSocketRoom = class {
                 if( self.onMessage ){
                     self.onMessage(this,data,isBinary)
                 }
-                
             });
+            console.log('self.onConnect ',self.onConnect )
+            if( self.onConnect ){
+                //--- Has .id added at this point
+                self.onConnect(ws);
+            }
             
         });
 
@@ -131,6 +136,26 @@ const WebSocketRoom = class {
         if( this.onSocketAdd ){
             this.onSocketAdd(ws.id)
         }
+    }
+
+    sendDataToClient(theID, data, isBinary){
+        //--- ToDo, save reference to ws - no loop?
+        this.server.clients.forEach(function each(ws) {
+            if( ws.id == theID ){
+                ws.send(data, { binary: isBinary });
+            }
+        });
+    }
+    //--- pass blank for theSenderID to send to all
+    sendDataToAll(data, isBinary, theSenderID){
+        if( typeof(data) == 'object'){
+            data = JSON.stringify(data);
+        }
+        this.server.clients.forEach(function each(ws) {
+            if( ws.id !== theSenderID ){
+                ws.send(data, { binary: isBinary });
+            }
+        });
     }
 
     getRoomName() {
