@@ -46,26 +46,35 @@ const WebSocketRoom = class {
 
         this.server.on('connection', function connection(ws,req) {
 
-            ws.isAlive = true;
+            try {
 
-            self.addClient(ws,req);
-            ws.on('close', function() {
-               self.removeClient(this.id);
-            })
+                ws.isAlive = true;
 
-            ws.on('pong', function() {this.isAlive = true;});
-            ws.on('error', console.error);
-            ws.on('message', function message(data, isBinary) {
-                if( self.onMessage ){
-                    self.onMessage(this,data,isBinary)
+                self.addClient(ws, req);
+                ws.on('close', function () {
+                    self.removeClient(this.id);
+                })
+
+                ws.on('pong', function () { this.isAlive = true; });
+                ws.on('error', console.error);
+                ws.on('message', function message(data, isBinary) {
+                    if (self.onMessage) {
+                        self.onMessage(this, data, isBinary)
+                    }
+                });
+                console.log('self.onConnect ', self.onConnect)
+                if (self.onConnect) {
+                    //--- Has .id added at this point
+                    self.onConnect(ws);
                 }
-            });
-            console.log('self.onConnect ',self.onConnect )
-            if( self.onConnect ){
-                //--- Has .id added at this point
-                self.onConnect(ws);
+
+
+
+            } catch (error) {
+                console.error('Error on connection',error)
             }
             
+        
         });
 
         if( this.pingInterval > 0 ){

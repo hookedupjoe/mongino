@@ -744,9 +744,14 @@ function setup() {
                             if (typeof(tmpAppWSReq.setup) == 'function') {
                                 var tmpWSS = tmpAppWSReq.setup(scope, {websocket:true});
                                 if( tmpWSS && tmpWSS.handleUpgrade ){
+                                    try {
                                         tmpWSS.handleUpgrade(request, socket, head, function done(ws) {
                                             tmpWSS.emit('connection', ws, request);
                                         });
+                                    } catch (error) {
+                                        console.error('Server Error in socket processing',error)
+                                        socket.destroy();
+                                    }
                                 } else {
                                     console.error('no winsock process available')
                                     socket.destroy();
