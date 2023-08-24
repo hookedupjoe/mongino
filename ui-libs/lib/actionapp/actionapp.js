@@ -10321,7 +10321,7 @@ License: LGPL
         },
         setFieldList: function (theFieldEl, theList, theFieldSpecs) {
             var tmpCtlEl = theFieldEl.closest('[ctlcomp]');
-            var tmpList = getListAsObjects(theList || '');
+            var tmpList = ActionAppCore.getListAsObjects(theList || '');
             var tmpVal = '';
             if( tmpCtlEl && tmpCtlEl.dropdown ){
                 tmpVal = tmpCtlEl.dropdown('get value');
