@@ -3978,6 +3978,7 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
                 "ctl": "field",
                 "name": "value",
                 "type": "text",
+                "classes": "submitOnEnter",
                 "req": true
             }]
         }
@@ -3986,13 +3987,22 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
         //      This is to keep from buliding and destroying for each
         //      Note: IF we add "cache" option to prompt, may work as well
         ThisApp.inputForm = ThisApp.controls.newControl(tmpInputSpecs);
-
+        ThisApp.inputForm.onKeydown = function(e){
+            if (e.keyCode==13){
+                ThisApp.prompter.submitPrompt()
+            } else if (e.keyCode==27){
+                ThisApp.hidePrompt();
+            }
+        }
         ThisApp.input = function (theText, theTitle, theButtonCaption, theDefaultValue) {
             var dfd = jQuery.Deferred();
             var tmpDefaultValue = theDefaultValue || '';
             var tmpParams = {
                 promptOptions: {
                     onBeforePrompt: function (theControl) {
+                        window.ic = theControl;
+                        ThisApp.inputForm.onKeyDownEl = theControl.getEl();
+                        theControl.getEl().on('keydown', ThisApp.inputForm.onKeydown);
                         theControl.loadSpot('text', theText);
                         theControl.setFieldValue('value', tmpDefaultValue || '')
                     }
@@ -4004,6 +4014,9 @@ window.ActionAppCore = window.ActionAppCore || ActionAppCore;
                 var tmpValue = '';
                 if (theWasSubmitted) {
                     var tmpValue = theData.value || '';
+                }
+                if(ThisApp.inputForm.onKeyDownEl){
+                    ThisApp.inputForm.onKeyDownEl.off('keydown',ThisApp.inputForm.onKeydown);
                 }
                 dfd.resolve(tmpValue);
             })
