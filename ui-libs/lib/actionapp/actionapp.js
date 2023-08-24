@@ -8455,6 +8455,34 @@ License: LGPL
         }
     }
 
+    meInstance.setLayoutOverflow = function(theDropDownEl){
+        if( !(theDropDownEl) ){
+            return;
+        }
+        window.theDropDownEl = theDropDownEl;
+        var tmpEl = $(theDropDownEl);
+        var tmpPane = tmpEl.closest('.ui-layout-pane');
+        //var tmpFrameEl = tmpEl.closest('.ui-layout-container');
+        //ToDo: Find and do only one frameset?
+        for( var aName in this.liveIndex.layouts){
+            var tmpLO = this.liveIndex.layouts[aName];
+            tmpLO.allowOverflow(tmpPane);
+        }
+    }
+    meInstance.resetLayoutOverflow = function(theDropDownEl){
+        if( !(theDropDownEl) ){
+            return;
+        }
+        var tmpEl = $(theDropDownEl);
+        var tmpPane = tmpEl.closest('.ui-layout-pane');
+        //ToDo: Find and do only one frameset?
+        for( var aName in this.liveIndex.layouts){
+            var tmpLO = this.liveIndex.layouts[aName];
+            tmpLO.resetOverflow(tmpPane);
+        }
+    }
+
+
     meInstance.initControlComponents = function (theOptionalEl) {
         var dfd = jQuery.Deferred();
         var tmpEl = theOptionalEl || this.parentEl;
@@ -8532,6 +8560,7 @@ License: LGPL
             var tmpDDs = ThisApp.getByAttr$({ ctlcomp: 'dropdown' }, tmpEl);
 
             if (tmpDDs.length) {
+                
                 this.liveIndex.dropdown = tmpDDs;
                 for( var iPos = 0 ; iPos < tmpDDs.length ; iPos++){
                     var tmpDD = $(tmpDDs.get(iPos));
@@ -8539,9 +8568,18 @@ License: LGPL
                     var tmpOpt = {
                         showOnFocus: false
                     };
+                    
 
                     if( tmpDir ){
                         tmpOpt.direction = tmpDir;
+                    }
+                    var tmpFnOn = this.setLayoutOverflow.bind(this);
+                    tmpOpt.onShow = function(){
+                        tmpFnOn(tmpDD);
+                    }
+                    var tmpFnOff = this.resetLayoutOverflow.bind(this);
+                    tmpOpt.onHide = function(){
+                        tmpFnOff(tmpDD);
                     }
                     tmpDD.dropdown(tmpOpt).attr('ctlcomp', '').attr('appcomp', '');
                 }
