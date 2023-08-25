@@ -148,6 +148,9 @@ const WebSocketRoom = class {
     }
 
     sendDataToClient(theID, data, isBinary){
+        if( typeof(data) == 'object'){
+            data = JSON.stringify(data);
+        }
         //--- ToDo, save reference to ws - no loop?
         this.server.clients.forEach(function each(ws) {
             if( ws.id == theID ){
