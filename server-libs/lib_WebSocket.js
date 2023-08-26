@@ -62,7 +62,6 @@ const WebSocketRoom = class {
                         self.onMessage(this, data, isBinary)
                     }
                 });
-                console.log('self.onConnect ', self.onConnect)
                 if (self.onConnect) {
                     //--- Has .id added at this point
                     self.onConnect(ws);
