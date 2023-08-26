@@ -140,7 +140,8 @@ const WebSocketRoom = class {
         ws.id = req.headers['sec-websocket-key'] || mgr.getUniqueID();
         this.clientIndex[ws.id] = {
             id: ws.id,
-            url:req.url
+            url: req.url,
+            ws: ws
         }
         if( this.onSocketAdd ){
             this.onSocketAdd(ws.id)
@@ -152,11 +153,10 @@ const WebSocketRoom = class {
             data = JSON.stringify(data);
         }
         //--- ToDo, save reference to ws - no loop?
-        this.server.clients.forEach(function each(ws) {
-            if( ws.id == theID ){
-                ws.send(data, { binary: isBinary });
-            }
-        });
+        var tmpClient = this.clientIndex[theID];
+        if( tmpClient && tmpClient.ws ){
+            tmpClient.ws.send(data, { binary: isBinary });
+        }
     }
     //--- pass blank for theSenderID to send to all
     sendDataToAll(data, isBinary, theSenderID){
