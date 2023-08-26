@@ -105,21 +105,7 @@ const WebSocketRoom = class {
         return this.clientIndex;
     }
 
-    // addSocket(ws,req){
-    //     var self = this;
-    //     this.addClient(ws,req);
-
-    //     ws.on('error', console.error);
-
-    //     ws.on('close', function() {
-    //         self.removeClient(this.id);
-    //     })
-
-    //     ws.on('message', function message(data, isBinary) {
-    //       self.onMessage(this.id,data,isBinary)
-    //     });
-    // }
-
+    
     getClient(theID){
         if(this.clientIndex[theID]){
             return this.clientIndex[theID];
@@ -152,7 +138,6 @@ const WebSocketRoom = class {
         if( typeof(data) == 'object'){
             data = JSON.stringify(data);
         }
-        //--- ToDo, save reference to ws - no loop?
         var tmpClient = this.clientIndex[theID];
         if( tmpClient && tmpClient.ws ){
             tmpClient.ws.send(data, { binary: isBinary });
