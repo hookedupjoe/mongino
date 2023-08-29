@@ -37,7 +37,10 @@ const WebSocketRoom = class {
 
       //--- Set pingInterval t0 0 to not ping clients
       //      else set using a MS value
-      this.pingInterval = this.options.pingInterval || 120000;
+      this.pingInterval = 120000;
+      if( typeof(this.options.pingInterval) == 'number'){
+        this.pingInterval = this.options.pingInterval
+      }
 
       
       var self = this;
