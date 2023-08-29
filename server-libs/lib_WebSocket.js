@@ -41,7 +41,6 @@ const WebSocketRoom = class {
       if( typeof(this.options.pingInterval) == 'number'){
         this.pingInterval = this.options.pingInterval
       }
-
       
       var self = this;
       if( this.options.autoManage !== false && this.server){
