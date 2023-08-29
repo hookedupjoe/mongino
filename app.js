@@ -736,12 +736,14 @@ function setup() {
                             return;
                         }
 
+                        if( tmpParts[0] == ''){
+                            tmpParts.shift();
+                        }
                         var tmpURLBase = tmpParts.join('/');
-                
+                        
                         var tmpAppID = tmpParts[1];
                         if( tmpAppID ){
                             var tmpFilePath = tmpScope.locals.path.appserver + tmpURLBase + '.js';
-                            console.log('tmpFilePath',tmpFilePath)
                             var tmpAppWSReq = require(tmpFilePath);
                             if (typeof(tmpAppWSReq.setup) == 'function') {
                                 var tmpWSS = tmpAppWSReq.setup(tmpScope, {websocket:true});
