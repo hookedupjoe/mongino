@@ -88,6 +88,8 @@ const WebSocketRoom = class {
             this.server.on('close', function close() {
                 clearInterval(interval);
             });
+        } else {
+            console.log('Winsock server, pingInterval set to zero - disabled ping check')
         }
 
       }
