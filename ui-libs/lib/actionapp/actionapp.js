@@ -5453,15 +5453,15 @@ License: LGPL
         tmpHTML.push('  </div>');
         tmpHTML.push('  </div>');
         tmpHTML.push('	<div class="actions">');
-        tmpHTML.push('	  <div appuse="_prompter:prompt-dialog-yes" action="_prompter:submitPrompt" class="ui button blue">');
+        tmpHTML.push('	  <button appuse="_prompter:prompt-dialog-yes" action="_prompter:submitPrompt" class="ui button blue">');
         tmpHTML.push('		Yes');
-        tmpHTML.push('	  </div>');
-        tmpHTML.push('	  <div appuse="_prompter:prompt-dialog-no" action="_prompter:hidePrompt" class="ui gray button">');
+        tmpHTML.push('	  </button>');
+        tmpHTML.push('	  <button appuse="_prompter:prompt-dialog-no" action="_prompter:hidePrompt" class="ui gray button">');
         tmpHTML.push('		No');
-        tmpHTML.push('	  </div>');
-        tmpHTML.push('	  <div appuse="_prompter:prompt-dialog-cancel" action="_prompter:hidePrompt" class="ui button" style="display:none">');
+        tmpHTML.push('	  </button>');
+        tmpHTML.push('	  <button appuse="_prompter:prompt-dialog-cancel" action="_prompter:hidePrompt" class="ui button" style="display:none">');
         tmpHTML.push('		Cancel');
-        tmpHTML.push('	  </div>');
+        tmpHTML.push('	  </button>');
         tmpHTML.push('	</div>');
         tmpHTML.push('</div>');
         tmpHTML.push('');
@@ -5474,13 +5474,13 @@ License: LGPL
         tmpHTML.push('    </div>');
         tmpHTML.push('	</div>');
         tmpHTML.push('	<div class="actions" style="clear:both;">');
-        tmpHTML.push('	  <div action="_prompter:hideConfirmNo" class="ui red button">');
+        tmpHTML.push('	  <button action="_prompter:hideConfirmNo" class="ui red button">');
         tmpHTML.push('		No');
-        tmpHTML.push('	  </div>');
-        tmpHTML.push('	  <div action="_prompter:hideConfirmYes" class="ui right green labeled icon button">');
+        tmpHTML.push('	  </button>');
+        tmpHTML.push('	  <button action="_prompter:hideConfirmYes" class="ui right green labeled icon button">');
         tmpHTML.push('		Yes');
         tmpHTML.push('		<i class="checkmark icon"></i>');
-        tmpHTML.push('	  </div>');
+        tmpHTML.push('	  </button>');
         tmpHTML.push('	</div>');
         tmpHTML.push('</div>');
 
@@ -5493,9 +5493,9 @@ License: LGPL
 
         tmpHTML.push('	</div>');
         tmpHTML.push('	<div class="actions" style="clear:both;">');
-        tmpHTML.push('	  <div action="_prompter:hideAlert" class="ui right blue button" style="min-width:200px">');
+        tmpHTML.push('	  <button action="_prompter:hideAlert" class="ui right blue button" style="min-width:200px">');
         tmpHTML.push('		OK');
-        tmpHTML.push('	  </div><div style="clear:both;"></div>');
+        tmpHTML.push('	  </button><div style="clear:both;"></div>');
         tmpHTML.push('	</div>');
         tmpHTML.push('</div>');
 
