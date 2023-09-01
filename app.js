@@ -428,7 +428,17 @@ function initAuthPrompt(theExpress, theIsDeployed){
                 }
             } else {
                 var tmpDBName = req.originalUrl.replace(/\//g, '');
+                var tmpParams = '';
+                var tmpDBParts = tmpDBName.split('?');
+                if( tmpDBParts.length == 2){
+                    tmpDBName = tmpDBParts[0];
+                    tmpParams = tmpDBParts[1];
+                }
                 tmpLoginURL += '&page=/' + tmpDBName + '/';
+                if( tmpParams ){
+                    tmpLoginURL += '?'+tmpParams;
+                }
+
 
                 tmpDBName = $.MongoManager.options.prefix.db + tmpDBName;
                 tmpIsAllowed = await $.AuthMgr.isAllowed(tmpUserID, { db: tmpDBName }, 0);
@@ -809,8 +819,12 @@ function setup() {
                 var tmpAppServerFilesLoc = scope.locals.path.ws.deploy + "/ui-servers/"
                 chokidar.watch(tmpAppServerFilesLoc, { ignored: /index\.js$/ })
                     .on('change', (path) => {
-                        try {
-                            if (require.cache[path]) delete require.cache[path];
+                    try {
+                        if( path.indexOf(".git") > -1){
+                            console.log('Ignoring git updates ' + path);
+                            return;
+                        }
+                        if (require.cache[path]) delete require.cache[path];
                             console.log('New file loaded for ' + path);
                         } catch (theChangeError) {
                             console.log("Could not hot update: " + path);
