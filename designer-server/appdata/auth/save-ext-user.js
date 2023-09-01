@@ -26,7 +26,6 @@ module.exports.setup = function setup(scope) {
                     throw("Bad JSON Passed")
                 }
             }
-            console.log('req.params',req.params);
             return $.AuthMgr.saveExtUser(tmpBody);
 
     }
