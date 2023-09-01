@@ -113,6 +113,14 @@
 			]
 		},
 		{
+			"name": "qrcode",
+			"base": "qrcode",
+			"label": "QR Code Generation",
+			"js": [
+				"<script src=\"{{LIBRARY-LOCATION}}/lib/qrcode/qrcode.js\"></script>"
+			]
+		},
+		{
 			"name": "spotifyWebPlayer",
 			"base": "",
 			"label": "p5js - Processing JavaScript",
