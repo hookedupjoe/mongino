@@ -800,8 +800,11 @@ function setup() {
                 chokidar.watch(tmpWatchDir, { ignored: /index\.js$/ })
                     .on('change', (path) => {
                         try {
-                            if (require.cache[path]) delete require.cache[path];
-                            console.log('New file loaded for ' + path);
+                            if (require.cache[path]){
+                                delete require.cache[path];
+                                console.log('New file loaded for ' + path);
+                            }
+                            
                         } catch (theChangeError) {
                             console.log("Could not hot update: " + path);
                             console.log("The reason: " + theChangeError);
@@ -820,12 +823,13 @@ function setup() {
                 chokidar.watch(tmpAppServerFilesLoc, { ignored: /index\.js$/ })
                     .on('change', (path) => {
                     try {
-                        if( path.indexOf(".git") > -1){
-                            console.log('Ignoring git updates ' + path);
-                            return;
+                        if( !(path.indexOf(".git") > -1)){
+                            if (require.cache[path]){
+                                delete require.cache[path];
+                                console.log('New file loaded for ' + path);
+                            }     
                         }
-                        if (require.cache[path]) delete require.cache[path];
-                            console.log('New file loaded for ' + path);
+                            
                         } catch (theChangeError) {
                             console.log("Could not hot update: " + path);
                             console.log("The reason: " + theChangeError);
@@ -841,8 +845,12 @@ function setup() {
                 chokidar.watch(tmpAppServerFilesLoc, { ignored: /index\.js$/ })
                     .on('change', (path) => {
                         try {
-                            if (require.cache[path]) delete require.cache[path];
-                            console.log('New file loaded for ' + path);
+                            if( !(path.indexOf(".git") > -1)){
+                                if (require.cache[path]){
+                                    delete require.cache[path];
+                                    console.log('New file loaded for ' + path);
+                                }
+                            } 
                         } catch (theChangeError) {
                             console.log("Could not hot update: " + path);
                             console.log("The reason: " + theChangeError);
