@@ -4474,6 +4474,7 @@ License: LGPL
         this.parts = this.part //longcut - keep typing it wrong, can use either :)
         this.pageActions = {}; //--- A place for actions
         this.pageTitle = this.options.pageTitle || '';
+        
 
         this.initPubSub();
 
@@ -4567,6 +4568,18 @@ License: LGPL
             return ActionAppCore.appInfo.name;
         }
         return '';
+    }
+    me.getAppUse = function (theUse, the$Flag) {
+        var tmpEl = this.getByAttr$({
+            appuse: theUse
+        });
+        if (!(tmpEl && tmpEl.length > 0)) {
+            return false;
+        }
+        if (the$Flag) {
+            return tmpEl
+        }
+        return tmpEl.get(0);
     }
 
     me.addPageWebControl = function (theControlName, theControl) {
