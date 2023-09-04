@@ -121,6 +121,14 @@
 			]
 		},
 		{
+			"name": "qrcodeReader",
+			"base": "html5-qrcode",
+			"label": "QR Code Reader",
+			"js": [
+				"<script src=\"{{LIBRARY-LOCATION}}/lib/html5-qrcode/html5-qrcode.js\"></script>"
+			]
+		},
+		{
 			"name": "spotifyWebPlayer",
 			"base": "",
 			"label": "p5js - Processing JavaScript",
