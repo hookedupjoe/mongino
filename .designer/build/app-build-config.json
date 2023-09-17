@@ -121,6 +121,14 @@
 			]
 		},
 		{
+			"name": "headtrackr",
+			"base": "headtrackr",
+			"label": "Head Tracker",
+			"js": [
+				"<script src=\"{{LIBRARY-LOCATION}}/lib/headtrackr/headtrackr.js\"></script>"
+			]
+		},
+		{
 			"name": "qrcodeReader",
 			"base": "html5-qrcode",
 			"label": "QR Code Reader",
