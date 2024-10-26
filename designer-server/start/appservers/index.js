@@ -9,15 +9,16 @@ module.exports.setup = function setup(scope) {
     scope.locals.path.appserver = scope.locals.path.ws.uiAppServers;
     
     return  async function processReq(req, res, next) {
-        if( req.authUser ){
-            //--- validate access?
-        } else {
+        // if( req.authUser ){
+        //     //--- validate access?
+        // } else {
             
-            if( $.isUsingPassport ){
-                return res.sendStatus(401)
-            }
-            console.log('Anonymous Access')
-        }
+        //     if( $.isUsingPassport ){
+        //         console.log('app server no');
+        //         return res.sendStatus(401)
+        //     }
+        //     console.log('Anonymous Access')
+        // }
 
         
 
@@ -71,6 +72,8 @@ module.exports.setup = function setup(scope) {
         if( req.authUser ){
             var tmpDBName = req.body.dbname;
             tmpIsAllowed = await $.AuthMgr.isAllowed(req.authUser.id,{db:req.body.dbname}, tmpAccessType)
+        } else {
+            tmpIsAllowed = await $.AuthMgr.isAllowed('',{db:req.body.dbname}, tmpAccessType)
         }
 
         
