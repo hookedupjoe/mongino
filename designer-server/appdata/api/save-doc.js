@@ -34,6 +34,23 @@ module.exports.setup = function setup(scope) {
                 var tmpDB = await tmpAccount.getDatabase(tmpBody.dbname);
                 var tmpDocType = tmpBody.doctype || '';
                 var tmpCollName = $.MongoManager.options.prefix.datatype  + tmpDocType;
+                // var tmpIsAllowed = false;
+
+                // if( req.session && req.session.passport && req.session.passport.user ){
+                //     var tmpUserInfo = req.session.passport.user;
+                //     var tmpUserID = tmpUserInfo.id;
+
+                //     console.log('user',tmpUserInfo.id)
+                //     tmpIsAllowed = await $.AuthMgr.isAllowed(tmpUserID,{db:tmpBody.dbname}, 0)
+                //     console.log('tmpIsAllowed',tmpIsAllowed)
+                    
+                // } else {
+                //     console.log('user is anonymous - not allowed');
+                //     reject('Not Authorized');
+                //     return;
+                // }
+
+
 
                 var tmpAddRet = false;
                 var tmpID = tmpBody.data._id || false;

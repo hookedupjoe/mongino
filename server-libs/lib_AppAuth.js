@@ -418,12 +418,32 @@ meAuthManager.isSystemAllowed = async function(theUserId){
 }
 
 
+meAuthManager.accessLevels = {
+    'reader':0,
+    'author': 1,
+    'editor': 2,
+    'admin': 3
+}
+
+meAuthManager.getAccessLevelFromDoc = function(theDocs){
+    var tmpDoc = theDocs[0];
+    var tmpLevel = tmpDoc.level || 'reader';
+    var tmpAccessLevel = self.getAccessLevel(tmpLevel);
+    return ( tmpAccessLevel >= thePermission)
+}
+
+meAuthManager.getAccessLevel = function(theLevel){
+    return this.accessLevels[theLevel] || 0;
+}
+
 meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
+    console.log('isAllowed',theUserId, theResource, thePermission)
     var self = this;
     return new Promise( async function (resolve, reject) {
         try {
             if( theUserId == 'system_admin_user'){
                 resolve(true);
+                return;
             }
             
             var tmpIsDesign = ( theResource.system == 'design' );
@@ -448,13 +468,14 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
 
             if( tmpIsDesign || !(tmpDBName)){
                 if( await self.isSystemAllowed(theUserId) ){
-                    resolve(true);
+                    return resolve(true);
                 } else {
-                    resolve(false);
+                    return resolve(false);
                 }
             }
             if( !(tmpResID) ){
-                resolve(false);
+                //>nolog console.log('NO RES ID ',thePermission);
+                return resolve(false);
             }
 
             var tmpAccount = await $.MongoManager.getAccount('_home');
@@ -466,9 +487,21 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
                 tmpFilter = {"__doctype": tmpDocType,"entryname": '-mo-anonymous', "type": "person"}; 
                 tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
                 if( (tmpDocs) && tmpDocs.length == 1){
-                    resolve(true);
+                    //--- ToDO:  Check permission of anonymous
+                    var tmpDoc = tmpDocs[0];
+                    var tmpLevel = tmpDoc.level || 'reader';
+                    var tmpAccessLevel = self.getAccessLevel(tmpLevel);
+                    if( tmpAccessLevel >= thePermission){
+                        //console.log('tmpDoc',tmpDoc);
+                        //>nolog console.log('anon allowed', thePermission);
+                        return resolve(true);
+                    }
+                    //>nolog console.log('anon NOT allowed', thePermission);
+                    return resolve(false);
+                   
                 } else {
-                    resolve(false);
+                    //>nolog console.log('ANON NOT ALLOWED',thePermission);
+                    return resolve(false);
                 }   
             }
             //--- ToDo: Combine filter into one for -mo-user ?
@@ -476,21 +509,43 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
             tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
             if( !(tmpDocs) || tmpDocs.length == 0){
                 if( await self.isSystemAllowed(theUserId) ){
-                    resolve(true);
+                    //>nolog console.log('isAllowed - system allowed full',theUserId, theResource, thePermission)
+                    return resolve(true);
                 } else {
                     tmpFilter = {"__doctype": tmpDocType,"entryname": '-mo-user', "type": "person"};
                     tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
                     if( (tmpDocs) && tmpDocs.length == 1){
-                        resolve(true);
+                        var tmpDoc = tmpDocs[0];
+                        var tmpLevel = tmpDoc.level || 'reader';
+                        var tmpAccessLevel = self.getAccessLevel(tmpLevel);
+                        if( tmpAccessLevel >= thePermission){
+                            //>nolog console.log('USER has access', thePermission);
+                            return resolve(true);
+                        }
+                        //>nolog console.log('USER NOT allowed', thePermission);
+                        return resolve(false);
                     } else {
-                        resolve(false);
+                        //>nolog console.log('NO USER FOUND',thePermission);
+                        return resolve(false);
                     }  
                 }
             } else {
-                //--- ToDo: Check access level
-                resolve(true);
+                
+                
+                var tmpDoc = tmpDocs[0];
+                var tmpLevel = tmpDoc.level || 'readger';
+                var tmpAccessLevel = self.getAccessLevel(tmpLevel);
+                if( tmpAccessLevel >= thePermission){
+                    //console.log('tmpDoc',tmpDoc);
+                    //>nolog console.log('person allowed',thePermission);
+                    return resolve(true);
+                }
+                //--- no permission
+                console.log('person not allowed',thePermission);
+                return resolve(false);
             }
-            resolve(true);
+            console.log('no case - thePermission',thePermission);
+            resolve(false);
         }
         catch (error) {
             console.error('Error in isAllowed: ' + error);

@@ -12,8 +12,8 @@ module.exports.setup = function setup(scope) {
 
        
         
-        
-
+        var tmpType = req.params.type || ''
+        var tmpName = req.params.name || ''
 
         var tmpAppID = req.headers['act-app-id'] || '';
 
@@ -56,6 +56,14 @@ module.exports.setup = function setup(scope) {
 
         var tmpIsAllowed = false;
         var tmpAccessType = 0; //--- ToDo: Determine access type based on action or method
+
+        if( tmpName == 'get-appdocs.json'){
+            tmpAccessType = 0;
+        } else if( tmpName == 'save-doc.json' || tmpName == 'recycle-docs.json'){
+            tmpAccessType = 2;
+        }
+        
+
         //--- May have passed anonymous?
         var tmpDBName = req.body.dbname;
 
@@ -77,8 +85,6 @@ module.exports.setup = function setup(scope) {
             return res.sendStatus(401);
         }
         
-        var tmpType = req.params.type || ''
-        var tmpName = req.params.name || ''
         var tmpRet = {}
         
         tmpRet.type = tmpType;
