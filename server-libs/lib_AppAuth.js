@@ -424,26 +424,41 @@ meAuthManager.accessLevels = {
     'admin': 3
 }
 
-meAuthManager.getAccessLevelFromDoc = function(theDocs, thePermission){
+meAuthManager.getAccessLevelFromDocs = function(theDocs, thePermission){
     var tmpDoc = theDocs[0];
     var tmpLevel = tmpDoc.level || 'reader';
     var tmpAccessLevel = this.getAccessLevel(tmpLevel);
-    //console.log('has permission? ' + (( tmpAccessLevel >= thePermission)))
-    return ( tmpAccessLevel >= thePermission)
+    return tmpAccessLevel;
 }
 
 meAuthManager.getAccessLevel = function(theLevel){
     return this.accessLevels[theLevel] || 0;
 }
 
+
 meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
-    console.log('isAllowed',theUserId, theResource, thePermission)
+    //console.log('isAllowed',theUserId, theResource, thePermission)
+    var self = this;
+    return new Promise( async function (resolve, reject) {
+        try {
+            var tmpLevel = await self.getAccessLevelForUser(theUserId, theResource);
+            return resolve(tmpLevel >= thePermission);
+         
+        }
+        catch (error) {
+            console.error('Error in isAllowed: ' + error);
+            resolve(false);
+        }
+    });
+}
+
+meAuthManager.getAccessLevelForUser = async function(theUserId, theResource){
+    //console.log('getAccessLevelForUser',theUserId, theResource)
     var self = this;
     return new Promise( async function (resolve, reject) {
         try {
             if( theUserId == 'system_admin_user'){
-                resolve(true);
-                return;
+                return resolve(self.getAccessLevel('admin'));
             }
             
             var tmpIsDesign = ( theResource.system == 'design' );
@@ -474,7 +489,6 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
                 }
             }
             if( !(tmpResID) ){
-                //>nolog console.log('NO RES ID ',thePermission);
                 return resolve(false);
             }
 
@@ -487,9 +501,8 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
                 tmpFilter = {"__doctype": tmpDocType,"entryname": '-mo-anonymous', "type": "person"}; 
                 tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
                 if( (tmpDocs) && tmpDocs.length == 1){
-                    return resolve(self.getAccessLevelFromDoc(tmpDocs, thePermission));                   
+                    return resolve(self.getAccessLevelFromDocs(tmpDocs));                   
                 } else {
-                    //>nolog console.log('ANON NOT ALLOWED',thePermission);
                     return resolve(false);
                 }   
             }
@@ -498,22 +511,19 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
             tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
             if( !(tmpDocs) || tmpDocs.length == 0){
                 if( await self.isSystemAllowed(theUserId) ){
-                    //>nolog console.log('isAllowed - system allowed full',theUserId, theResource, thePermission)
-                    return resolve(true);
+                    return resolve(self.getAccessLevel('admin'));
                 } else {
                     tmpFilter = {"__doctype": tmpDocType,"entryname": '-mo-user', "type": "person"};
                     tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
                     if( (tmpDocs) && tmpDocs.length == 1){
-                        return resolve(self.getAccessLevelFromDoc(tmpDocs, thePermission));  
+                        return resolve(self.getAccessLevelFromDocs(tmpDocs));  
                     } else {
                         return resolve(false);
                     }  
                 }
             } else {
-                return resolve(self.getAccessLevelFromDoc(tmpDocs, thePermission));  
+                return resolve(self.getAccessLevelFromDocs(tmpDocs));  
             }
-            console.log('no case - thePermission',thePermission);
-            resolve(false);
         }
         catch (error) {
             console.error('Error in isAllowed: ' + error);

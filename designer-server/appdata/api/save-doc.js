@@ -61,7 +61,6 @@ module.exports.setup = function setup(scope) {
                 if( tmpID ){
                     var tmpCollection = await tmpDB.getCollection(tmpCollName);
                     var tmpUD =  { $set: tmpBody.data };
-                    console.log('update');
                     tmpAddRet = await tmpCollection.updateOne({_id: new ObjectId(tmpID)}, tmpUD)
 
                 } else {
