@@ -529,6 +529,19 @@ meAuthManager.getAccessLevel = function(theLevel){
 //     });
 // }
 
+
+meAuthManager.getCurrentUserId = function(req){
+    var tmpUserId = '';
+    if( req.session && req.session.passport && req.session.passport.user ){
+        var tmpUserInfo = req.session.passport.user;
+        tmpUserId = tmpUserInfo.id
+        if( tmpUserInfo.provider ){
+            tmpUserId = tmpUserInfo.provider + '-' + tmpUserId;
+        }
+    }
+    return tmpUserId;
+}
+
 meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
     console.log('isAllowed',theUserId, theResource, thePermission)
     var self = this;
