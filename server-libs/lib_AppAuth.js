@@ -659,13 +659,18 @@ meAuthManager.getAccessLevelForUser = async function(theUserId, theResource){
 
             if( tmpIsDesign || !(tmpDBName)){
                 if( await self.isSystemAllowed(theUserId) ){
-                    return resolve(true);
+                    return resolve(self.getAccessLevel('admin'));
                 } else {
                     return resolve(false);
                 }
             }
             if( !(tmpResID) ){
                 return resolve(false);
+            }
+
+            //--- System Level Access overrides DB access
+            if( await self.isSystemAllowed(theUserId) ){
+                return resolve(self.getAccessLevel('admin'));
             }
 
             var tmpAccount = await $.MongoManager.getAccount('_home');
