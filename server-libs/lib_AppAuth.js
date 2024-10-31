@@ -542,99 +542,84 @@ meAuthManager.getCurrentUserId = function(req){
     return tmpUserId;
 }
 
-// meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
-//     console.log('isAllowed',theUserId, theResource, thePermission)
-//     var self = this;
-//     return new Promise( async function (resolve, reject) {
-//         try {
-//             if( theUserId == 'system_admin_user'){
-//                 resolve(true);
-//                 return;
-//             }
-            
-//             var tmpIsDesign = ( theResource.system == 'design' );
-           
-
-//             var tmpCollName = $.MongoManager.options.names.aclcollection;
-//             var tmpDocType = 'aclentry';
-//             var tmpDBName = theResource.database || theResource.db || '';
-            
-//             var tmpResType = '';
-//             var tmpResID = '';
-
-//             if( tmpDBName ){
-//                 tmpResType = 'db';
-//                 tmpResID = tmpDBName;
-//             }
-
-//             //--- Just in case an api call is made with / in the end
-//             if( tmpDBName.indexOf('?') > -1 ){
-//                 tmpDBName = '';
-//             }
-
-//             if( tmpIsDesign || !(tmpDBName)){
-//                 if( await self.isSystemAllowed(theUserId) ){
-//                     return resolve(true);
-//                 } else {
-//                     return resolve(false);
-//                 }
-//             }
-//             if( !(tmpResID) ){
-//                 //>nolog console.log('NO RES ID ',thePermission);
-//                 return resolve(false);
-//             }
-
-//             var tmpAccount = await $.MongoManager.getAccount('_home');
-//             var tmpDB = await tmpAccount.getDatabase(tmpDBName);
-//             var tmpMongoDB = tmpDB.getMongoDB();
-//             var tmpFilter, tmpDocs;
-//             //--- See if no username , check anonymous access, kick out
-//             if( !(theUserId) ){
-//                 tmpFilter = {"__doctype": tmpDocType,"entryname": '-mo-anonymous', "type": "person"}; 
-//                 tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
-//                 if( (tmpDocs) && tmpDocs.length == 1){
-//                     return resolve(self.getAccessLevelFromDoc(tmpDocs, thePermission));                   
-//                 } else {
-//                     //>nolog console.log('ANON NOT ALLOWED',thePermission);
-//                     return resolve(false);
-//                 }   
-//             }
-//             //--- ToDo: Combine filter into one for -mo-user ?
-//             tmpFilter = {"__doctype": tmpDocType,"entryname": theUserId, "type": "person"};
-//             tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
-//             if( !(tmpDocs) || tmpDocs.length == 0){
-//                 if( await self.isSystemAllowed(theUserId) ){
-//                     //>nolog console.log('isAllowed - system allowed full',theUserId, theResource, thePermission)
-//                     return resolve(true);
-//                 } else {
-//                     tmpFilter = {"__doctype": tmpDocType,"entryname": '-mo-user', "type": "person"};
-//                     tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
-//                     if( (tmpDocs) && tmpDocs.length == 1){
-//                         return resolve(self.getAccessLevelFromDoc(tmpDocs, thePermission));  
-//                     } else {
-//                         return resolve(false);
-//                     }  
-//                 }
-//             } else {
-//                 return resolve(self.getAccessLevelFromDoc(tmpDocs, thePermission));  
-//             }
-//             console.log('no case - thePermission',thePermission);
-//             resolve(false);
-//         }
-//         catch (error) {
-//             console.error('Error in isAllowed: ' + error);
-//             resolve(false);
-//         }
-//     });
-// }
-
 meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
     console.log('isAllowed',theUserId, theResource, thePermission)
     var self = this;
     return new Promise( async function (resolve, reject) {
         try {
-            var tmpAccessLevel = await self.getAccessLevelForUser(theUserId, theResource, thePermission);
-            return resolve( tmpAccessLevel >= thePermission)
+            if( theUserId == 'system_admin_user'){
+                resolve(true);
+                return;
+            }
+            
+            var tmpIsDesign = ( theResource.system == 'design' );
+           
+
+            var tmpCollName = $.MongoManager.options.names.aclcollection;
+            var tmpDocType = 'aclentry';
+            var tmpDBName = theResource.database || theResource.db || '';
+            
+            var tmpResType = '';
+            var tmpResID = '';
+
+            if( tmpDBName ){
+                tmpResType = 'db';
+                tmpResID = tmpDBName;
+            }
+
+            //--- Just in case an api call is made with / in the end
+            if( tmpDBName.indexOf('?') > -1 ){
+                tmpDBName = '';
+            }
+
+            if( tmpIsDesign || !(tmpDBName)){
+                if( await self.isSystemAllowed(theUserId) ){
+                    return resolve(true);
+                } else {
+                    return resolve(false);
+                }
+            }
+            if( !(tmpResID) ){
+                //>nolog console.log('NO RES ID ',thePermission);
+                return resolve(false);
+            }
+
+            var tmpAccount = await $.MongoManager.getAccount('_home');
+            var tmpDB = await tmpAccount.getDatabase(tmpDBName);
+            var tmpMongoDB = tmpDB.getMongoDB();
+            var tmpFilter, tmpDocs;
+            //--- See if no username , check anonymous access, kick out
+            if( !(theUserId) ){
+                tmpFilter = {"__doctype": tmpDocType,"entryname": '-mo-anonymous', "type": "person"}; 
+                tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
+                if( (tmpDocs) && tmpDocs.length == 1){
+                    return resolve(self.getAccessLevelFromDoc(tmpDocs, thePermission));                   
+                } else {
+                    //>nolog console.log('ANON NOT ALLOWED',thePermission);
+                    return resolve(false);
+                }   
+            }
+            //--- ToDo: Combine filter into one for -mo-user ?
+            tmpFilter = {"__doctype": tmpDocType,"entryname": theUserId, "type": "person"};
+            tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
+            if( !(tmpDocs) || tmpDocs.length == 0){
+                if( await self.isSystemAllowed(theUserId) ){
+                    //>nolog console.log('isAllowed - system allowed full',theUserId, theResource, thePermission)
+                    return resolve(true);
+                } else {
+                    tmpFilter = {"__doctype": tmpDocType,"entryname": '-mo-user', "type": "person"};
+                    tmpDocs = await tmpMongoDB.collection(tmpCollName).find({}).filter(tmpFilter).toArray();
+                    if( (tmpDocs) && tmpDocs.length == 1){
+                        return resolve(self.getAccessLevelFromDoc(tmpDocs, thePermission));  
+                    } else {
+                        return resolve(false);
+                    }  
+                }
+            } else {
+                return resolve(self.getAccessLevelFromDoc(tmpDocs, thePermission));  
+            }
+            console.log('no case - thePermission',thePermission);
+            resolve(false);
         }
         catch (error) {
             console.error('Error in isAllowed: ' + error);
@@ -642,6 +627,21 @@ meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
         }
     });
 }
+
+// meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
+//     console.log('isAllowed',theUserId, theResource, thePermission)
+//     var self = this;
+//     return new Promise( async function (resolve, reject) {
+//         try {
+//             var tmpAccessLevel = await self.getAccessLevelForUser(theUserId, theResource, thePermission);
+//             return resolve( tmpAccessLevel >= thePermission)
+//         }
+//         catch (error) {
+//             console.error('Error in isAllowed: ' + error);
+//             resolve(false);
+//         }
+//     });
+// }
 
 meAuthManager.getAccessLevelForUser = async function(theUserId, theResource){
     var self = this;
