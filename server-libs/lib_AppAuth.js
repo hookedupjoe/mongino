@@ -629,7 +629,7 @@ meAuthManager.getCurrentUserId = function(req){
 // }
 
 meAuthManager.isAllowed = async function(theUserId, theResource, thePermission){
-    console.log('isAllowed',theUserId, theResource, thePermission)
+    //console.log('isAllowed',theUserId, theResource, thePermission)
     var self = this;
     return new Promise( async function (resolve, reject) {
         try {

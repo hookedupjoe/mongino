@@ -91,7 +91,7 @@ const WebSocketRoom = class {
                 clearInterval(interval);
             });
         } else {
-            console.log('Winsock server, pingInterval set to zero - disabled ping check')
+            //console.log('Winsock server, pingInterval set to zero - disabled ping check')
         }
 
       }
