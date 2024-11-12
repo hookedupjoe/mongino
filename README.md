@@ -2,7 +2,7 @@
 A Robust Application Environment
 
 * Author - W Joseph Francis
-* (c) hookedup, inc. 2023
+* (c) hookedup, inc. 2023-2024
 * License - LGPL
 * [mongino.com](https://mongino.com/)
 
