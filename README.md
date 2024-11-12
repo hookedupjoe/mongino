@@ -1,5 +1,3 @@
-![Mongino Header](https://mongino.com/wp-content/uploads/2023/07/mongino-logo-orange.png)
-
 # Mongino
 A Robust Application Environment
 
@@ -8,12 +6,12 @@ A Robust Application Environment
 * License - LGPL
 * [mongino.com](https://mongino.com/)
 
-# Requirements
+## Requirements
 * Windows, Mac or Linux (ubuntu recommended for headless server)
 * Node 14 or higher, (18 recommended)
 * MongoDB, v5+ recommended
 
-# Quick Start
+## Quick Start
 * Install Node 14+
 * Setup MongoDB (authentication recommended)
 * Install and verify access with MongoDB Compass
@@ -21,11 +19,11 @@ A Robust Application Environment
 * npm install
 * npm audit fixup
 
-# To Run
+## To Run
 * npm start
 * open http://localhost:33480/ or ctrl-click the link when started.
 
-# To Update
+## To Update
 * Open git directory
 * git pull
 * npm install
